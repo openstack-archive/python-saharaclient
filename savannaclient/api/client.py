@@ -21,11 +21,13 @@ from savannaclient.openstack.common import log as logging
 
 from savannaclient.api import cluster_templates
 from savannaclient.api import clusters
+from savannaclient.api import data_sources
 from savannaclient.api import httpclient
 from savannaclient.api import images
+from savannaclient.api import job_origins
+from savannaclient.api import jobs
 from savannaclient.api import node_group_templates
 from savannaclient.api import plugins
-
 
 LOG = logging.getLogger(__name__)
 
@@ -57,7 +59,7 @@ class Client(object):
         if not savanna_url:
             LOG.warning("Could not determine url for Savanna. "
                         "Trying localhost with default port.")
-            savanna_url = "http://localhost:8386/v1.0/" + project_id
+            savanna_url = "http://localhost:8386/v1.1/" + project_id
 
         self.client = httpclient.HTTPClient(savanna_url, token)
 
@@ -67,3 +69,7 @@ class Client(object):
                                      NodeGroupTemplateManager(self))
         self.plugins = plugins.PluginManager(self)
         self.images = images.ImageManager(self)
+
+        self.data_sources = data_sources.DataSourceManager(self)
+        self.jobs = jobs.JobsManager(self)
+        self.job_origins = job_origins.JobOriginsManager(self)
