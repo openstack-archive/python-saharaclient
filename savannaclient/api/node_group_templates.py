@@ -43,7 +43,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
             data.update({"volumes_per_node": volumes_per_node,
                          "volumes_size": volumes_size})
 
-        self._create('/node-group-templates', data)
+        return self._create('/node-group-templates', data)
 
     def list(self):
         return self._list('/node-group-templates', 'node_group_templates')

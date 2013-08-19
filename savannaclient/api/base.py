@@ -72,6 +72,9 @@ class ResourceManager(object):
         if resp.status_code != 202:
             self._raise_api_exception(resp)
 
+        data = resp.json()
+        return self.resource_class(self, data)
+
     def _update(self, url, data):
         resp = self.api.client.put(url, json.dumps(data))
         if resp.status_code != 202:

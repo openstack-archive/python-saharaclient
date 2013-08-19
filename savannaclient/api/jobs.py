@@ -43,4 +43,4 @@ class JobsManager(base.ResourceManager):
             'output_type': output_type
         }
 
-        self._create('/jobs', data)
+        return self._create('/jobs', data)
