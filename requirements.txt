@@ -1,6 +1,5 @@
-babel
-d2to1>=0.2.10,<0.3
-pbr>=0.5.16,<0.6
+Babel>=0.9.6
+pbr>=0.5.21,<1.0
 netaddr
 requests>=1.1,<1.2.3
 python-keystoneclient>=0.3.0
