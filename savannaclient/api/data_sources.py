@@ -30,7 +30,8 @@ class DataSourceManager(base.ResourceManager):
         return self._delete('/data-sources/%s' % data_source_id)
 
     def get(self, data_source_id):
-        return self._get('/data-sources/%s' % data_source_id)
+        return self._get('/data-sources/%s' % data_source_id,
+                         'resource')
 
     def create(self, name, description, data_source_type, url, credentials):
         data = {
@@ -41,4 +42,4 @@ class DataSourceManager(base.ResourceManager):
             'credentials': credentials
         }
 
-        return self._create('/data-sources', data)
+        return self._create('/data-sources', data, 'resource')

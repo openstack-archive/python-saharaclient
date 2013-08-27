@@ -66,13 +66,16 @@ class ResourceManager(object):
     def find(self, **kwargs):
         return [i for i in self.list() if _check_items(i, kwargs.items())]
 
-    def _create(self, url, data):
+    def _create(self, url, data, response_key=None):
         resp = self.api.client.post(url, json.dumps(data))
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)
 
-        data = resp.json()
+        if response_key is not None:
+            data = resp.json()[response_key]
+        else:
+            data = resp.json()
         return self.resource_class(self, data)
 
     def _update(self, url, data):
@@ -82,7 +85,6 @@ class ResourceManager(object):
 
     def _list(self, url, response_key):
         resp = self.api.client.get(url)
-
         if resp.status_code == 200:
             data = resp.json()[response_key]
 

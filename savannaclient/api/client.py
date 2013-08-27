@@ -24,6 +24,8 @@ from savannaclient.api import clusters
 from savannaclient.api import data_sources
 from savannaclient.api import httpclient
 from savannaclient.api import images
+from savannaclient.api import job_binaries
+from savannaclient.api import job_executions
 from savannaclient.api import job_origins
 from savannaclient.api import jobs
 from savannaclient.api import node_group_templates
@@ -73,3 +75,5 @@ class Client(object):
         self.data_sources = data_sources.DataSourceManager(self)
         self.jobs = jobs.JobsManager(self)
         self.job_origins = job_origins.JobOriginsManager(self)
+        self.job_executions = job_executions.JobExecutionsManager(self)
+        self.job_binaries = job_binaries.JobExecutionsManager(self)
