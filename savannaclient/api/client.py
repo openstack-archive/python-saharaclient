@@ -35,14 +35,16 @@ LOG = logging.getLogger(__name__)
 
 
 class Client(object):
-    def __init__(self, username, api_key, project_id, auth_url=None,
-                 savanna_url=None, timeout=None, endpoint_type='publicURL',
-                 service_type='mapreduce', input_auth_token=None):
+    def __init__(self, username, api_key, project_id=None, project_name=None,
+                 auth_url=None, savanna_url=None, timeout=None,
+                 endpoint_type='publicURL', service_type='mapreduce',
+                 input_auth_token=None):
 
         keystone = keystone_client.Client(username=username,
                                           password=api_key,
                                           token=input_auth_token,
                                           tenant_id=project_id,
+                                          tenant_name=project_name,
                                           auth_url=auth_url,
                                           timeout=timeout)
 
