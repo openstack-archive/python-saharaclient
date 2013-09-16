@@ -36,6 +36,10 @@ class JobExecutionsManager(base.ResourceManager):
         return self._delete('/job-executions/%s' % job_execution_id)
 
     def execute(self, job_id, input_id, output_id, cluster_id):
-        return self._create('/jobs/%s/execute/from/%s/to/%s/on/%s' %
-                            (job_id, input_id, output_id, cluster_id),
-                            "", "resource")
+        data = {
+            'input_id': input_id,
+            'output_id': output_id,
+            'cluster_id': cluster_id,
+        }
+
+        return self._create('/jobs/%s/execute' % job_id, data, "job_execution")

@@ -27,6 +27,7 @@ from savannaclient.api import data_sources
 from savannaclient.api import httpclient
 from savannaclient.api import images
 from savannaclient.api import job_binaries
+from savannaclient.api import job_binary_internals
 from savannaclient.api import job_executions
 from savannaclient.api import job_origins
 from savannaclient.api import jobs
@@ -94,4 +95,6 @@ class Client(object):
         self.jobs = jobs.JobsManager(self)
         self.job_origins = job_origins.JobOriginsManager(self)
         self.job_executions = job_executions.JobExecutionsManager(self)
-        self.job_binaries = job_binaries.JobExecutionsManager(self)
+        self.job_binaries = job_binaries.JobBinariesManager(self)
+        self.job_binary_internals =\
+            job_binary_internals.JobBinaryInternalsManager(self)

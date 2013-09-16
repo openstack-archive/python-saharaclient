@@ -32,13 +32,12 @@ class JobOriginsManager(base.ResourceManager):
     def get(self, job_origin_id):
         return self._get('/job-origins/%s' % job_origin_id)
 
-    def create(self, name, description, storage_type, url, credentials):
+    def create(self, name, description, mains, libs=[]):
         data = {
             'name': name,
             'description': description,
-            'storage_type': storage_type,
-            'url': url,
-            'credentials': credentials
+            'mains': mains,
+            'libs': libs,
         }
 
         return self._create('/job-origins', data, "resource")

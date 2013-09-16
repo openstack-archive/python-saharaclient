@@ -66,6 +66,11 @@ class ResourceManager(object):
     def find(self, **kwargs):
         return [i for i in self.list() if _check_items(i, kwargs.items())]
 
+    def _copy_if_defined(self, data, **kwargs):
+        for var_name, var_value in kwargs.iteritems():
+            if var_value is not None:
+                data[var_name] = var_value
+
     def _create(self, url, data, response_key=None):
         resp = self.api.client.post(url, json.dumps(data))
 

@@ -16,25 +16,25 @@
 from savannaclient.api import base
 
 
-class JobBinaries(base.Resource):
-    resource_name = 'JobBinary'
+class JobBinaryInternal(base.Resource):
+    resource_name = 'JobBinaryInternal'
 
 
-class JobBinariesManager(base.ResourceManager):
-    resource_class = JobBinaries
+class JobBinaryInternalsManager(base.ResourceManager):
+    resource_class = JobBinaryInternal
 
     def list(self):
-        return self._list('/job-binaries', "binaries")
+        return self._list('/job-binary-internals', "binaries")
 
     def delete(self, job_binary_id):
-        return self._delete('/job-binaries/%s' % job_binary_id)
+        return self._delete('/job-binary-internals/%s' % job_binary_id)
 
-    def create(self, name, url, description=None):
-        data = {
-            'name': name,
-            'url': url,
-        }
+    def create(self, name, data):
+        url = '/job-binary-internals/%s' % name
+        resp = self.api.client.put(url, data)
 
-        self._copy_if_defined(data, description=description)
+        if resp.status_code != 202:
+            self._raise_api_exception(resp)
 
-        return self._create("/job-binaries", data, "resource")
+        data = resp.json()["resource"]
+        return self.resource_class(self, data)

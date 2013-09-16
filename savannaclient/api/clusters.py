@@ -31,11 +31,6 @@ class ClusterManager(base.ResourceManager):
                 raise base.APIException('Cluster is missing field "%s"' %
                                         var_name)
 
-    def _copy_if_defined(self, data, **kwargs):
-        for var_name, var_value in kwargs.iteritems():
-            if var_value is not None:
-                data[var_name] = var_value
-
     def create(self, name, plugin_name, hadoop_version,
                cluster_template_id=None, default_image_id=None,
                description=None, cluster_configs=None, node_groups=None,
