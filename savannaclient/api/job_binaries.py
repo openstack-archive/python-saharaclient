@@ -37,4 +37,4 @@ class JobBinariesManager(base.ResourceManager):
 
         self._copy_if_defined(data, description=description)
 
-        return self._create("/job-binaries", data, "resource")
+        return self._create("/job-binaries", data, "job_binary")
