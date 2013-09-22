@@ -38,7 +38,7 @@ class ClusterTemplateManager(base.ResourceManager):
             'anti_affinity': anti_affinity
         }
 
-        self._create('/cluster-templates', data)
+        return self._create('/cluster-templates', data, 'cluster_template')
 
     def list(self):
         return self._list('/cluster-templates', 'cluster_templates')

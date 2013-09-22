@@ -62,7 +62,7 @@ class ClusterManager(base.ResourceManager):
                               user_keypair_id=user_keypair_id,
                               anti_affinity=anti_affinity)
 
-        self._create('/clusters', data)
+        return self._create('/clusters', data, 'cluster')
 
     def scale(self, cluster_id, scale_object):
         return self._update('/clusters/%s' % cluster_id, scale_object)
