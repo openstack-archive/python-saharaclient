@@ -42,4 +42,4 @@ class DataSourceManager(base.ResourceManager):
             'credentials': credentials
         }
 
-        return self._create('/data-sources', data, 'resource')
+        return self._create('/data-sources', data, 'data_source')

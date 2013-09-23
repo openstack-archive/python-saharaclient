@@ -40,4 +40,4 @@ class JobOriginsManager(base.ResourceManager):
             'libs': libs,
         }
 
-        return self._create('/job-origins', data, "resource")
+        return self._create('/job-origins', data, "job_origin")

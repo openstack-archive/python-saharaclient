@@ -36,5 +36,5 @@ class JobBinaryInternalsManager(base.ResourceManager):
         if resp.status_code != 202:
             self._raise_api_exception(resp)
 
-        data = resp.json()["resource"]
+        data = resp.json()["job_binary_internal"]
         return self.resource_class(self, data)
