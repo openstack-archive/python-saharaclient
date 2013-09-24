@@ -1,6 +1,5 @@
 Babel>=0.9.6
 oslo.config>=1.1.0
-pbr>=0.5.21,<1.0
 netaddr
 python-keystoneclient>=0.2.0,<0.3
 requests>=1.1,<1.2.3
