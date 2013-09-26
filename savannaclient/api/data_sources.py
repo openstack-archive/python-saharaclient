@@ -23,23 +23,23 @@ class DataSources(base.Resource):
 class DataSourceManager(base.ResourceManager):
     resource_class = DataSources
 
-    def list(self):
-        return self._list('/data-sources', "data_sources")
-
-    def delete(self, data_source_id):
-        return self._delete('/data-sources/%s' % data_source_id)
-
-    def get(self, data_source_id):
-        return self._get('/data-sources/%s' % data_source_id,
-                         'resource')
-
-    def create(self, name, description, data_source_type, url, credentials):
+    def create(self, name, description, data_source_type,
+               url, credential_user, credential_pass):
         data = {
             'name': name,
             'description': description,
             'type': data_source_type,
             'url': url,
-            'credentials': credentials
+            'credentials': {'user': credential_user,
+                            'password': credential_pass}
         }
-
         return self._create('/data-sources', data, 'data_source')
+
+    def list(self):
+        return self._list('/data-sources', 'data_sources')
+
+    def get(self, data_source_id):
+        return self._get('/data-sources/%s' % data_source_id, 'data_source')
+
+    def delete(self, data_source_id):
+        self._delete('/data-sources/%s' % data_source_id)

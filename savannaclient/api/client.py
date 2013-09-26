@@ -29,7 +29,6 @@ from savannaclient.api import images
 from savannaclient.api import job_binaries
 from savannaclient.api import job_binary_internals
 from savannaclient.api import job_executions
-from savannaclient.api import job_origins
 from savannaclient.api import jobs
 from savannaclient.api import node_group_templates
 from savannaclient.api import plugins
@@ -38,10 +37,10 @@ LOG = logging.getLogger(__name__)
 
 
 class Client(object):
-    def __init__(self, username, api_key, project_id=None, project_name=None,
-                 auth_url=None, savanna_url=None, timeout=None,
-                 endpoint_type='publicURL', service_type='mapreduce',
-                 input_auth_token=None):
+    def __init__(self, username=None, api_key=None, project_id=None,
+                 project_name=None, auth_url=None, savanna_url=None,
+                 timeout=None, endpoint_type='publicURL',
+                 service_type='mapreduce', input_auth_token=None):
         if savanna_url and not isinstance(savanna_url, six.string_types):
             raise RuntimeError('Savanna url should be string')
         if (isinstance(project_name, six.string_types) or
@@ -93,7 +92,6 @@ class Client(object):
 
         self.data_sources = data_sources.DataSourceManager(self)
         self.jobs = jobs.JobsManager(self)
-        self.job_origins = job_origins.JobOriginsManager(self)
         self.job_executions = job_executions.JobExecutionsManager(self)
         self.job_binaries = job_binaries.JobBinariesManager(self)
         self.job_binary_internals =\

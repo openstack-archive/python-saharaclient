@@ -31,12 +31,19 @@ class ClusterManager(base.ResourceManager):
                 raise base.APIException('Cluster is missing field "%s"' %
                                         var_name)
 
+    def _copy_if_defined(self, data, **kwargs):
+        for var_name, var_value in kwargs.iteritems():
+            if var_value is not None:
+                data[var_name] = var_value
+
     def create(self, name, plugin_name, hadoop_version,
                cluster_template_id=None, default_image_id=None,
                description=None, cluster_configs=None, node_groups=None,
-               user_keypair_id=None, anti_affinity=None):
+               user_keypair_id=None, anti_affinity=None, net_id=None):
 
-        # expecting node groups to be array of dictionaries
+        if node_groups is not None:
+            node_groups = [ng.as_dict() for ng in node_groups]
+
         data = {
             'name': name,
             'plugin_name': plugin_name,
@@ -55,7 +62,8 @@ class ClusterManager(base.ResourceManager):
                               cluster_configs=cluster_configs,
                               node_groups=node_groups,
                               user_keypair_id=user_keypair_id,
-                              anti_affinity=anti_affinity)
+                              anti_affinity=anti_affinity,
+                              neutron_management_network=net_id)
 
         return self._create('/clusters', data, 'cluster')
 

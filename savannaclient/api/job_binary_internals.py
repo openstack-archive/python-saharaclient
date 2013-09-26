@@ -23,18 +23,16 @@ class JobBinaryInternal(base.Resource):
 class JobBinaryInternalsManager(base.ResourceManager):
     resource_class = JobBinaryInternal
 
+    def create(self, name, data):
+        return self._create('/job-binary-internals/%s' % name, data,
+                            'job_binary_internal')
+
     def list(self):
-        return self._list('/job-binary-internals', "binaries")
+        return self._list('/job-binary-internals', 'binaries')
+
+    def get(self, job_binary_id):
+        return self._get('/job-binary-internals/%s' % job_binary_id,
+                         'job_binary_internal')
 
     def delete(self, job_binary_id):
-        return self._delete('/job-binary-internals/%s' % job_binary_id)
-
-    def create(self, name, data):
-        url = '/job-binary-internals/%s' % name
-        resp = self.api.client.put(url, data)
-
-        if resp.status_code != 202:
-            self._raise_api_exception(resp)
-
-        data = resp.json()["job_binary_internal"]
-        return self.resource_class(self, data)
+        self._delete('/job-binary-internals/%s' % job_binary_id)

@@ -16,31 +16,29 @@
 from savannaclient.api import base
 
 
-class Jobs(base.Resource):
+class Job(base.Resource):
     resource_name = 'Job'
 
 
 class JobsManager(base.ResourceManager):
-    resource_class = Jobs
+    resource_class = Job
 
-    def list(self):
-        return self._list('/jobs', "jobs")
-
-    def delete(self, job_id):
-        return self._delete('/jobs/%s' % job_id)
-
-    def get(self, job_id):
-        return self._get('/jobs/%s' % job_id)
-
-    def create(self, name, description, job_origin_id,
-               job_type, input_type, output_type):
+    def create(self, name, type, mains, libs, description):
         data = {
             'name': name,
+            'type': type,
             'description': description,
-            'type': job_type,
-            'job_origin_id': job_origin_id,
-            'input_type': input_type,
-            'output_type': output_type
+            'mains': mains,
+            'libs': libs
         }
 
         return self._create('/jobs', data, 'job')
+
+    def list(self):
+        return self._list('/jobs', 'jobs')
+
+    def get(self, job_id):
+        return self._get('/jobs/%s' % job_id, 'job')
+
+    def delete(self, job_id):
+        self._delete('/jobs/%s' % job_id)

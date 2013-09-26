@@ -16,30 +16,29 @@
 from savannaclient.api import base
 
 
-class JobExecutions(base.Resource):
+class JobExecution(base.Resource):
     resource_name = 'JobExecution'
 
 
 class JobExecutionsManager(base.ResourceManager):
-    resource_class = JobExecutions
+    resource_class = JobExecution
 
     def list(self):
-        return self._list('/job-executions', "job_executions")
+        return self._list('/job-executions', 'job_executions')
 
-    def get(self, job_execution_id):
-        return self._get('/job-executions/%s' % job_execution_id)
+    def get(self, obj_id):
+        return self._get('/job-executions/%s' % obj_id, 'job_execution')
 
-    def cancel(self, job_execution_id):
-        return self._get('/job-executions/%s/cancel' % job_execution_id)
+    def delete(self, obj_id):
+        self._delete('/job-executions/%s' % obj_id)
 
-    def delete(self, job_execution_id):
-        return self._delete('/job-executions/%s' % job_execution_id)
-
-    def execute(self, job_id, input_id, output_id, cluster_id):
+    def create(self, job_id, cluster_id, input_id, output_id, configs):
+        url = "/jobs/%s/execute" % job_id
         data = {
-            'input_id': input_id,
-            'output_id': output_id,
-            'cluster_id': cluster_id,
+            "input_id": input_id,
+            "output_id": output_id,
+            "cluster_id": cluster_id,
+            "job_configs": configs
         }
 
-        return self._create('/jobs/%s/execute' % job_id, data, "job_execution")
+        return self._create(url, data, 'job_execution')

@@ -26,17 +26,19 @@ class ClusterTemplateManager(base.ResourceManager):
     resource_class = ClusterTemplate
 
     def create(self, name, plugin_name, hadoop_version, description,
-               cluster_configs, node_groups, anti_affinity):
-        # expecting node groups to be array of dictionaries
+               cluster_configs, node_groups, anti_affinity, net_id=None):
         data = {
             'name': name,
             'plugin_name': plugin_name,
             'hadoop_version': hadoop_version,
             'description': description,
             'cluster_configs': cluster_configs,
-            'node_groups': node_groups,
+            'node_groups': [ng.as_dict() for ng in node_groups],
             'anti_affinity': anti_affinity
         }
+
+        if net_id:
+            data.update({'neutron_management_network': net_id})
 
         return self._create('/cluster-templates', data, 'cluster_template')
 

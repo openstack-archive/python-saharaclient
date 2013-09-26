@@ -23,18 +23,21 @@ class JobBinaries(base.Resource):
 class JobBinariesManager(base.ResourceManager):
     resource_class = JobBinaries
 
-    def list(self):
-        return self._list('/job-binaries', "binaries")
-
-    def delete(self, job_binary_id):
-        return self._delete('/job-binaries/%s' % job_binary_id)
-
-    def create(self, name, url, description=None):
+    def create(self, name, url, description, extra):
         data = {
-            'name': name,
-            'url': url,
+            "name": name,
+            "url": url,
+            "description": description,
+            "extra": extra
         }
 
-        self._copy_if_defined(data, description=description)
+        return self._create('/job-binaries', data, 'job_binary')
 
-        return self._create("/job-binaries", data, "job_binary")
+    def list(self):
+        return self._list('/job-binaries', 'binaries')
+
+    def get(self, job_binary_id):
+        return self._get('/job-binaries/%s' % job_binary_id, 'job_binary')
+
+    def delete(self, job_binary_id):
+        self._delete('/job-binaries/%s' % job_binary_id)

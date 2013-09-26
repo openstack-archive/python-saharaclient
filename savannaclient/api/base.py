@@ -56,7 +56,6 @@ def _check_items(obj, searches):
         return False
 
 
-#TODO(nkonovalov) handle response body in case of error
 class ResourceManager(object):
     resource_class = None
 
@@ -78,9 +77,9 @@ class ResourceManager(object):
             self._raise_api_exception(resp)
 
         if response_key is not None:
-            data = resp.json()[response_key]
+            data = get_json(resp)[response_key]
         else:
-            data = resp.json()
+            data = get_json(resp)
         return self.resource_class(self, data)
 
     def _update(self, url, data):
@@ -91,7 +90,7 @@ class ResourceManager(object):
     def _list(self, url, response_key):
         resp = self.api.client.get(url)
         if resp.status_code == 200:
-            data = resp.json()[response_key]
+            data = get_json(resp)[response_key]
 
             return [self.resource_class(self, res)
                     for res in data]
@@ -103,9 +102,9 @@ class ResourceManager(object):
 
         if resp.status_code == 200:
             if response_key is not None:
-                data = resp.json()[response_key]
+                data = get_json(resp)[response_key]
             else:
-                data = resp.json()
+                data = get_json(resp)
             return self.resource_class(self, data)
         else:
             self._raise_api_exception(resp)
@@ -120,8 +119,20 @@ class ResourceManager(object):
         return self.resource_class.resource_name + 's'
 
     def _raise_api_exception(self, resp):
-        error_data = resp.json()
+        error_data = get_json(resp)
         raise APIException(error_data["error_message"])
+
+
+def get_json(response):
+    """This method provided backward compatibility with old versions
+    of requests library
+
+    """
+    json_field_or_function = getattr(response, 'json', None)
+    if callable(json_field_or_function):
+        return response.json()
+    else:
+        return json.loads(response.content)
 
 
 class APIException(Exception):
