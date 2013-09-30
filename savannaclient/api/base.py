@@ -70,8 +70,10 @@ class ResourceManager(object):
             if var_value is not None:
                 data[var_name] = var_value
 
-    def _create(self, url, data, response_key=None):
-        resp = self.api.client.post(url, json.dumps(data))
+    def _create(self, url, data, response_key=None, dump_json=True):
+        if dump_json:
+            data = json.dumps(data)
+        resp = self.api.client.post(url, data)
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)
