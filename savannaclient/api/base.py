@@ -84,10 +84,18 @@ class ResourceManager(object):
             data = get_json(resp)
         return self.resource_class(self, data)
 
-    def _update(self, url, data):
-        resp = self.api.client.put(url, json.dumps(data))
+    def _update(self, url, data, response_key=None, dump_json=True):
+        if dump_json:
+            data = json.dumps(data)
+        resp = self.api.client.put(url, data)
+
         if resp.status_code != 202:
             self._raise_api_exception(resp)
+        if response_key is not None:
+            data = get_json(resp)[response_key]
+        else:
+            data = get_json(resp)
+        return self.resource_class(self, data)
 
     def _list(self, url, response_key):
         resp = self.api.client.get(url)

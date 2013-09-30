@@ -24,7 +24,7 @@ class JobBinaryInternalsManager(base.ResourceManager):
     resource_class = JobBinaryInternal
 
     def create(self, name, data):
-        return self._create('/job-binary-internals/%s' % name, data,
+        return self._update('/job-binary-internals/%s' % name, data,
                             'job_binary_internal', dump_json=False)
 
     def list(self):
