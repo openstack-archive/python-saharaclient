@@ -33,7 +33,7 @@ class ClusterTemplateManager(base.ResourceManager):
             'hadoop_version': hadoop_version,
             'description': description,
             'cluster_configs': cluster_configs,
-            'node_groups': [ng.as_dict() for ng in node_groups],
+            'node_groups': node_groups,
             'anti_affinity': anti_affinity
         }
 

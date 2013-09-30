@@ -41,9 +41,6 @@ class ClusterManager(base.ResourceManager):
                description=None, cluster_configs=None, node_groups=None,
                user_keypair_id=None, anti_affinity=None, net_id=None):
 
-        if node_groups is not None:
-            node_groups = [ng.as_dict() for ng in node_groups]
-
         data = {
             'name': name,
             'plugin_name': plugin_name,
