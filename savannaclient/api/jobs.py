@@ -40,5 +40,8 @@ class JobsManager(base.ResourceManager):
     def get(self, job_id):
         return self._get('/jobs/%s' % job_id, 'job')
 
+    def get_configs(self, job_type):
+        return self._get('/jobs/config-hints/%s' % job_type)
+
     def delete(self, job_id):
         self._delete('/jobs/%s' % job_id)
