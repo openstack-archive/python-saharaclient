@@ -25,20 +25,21 @@ class ClusterTemplate(base.Resource):
 class ClusterTemplateManager(base.ResourceManager):
     resource_class = ClusterTemplate
 
-    def create(self, name, plugin_name, hadoop_version, description,
-               cluster_configs, node_groups, anti_affinity, net_id=None):
+    def create(self, name, plugin_name, hadoop_version, description=None,
+               cluster_configs=None, node_groups=None, anti_affinity=None,
+               net_id=None):
         data = {
             'name': name,
             'plugin_name': plugin_name,
-            'hadoop_version': hadoop_version,
-            'description': description,
-            'cluster_configs': cluster_configs,
-            'node_groups': node_groups,
-            'anti_affinity': anti_affinity
+            'hadoop_version': hadoop_version
         }
 
-        if net_id:
-            data.update({'neutron_management_network': net_id})
+        self._copy_if_defined(data,
+                              description=description,
+                              cluster_configs=cluster_configs,
+                              node_groups=node_groups,
+                              anti_affinity=anti_affinity,
+                              neutron_management_network=net_id)
 
         return self._create('/cluster-templates', data, 'cluster_template')
 

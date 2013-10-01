@@ -33,16 +33,14 @@ class NodeGroupTemplateManager(base.ResourceManager):
             'name': name,
             'plugin_name': plugin_name,
             'hadoop_version': hadoop_version,
-            'description': description,
             'flavor_id': flavor_id,
             'node_processes': node_processes
         }
 
-        if not node_configs:
-            data["node_configs"] = dict()
-
-        if floating_ip_pool:
-            data.update({"floating_ip_pool": floating_ip_pool})
+        self._copy_if_defined(data,
+                              description=description,
+                              node_configs=node_configs,
+                              floating_ip_pool=floating_ip_pool)
 
         if volumes_per_node:
             data.update({"volumes_per_node": volumes_per_node,
