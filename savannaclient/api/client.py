@@ -17,7 +17,8 @@
 
 import six
 
-from keystoneclient.v2_0 import client as keystone_client
+from keystoneclient.v2_0 import client as keystone_client_v2
+from keystoneclient.v3 import client as keystone_client_v3
 
 from savannaclient.api import cluster_templates
 from savannaclient.api import clusters
@@ -44,6 +45,9 @@ class Client(object):
                 if project_name and project_id:
                         raise RuntimeError('Only project name or '
                                            'project id should be set')
+                keystone_client = keystone_client_v2 \
+                    if "v2.0" in auth_url \
+                    else keystone_client_v3
                 keystone = keystone_client.Client(username=username,
                                                   password=api_key,
                                                   token=input_auth_token,
