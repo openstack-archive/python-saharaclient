@@ -1,7 +1,6 @@
 Babel>=0.9.6
 pbr>=0.5.21,<1.0
 netaddr
-oslo.config>=1.2.0
 python-keystoneclient>=0.3.2
 requests>=1.1
 six

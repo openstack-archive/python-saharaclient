@@ -19,8 +19,6 @@ import six
 
 from keystoneclient.v2_0 import client as keystone_client
 
-from savannaclient.openstack.common import log as logging
-
 from savannaclient.api import cluster_templates
 from savannaclient.api import clusters
 from savannaclient.api import data_sources
@@ -32,8 +30,6 @@ from savannaclient.api import job_executions
 from savannaclient.api import jobs
 from savannaclient.api import node_group_templates
 from savannaclient.api import plugins
-
-LOG = logging.getLogger(__name__)
 
 
 class Client(object):
@@ -77,8 +73,6 @@ class Client(object):
                         break
 
         if not savanna_url:
-            LOG.warning("Could not determine url for Savanna. "
-                        "Trying localhost with default port.")
             savanna_url = "http://localhost:8386/v1.1/" + project_id
 
         self.client = httpclient.HTTPClient(savanna_url, token)
