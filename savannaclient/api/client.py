@@ -36,8 +36,8 @@ from savannaclient.api import plugins
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, savanna_url=None,
-                 timeout=None, endpoint_type='publicURL',
-                 service_type='mapreduce', input_auth_token=None):
+                 endpoint_type='publicURL', service_type='mapreduce',
+                 input_auth_token=None):
         if savanna_url and not isinstance(savanna_url, six.string_types):
             raise RuntimeError('Savanna url should be string')
         if (isinstance(project_name, six.string_types) or
@@ -53,8 +53,7 @@ class Client(object):
                                                   token=input_auth_token,
                                                   tenant_id=project_id,
                                                   tenant_name=project_name,
-                                                  auth_url=auth_url,
-                                                  timeout=timeout)
+                                                  auth_url=auth_url)
 
                 keystone.authenticate()
                 token = keystone.auth_token
