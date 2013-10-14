@@ -23,6 +23,12 @@ from savannaclient.api import base
 class Plugin(base.Resource):
     resource_name = 'Plugin'
 
+    def __init__(self, manager, info):
+        base.Resource.__init__(self, manager, info)
+
+        # Horizon requires each object in table to have an id
+        self.id = self.name
+
 
 class PluginManager(base.ResourceManager):
     resource_class = Plugin
