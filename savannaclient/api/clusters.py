@@ -38,8 +38,9 @@ class ClusterManager(base.ResourceManager):
 
     def create(self, name, plugin_name, hadoop_version,
                cluster_template_id=None, default_image_id=None,
-               description=None, cluster_configs=None, node_groups=None,
-               user_keypair_id=None, anti_affinity=None, net_id=None):
+               is_transient=None, description=None, cluster_configs=None,
+               node_groups=None, user_keypair_id=None,
+               anti_affinity=None, net_id=None):
 
         data = {
             'name': name,
@@ -54,6 +55,7 @@ class ClusterManager(base.ResourceManager):
 
         self._copy_if_defined(data,
                               cluster_template_id=cluster_template_id,
+                              is_transient=is_transient,
                               default_image_id=default_image_id,
                               description=description,
                               cluster_configs=cluster_configs,
