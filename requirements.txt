@@ -3,4 +3,4 @@ pbr>=0.5.21,<1.0
 netaddr
 python-keystoneclient>=0.3.2
 requests>=1.1,<1.2.3
-six
+six>=1.4.1
