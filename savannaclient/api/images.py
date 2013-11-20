@@ -34,6 +34,9 @@ class ImageManager(base.ResourceManager):
     def get(self, id):
         return self._get('/images/%s' % id, 'image')
 
+    def unregister_image(self, image_id):
+        self._delete('/images/%s' % image_id)
+
     def update_image(self, image_id, user_name, desc):
         body = {"username": user_name,
                 "description": desc}
