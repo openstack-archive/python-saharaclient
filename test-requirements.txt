@@ -2,6 +2,5 @@ hacking>=0.8.0,<0.9
 
 coverage>=3.6
 mock>=1.0
-nose
-openstack.nose_plugin>=0.7
-unittest2
+discover
+testrepository>=0.0.17
