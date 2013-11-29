@@ -53,7 +53,8 @@ class Client(object):
                                                   token=input_auth_token,
                                                   tenant_id=project_id,
                                                   tenant_name=project_name,
-                                                  auth_url=auth_url)
+                                                  auth_url=auth_url,
+                                                  endpoint=auth_url)
 
                 keystone.authenticate()
                 token = keystone.auth_token
