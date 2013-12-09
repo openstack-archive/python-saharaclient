@@ -15,8 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
-
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
@@ -36,50 +34,50 @@ from savannaclient.api import plugins
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, savanna_url=None,
-                 endpoint_type='publicURL', service_type='mapreduce',
+                 endpoint_type='publicURL', service_type='data_processing',
                  input_auth_token=None):
-        if savanna_url and not isinstance(savanna_url, six.string_types):
-            raise RuntimeError('Savanna url should be string')
-        if (isinstance(project_name, six.string_types) or
-           isinstance(project_id, six.string_types)):
-                if project_name and project_id:
-                        raise RuntimeError('Only project name or '
-                                           'project id should be set')
-                keystone_client = keystone_client_v2 \
-                    if "v2.0" in auth_url \
-                    else keystone_client_v3
-                keystone = keystone_client.Client(username=username,
-                                                  password=api_key,
-                                                  token=input_auth_token,
-                                                  tenant_id=project_id,
-                                                  tenant_name=project_name,
-                                                  auth_url=auth_url,
-                                                  endpoint=auth_url)
 
-                keystone.authenticate()
-                token = keystone.auth_token
-                if project_name and not project_id:
-                    if keystone.tenants.find(name=project_name):
-                        project_id = str(keystone.tenants.find(
-                            name=project_name).id)
-        else:
-                raise RuntimeError('Project name or project id should'
-                                   ' not be empty and should be string')
+        if not input_auth_token:
+            keystone = self.get_keystone_client(username=username,
+                                                api_key=api_key,
+                                                auth_url=auth_url,
+                                                project_id=project_id,
+                                                project_name=project_name)
+            input_auth_token = keystone.auth_token
+        if not input_auth_token:
+            raise RuntimeError("Not Authorized")
 
-        if savanna_url:
-            savanna_url = savanna_url + "/" + project_id
-        else:
+        savanna_catalog_url = savanna_url
+        if not savanna_url:
+            keystone = self.get_keystone_client(username=username,
+                                                api_key=api_key,
+                                                auth_url=auth_url,
+                                                token=input_auth_token,
+                                                project_id=project_id,
+                                                project_name=project_name)
             catalog = keystone.service_catalog.get_endpoints(service_type)
             if service_type in catalog:
                 for e_type, endpoint in catalog.get[service_type][0].items():
                     if str(e_type).lower() == str(endpoint_type).lower():
-                        savanna_url = endpoint
+                        savanna_catalog_url = endpoint
                         break
+        if not savanna_catalog_url:
+            raise RuntimeError("Could not find Savanna endpoint in catalog")
 
-        if not savanna_url:
-            savanna_url = "http://localhost:8386/v1.1/" + project_id
+        if not project_id:
+            keystone = self.get_keystone_client(username=username,
+                                                api_key=api_key,
+                                                auth_url=auth_url,
+                                                token=input_auth_token,
+                                                project_name=project_name)
+            project_id = self.get_projects_list(keystone).find(
+                name=project_name).id
+            if not project_id:
+                raise RuntimeError("Could not determine tenant id")
 
-        self.client = httpclient.HTTPClient(savanna_url, token)
+        savanna_url = savanna_catalog_url + "/" + project_id
+
+        self.client = httpclient.HTTPClient(savanna_url, input_auth_token)
 
         self.clusters = clusters.ClusterManager(self)
         self.cluster_templates = cluster_templates.ClusterTemplateManager(self)
@@ -94,3 +92,30 @@ class Client(object):
         self.job_binaries = job_binaries.JobBinariesManager(self)
         self.job_binary_internals =\
             job_binary_internals.JobBinaryInternalsManager(self)
+
+    def get_keystone_client(self, username=None, api_key=None, auth_url=None,
+                            token=None, project_id=None, project_name=None):
+        if not auth_url:
+                raise RuntimeError("No auth url specified")
+        imported_client = keystone_client_v2 if "v2.0" in auth_url\
+            else keystone_client_v3
+        if not getattr(self, "keystone_client", None):
+            self.keystone_client = imported_client.Client(
+                username=username,
+                password=api_key,
+                token=token,
+                tenant_id=project_id,
+                tenant_name=project_name,
+                auth_url=auth_url,
+                endpoint=auth_url)
+
+        self.keystone_client.authenticate()
+
+        return self.keystone_client
+
+    @staticmethod
+    def get_projects_list(keystone_client):
+        if isinstance(keystone_client, keystone_client_v2.Client):
+            return keystone_client.tenants
+
+        return keystone_client.projects
