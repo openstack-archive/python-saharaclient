@@ -57,7 +57,7 @@ class Client(object):
                                                 project_name=project_name)
             catalog = keystone.service_catalog.get_endpoints(service_type)
             if service_type in catalog:
-                for e_type, endpoint in catalog.get[service_type][0].items():
+                for e_type, endpoint in catalog.get(service_type)[0].items():
                     if str(e_type).lower() == str(endpoint_type).lower():
                         savanna_catalog_url = endpoint
                         break
