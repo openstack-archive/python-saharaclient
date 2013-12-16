@@ -23,9 +23,11 @@ class NodeGroupTemplate(base.Resource):
 class NodeGroupTemplateManager(base.ResourceManager):
     resource_class = NodeGroupTemplate
 
-    def create(self, name, plugin_name, hadoop_version, flavor_id,
-               description=None, volumes_per_node=None, volumes_size=None,
-               node_processes=None, node_configs=None, floating_ip_pool=None):
+    def _assign_field(self, name, plugin_name, hadoop_version, flavor_id,
+                      description=None,
+                      volumes_per_node=None, volumes_size=None,
+                      node_processes=None, node_configs=None,
+                      floating_ip_pool=None):
 
         data = {
             'name': name,
@@ -44,7 +46,31 @@ class NodeGroupTemplateManager(base.ResourceManager):
             data.update({"volumes_per_node": volumes_per_node,
                          "volumes_size": volumes_size})
 
+        return data
+
+    def create(self, name, plugin_name, hadoop_version, flavor_id,
+               description=None, volumes_per_node=None, volumes_size=None,
+               node_processes=None, node_configs=None, floating_ip_pool=None):
+
+        data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
+                                  description, volumes_per_node, volumes_size,
+                                  node_processes, node_configs,
+                                  floating_ip_pool)
+
         return self._create('/node-group-templates', data,
+                            'node_group_template')
+
+    def update(self, ng_template_id, name, plugin_name, hadoop_version,
+               flavor_id, description=None, volumes_per_node=None,
+               volumes_size=None, node_processes=None,
+               node_configs=None, floating_ip_pool=None):
+
+        data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
+                                  description, volumes_per_node,
+                                  volumes_size, node_processes,
+                                  node_configs, floating_ip_pool)
+
+        return self._update('/node-group-templates/%s' % ng_template_id, data,
                             'node_group_template')
 
     def list(self):
