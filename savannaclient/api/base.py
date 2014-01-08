@@ -15,6 +15,7 @@
 
 import json
 import logging
+import six
 
 LOG = logging.getLogger(__name__)
 
@@ -30,12 +31,12 @@ class Resource(object):
         self._add_details(info)
 
     def _set_defaults(self, info):
-        for name, value in self.defaults.iteritems():
+        for name, value in six.iteritems(self.defaults):
             if name not in info:
                 info[name] = value
 
     def _add_details(self, info):
-        for (k, v) in info.iteritems():
+        for (k, v) in six.iteritems(info):
             try:
                 setattr(self, k, v)
                 self._info[k] = v
@@ -64,7 +65,7 @@ class ResourceManager(object):
         return [i for i in self.list() if _check_items(i, kwargs.items())]
 
     def _copy_if_defined(self, data, **kwargs):
-        for var_name, var_value in kwargs.iteritems():
+        for var_name, var_value in six.iteritems(kwargs):
             if var_value is not None:
                 data[var_name] = var_value
 

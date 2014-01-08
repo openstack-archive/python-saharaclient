@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import six
+
 from savannaclient.api import base
 
 
@@ -24,13 +26,13 @@ class ClusterManager(base.ResourceManager):
     resource_class = Cluster
 
     def _assert_variables(self, **kwargs):
-        for var_name, var_value in kwargs.iteritems():
+        for var_name, var_value in six.iteritems(kwargs):
             if var_value is None:
                 raise base.APIException('Cluster is missing field "%s"' %
                                         var_name)
 
     def _copy_if_defined(self, data, **kwargs):
-        for var_name, var_value in kwargs.iteritems():
+        for var_name, var_value in six.iteritems(kwargs):
             if var_value is not None:
                 data[var_name] = var_value
 
