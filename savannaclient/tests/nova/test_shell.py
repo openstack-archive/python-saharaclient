@@ -49,9 +49,22 @@ class FakePluginManager:
         return (FakePlugin(),)
 
 
+class FakeImage:
+    name = 'fake'
+    id = 'aaa-bb-ccc'
+    username = 'you'
+    description = None
+
+
+class FakeImageManager:
+    def list(self):
+        return (FakeImage(),)
+
+
 class FakePluginClient:
     def __init__(self, *args, **kwargs):
         self.plugins = FakePluginManager()
+        self.images = FakeImageManager()
 
 
 class ShellTest(utils.TestCase):
@@ -257,3 +270,16 @@ class ShellTest(utils.TestCase):
 #    @mock.patch('novaclient.client.Client')
 #    def test_v_unknown_service_type(self, mock_client):
 #        self._test_service_type('unknown', 'compute', mock_client)
+
+    @mock.patch('savannaclient.api.client.Client', FakePluginClient)
+    def test_image_list(self):
+        ex = (
+            '+------+------------+----------+------+-------------+\n'
+            '| name | id         | username | tags | description |\n'
+            '+------+------------+----------+------+-------------+\n'
+            '| fake | aaa-bb-ccc | you      |      | None        |\n'
+            '+------+------------+----------+------+-------------+\n'
+        )
+        self.make_env()
+        stdout, stderr = self.shell('image-list')
+        self.assertEqual((stdout + stderr), ex)
