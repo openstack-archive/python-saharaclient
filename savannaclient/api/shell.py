@@ -162,3 +162,58 @@ def do_image_remove_tag(cs, args):
                           filter(lambda x: x != args.tag,
                                  cs.images.get(args.id).tags))
     # TODO(mattf): No indication of result, expect image details
+
+
+#
+# Clusters
+# ~~~~~~~~
+# cluster-list
+#
+# cluster-show --name <cluster>|--id <cluster_id>
+#
+# TODO(mattf): cluster-create
+#
+# TODO(mattf): cluster-scale
+#
+# cluster-delete --name <cluster>|--id <cluster_id>
+#
+
+def do_cluster_list(cs, args):
+    """Print a list of available clusters."""
+    clusters = cs.clusters.list()
+    for cluster in clusters:
+        cluster.node_count = sum(map(lambda g: g['count'],
+                                     cluster.node_groups))
+    columns = ('name', 'id', 'status', 'node_count')
+    utils.print_list(clusters, columns)
+
+
+# TODO(mattf): Add --name
+#@utils.arg('--name',
+#           metavar='<cluster>',
+#           required=True,
+#           help='Cluster name')
+@utils.arg('--id',
+           metavar='<cluster_id>',
+           required=True,
+           help='Id of cluster to show')
+def do_cluster_show(cs, args):
+    """Show details of a cluster."""
+    cluster = cs.clusters.get(args.id)
+    # TODO(mattf): Make this pretty, e.g format node_groups and info urls
+    utils.print_dict(cluster._info)
+
+
+# TODO(mattf): Add --name
+#@utils.arg('--name',
+#           metavar='<cluster>',
+#           required=True,
+#           help='Cluster name')
+@utils.arg('--id',
+           metavar='<cluster_id>',
+           required=True,
+           help='Id of cluster to delete')
+def do_cluster_delete(cs, args):
+    """Delete a cluster."""
+    cs.clusters.delete(args.id)
+    # TODO(mattf): No indication of result
