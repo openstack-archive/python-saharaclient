@@ -252,3 +252,38 @@ def do_node_group_template_delete(cs, args):
     """Delete a node group template."""
     cs.node_group_templates.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Cluster Templates
+# ~~~~~~~~~~~~~~~~~
+# cluster-template-list
+#
+# TODO(mattf): cluster-template-show --name <template>|--id <template_id>
+#
+# TODO(mattf): cluster-template-create
+#
+# cluster-template-delete --name <template>|--id <template_id>
+#
+
+def do_cluster_template_list(cs, args):
+    """Print a list of available cluster templates."""
+    templates = cs.cluster_templates.list()
+    columns = ('name', 'id', 'plugin_name', 'node_groups', 'description')
+    # TODO(mattf): Make node_groups pretty
+    utils.print_list(templates, columns)
+
+
+# TODO(mattf): Add --name
+#@utils.arg('--name',
+#           metavar='<template>',
+#           required=True,
+#           help='Template name')
+@utils.arg('--id',
+           metavar='<template_id>',
+           required=True,
+           help='Id of cluster template to delete')
+def do_cluster_template_delete(cs, args):
+    """Delete a cluster template."""
+    cs.cluster_templates.delete(args.id)
+    # TODO(mattf): No indication of result
