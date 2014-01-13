@@ -54,6 +54,7 @@ def do_plugins_list(cs, args):
 def do_plugins_show(cs, args):
     """Show details of a plugin."""
     plugin = cs.plugins.get(args.name)
+    plugin._info['versions'] = ', '.join(plugin._info['versions'])
     utils.print_dict(plugin._info)
 
 
