@@ -20,6 +20,13 @@ def _print_list_field(field):
     return lambda obj: ', '.join(getattr(obj, field))
 
 
+def _print_node_group_field(cluster):
+    return ', '.join(map(lambda x: ': '.join(x),
+                         [(node_group['name'],
+                           str(node_group['count']))
+                          for node_group in cluster.node_groups]))
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -275,8 +282,8 @@ def do_cluster_template_list(cs, args):
     """Print a list of available cluster templates."""
     templates = cs.cluster_templates.list()
     columns = ('name', 'id', 'plugin_name', 'node_groups', 'description')
-    # TODO(mattf): Make node_groups pretty
-    utils.print_list(templates, columns)
+    utils.print_list(templates, columns,
+                     {'node_groups': _print_node_group_field})
 
 
 # TODO(mattf): Add --name
