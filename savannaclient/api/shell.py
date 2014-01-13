@@ -16,6 +16,10 @@
 from savannaclient.nova import utils
 
 
+def _print_list_field(field):
+    return lambda obj: ', '.join(getattr(obj, field))
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -28,7 +32,8 @@ def do_plugins_list(cs, args):
     """Print a list of available plugins."""
     plugins = cs.plugins.list()
     columns = ('name', 'versions', 'title')
-    utils.print_list(plugins, columns)
+    utils.print_list(plugins, columns,
+                     {'versions': _print_list_field('versions')})
 
 
 @utils.arg('--name',
@@ -67,7 +72,7 @@ def do_image_list(cs, args):
     """Print a list of available plugins."""
     images = cs.images.list()
     columns = ('name', 'id', 'username', 'tags', 'description')
-    utils.print_list(images, columns)
+    utils.print_list(images, columns, {'tags': _print_list_field('tags')})
 
 
 @utils.arg('--id',
@@ -235,8 +240,8 @@ def do_node_group_template_list(cs, args):
     """Print a list of available node group templates."""
     templates = cs.node_group_templates.list()
     columns = ('name', 'id', 'plugin_name', 'node_processes', 'description')
-    # TODO(mattf): Make node_processes pretty
-    utils.print_list(templates, columns)
+    utils.print_list(templates, columns,
+                     {'node_processes': _print_list_field('node_processes')})
 
 
 # TODO(mattf): Add --name

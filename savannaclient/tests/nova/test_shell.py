@@ -40,7 +40,7 @@ FAKE_ENV2 = {'OS_USERNAME': 'username',
 
 class FakePlugin:
     name = 'fake'
-    versions = '1.0'
+    versions = ['1.0', ]
     title = 'a fake plugin'
 
 
@@ -54,6 +54,7 @@ class FakeImage:
     id = 'aaa-bb-ccc'
     username = 'you'
     description = None
+    tags = []
 
 
 class FakeImageManager:
