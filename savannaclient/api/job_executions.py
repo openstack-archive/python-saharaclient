@@ -37,10 +37,18 @@ class JobExecutionsManager(base.ResourceManager):
                job_exec_data={}):
         url = "/jobs/%s/execute" % job_id
         data = copy.copy(job_exec_data)
+
+        # Leave these out if they are null.  For Java job types they
+        # are not part of the schema
+        io_ids = (("input_id", input_id),
+                  ("output_id", output_id))
+        for key, value in io_ids:
+            if value is not None:
+                data.update({key: value})
+
+        # These are always required
         data.update(
             {
-                "input_id": input_id,
-                "output_id": output_id,
                 "cluster_id": cluster_id,
                 "job_configs": configs
             })
