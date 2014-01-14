@@ -90,6 +90,8 @@ def do_image_list(cs, args):
 def do_image_show(cs, args):
     """Show details of an image."""
     image = cs.images.get(args.id)
+    del image._info['metadata']
+    image._info['tags'] = ', '.join(image._info['tags'])
     utils.print_dict(image._info)
 
 
