@@ -216,7 +216,8 @@ def do_cluster_show(cs, args):
     """Show details of a cluster."""
     cluster = cs.clusters.get(args.id)
     # TODO(mattf): Make this pretty, e.g format node_groups and info urls
-    utils.print_dict(cluster._info)
+    # Forcing wrap=47 allows for clean display on a terminal of width 80
+    utils.print_dict(cluster._info, wrap=47)
 
 
 # TODO(mattf): Add --name
