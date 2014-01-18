@@ -313,7 +313,7 @@ def do_node_group_template_delete(cs, args):
 # ~~~~~~~~~~~~~~~~~
 # cluster-template-list
 #
-# cluster-template-show --name <template>|--id <template_id>
+# cluster-template-show --name <template>|--id <template_id> [--json]
 #
 # TODO(mattf): cluster-template-create
 #
@@ -337,9 +337,17 @@ def do_cluster_template_list(cs, args):
            metavar='<template_id>',
            required=True,
            help='Id of cluster template to show')
+@utils.arg('--json',
+           action='store_true',
+           default=False,
+           help='Print JSON representation of cluster template')
 def do_cluster_template_show(cs, args):
     """Show details of a cluster template."""
-    _show_cluster_template(cs.cluster_templates.get(args.id))
+    template = cs.cluster_templates.get(args.id)
+    if args.json:
+        print(json.dumps(template._info))
+    else:
+        _show_cluster_template(template)
 
 
 # TODO(mattf): Add --name
