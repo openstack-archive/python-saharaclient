@@ -39,6 +39,12 @@ def _show_cluster_template(template):
     utils.print_dict(template._info)
 
 
+def _show_cluster(cluster):
+    # TODO(mattf): Make this pretty, e.g format node_groups and info urls
+    # Forcing wrap=47 allows for clean display on a terminal of width 80
+    utils.print_dict(cluster._info, wrap=47)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -226,10 +232,7 @@ def do_cluster_list(cs, args):
            help='Id of cluster to show')
 def do_cluster_show(cs, args):
     """Show details of a cluster."""
-    cluster = cs.clusters.get(args.id)
-    # TODO(mattf): Make this pretty, e.g format node_groups and info urls
-    # Forcing wrap=47 allows for clean display on a terminal of width 80
-    utils.print_dict(cluster._info, wrap=47)
+    _show_cluster(cs.clusters.get(args.id))
 
 
 # TODO(mattf): Add --name
