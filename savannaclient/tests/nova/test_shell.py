@@ -120,7 +120,7 @@ class ShellTest(utils.TestCase):
     def test_help(self):
         required = [
             '.*?^usage: savanna',
-            '.*?^\s+plugins-list\s+Print a list of available plugins.',
+            '.*?^\s+plugin-list\s+Print a list of available plugins.',
             '.*?^See "savanna help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('help')
@@ -130,10 +130,10 @@ class ShellTest(utils.TestCase):
 
     def test_help_on_subcommand(self):
         required = [
-            '.*?^usage: savanna plugins-list',
+            '.*?^usage: savanna plugin-list',
             '.*?^Print a list of available plugins.',
         ]
-        stdout, stderr = self.shell('help plugins-list')
+        stdout, stderr = self.shell('help plugin-list')
         for r in required:
             self.assertThat((stdout + stderr),
                             matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
@@ -141,7 +141,7 @@ class ShellTest(utils.TestCase):
     def test_help_no_options(self):
         required = [
             '.*?^usage: savanna',
-            '.*?^\s+plugins-list\s+Print a list of available plugins.',
+            '.*?^\s+plugin-list\s+Print a list of available plugins.',
             '.*?^See "savanna help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('')
@@ -154,8 +154,8 @@ class ShellTest(utils.TestCase):
         # just check we have some output
         required = [
             '.*help',
-            '.*plugins-list',
-            '.*plugins-show',
+            '.*plugin-list',
+            '.*plugin-show',
             '.*--name']
         for r in required:
             self.assertThat((stdout + stderr),
@@ -166,7 +166,7 @@ class ShellTest(utils.TestCase):
                     ' via either --os-username or env[OS_USERNAME]',)
         self.make_env(exclude='OS_USERNAME')
         try:
-            self.shell('plugins-list')
+            self.shell('plugin-list')
         except exceptions.CommandError as message:
             self.assertEqual(required, message.args)
         else:
@@ -178,7 +178,7 @@ class ShellTest(utils.TestCase):
                     ' env[OS_TENANT_NAME] or env[OS_TENANT_ID]',)
         self.make_env(exclude='OS_TENANT_NAME')
         try:
-            self.shell('plugins-list')
+            self.shell('plugin-list')
         except exceptions.CommandError as message:
             self.assertEqual(required, message.args)
         else:
@@ -190,7 +190,7 @@ class ShellTest(utils.TestCase):
                     ' env[OS_TENANT_NAME] or env[OS_TENANT_ID]',)
         self.make_env(exclude='OS_TENANT_ID', fake_env=FAKE_ENV2)
         try:
-            self.shell('plugins-list')
+            self.shell('plugin-list')
         except exceptions.CommandError as message:
             self.assertEqual(required, message.args)
         else:
@@ -203,7 +203,7 @@ class ShellTest(utils.TestCase):
                     ' with --os-auth-system or env[OS_AUTH_SYSTEM]',)
         self.make_env(exclude='OS_AUTH_URL')
         try:
-            self.shell('plugins-list')
+            self.shell('plugin-list')
         except exceptions.CommandError as message:
             self.assertEqual(required, message.args)
         else:
@@ -223,7 +223,7 @@ class ShellTest(utils.TestCase):
         )
 #        self.make_env(exclude='OS_PASSWORD')
         self.make_env()
-        stdout, stderr = self.shell('plugins-list')
+        stdout, stderr = self.shell('plugin-list')
         self.assertEqual((stdout + stderr), ex)
 
 #    @mock.patch('sys.stdin', side_effect=mock.MagicMock)
@@ -235,7 +235,7 @@ class ShellTest(utils.TestCase):
                     ' or prompted response',)
         self.make_env(exclude='OS_PASSWORD')
         try:
-            self.shell('plugins-list')
+            self.shell('plugin-list')
         except exceptions.CommandError as message:
             self.assertEqual(required, message.args)
         else:

@@ -30,12 +30,12 @@ def _print_node_group_field(cluster):
 #
 # Plugins
 # ~~~~~~~
-# plugins-list
+# plugin-list
 #
-# plugins-show --name <plugin> [--version <version>]
+# plugin-show --name <plugin> [--version <version>]
 #
 
-def do_plugins_list(cs, args):
+def do_plugin_list(cs, args):
     """Print a list of available plugins."""
     plugins = cs.plugins.list()
     columns = ('name', 'versions', 'title')
@@ -51,7 +51,7 @@ def do_plugins_list(cs, args):
 #@utils.arg('--version',
 #           metavar='<version>',
 #           help='Optional version')
-def do_plugins_show(cs, args):
+def do_plugin_show(cs, args):
     """Show details of a plugin."""
     plugin = cs.plugins.get(args.name)
     plugin._info['versions'] = ', '.join(plugin._info['versions'])
