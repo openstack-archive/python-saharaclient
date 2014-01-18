@@ -13,6 +13,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import json
 from savannaclient.nova import utils
 
 
@@ -255,7 +256,7 @@ def do_cluster_delete(cs, args):
 # ~~~~~~~~~~~~~~~~~~~~
 # node-group-template-list
 #
-# node-group-template-show --name <template>|--id <template_id>
+# node-group-template-show --name <template>|--id <template_id> [--json]
 #
 # TODO(mattf): node-group-template-create
 #
@@ -279,9 +280,17 @@ def do_node_group_template_list(cs, args):
            metavar='<template_id>',
            required=True,
            help='Id of node group template to show')
+@utils.arg('--json',
+           action='store_true',
+           default=False,
+           help='Print JSON representation of node group template')
 def do_node_group_template_show(cs, args):
     """Show details of a node group template."""
-    _show_node_group_template(cs.node_group_templates.get(args.id))
+    template = cs.node_group_templates.get(args.id)
+    if args.json:
+        print(json.dumps(template._info))
+    else:
+        _show_node_group_template(template)
 
 
 # TODO(mattf): Add --name
