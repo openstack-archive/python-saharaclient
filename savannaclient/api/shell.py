@@ -203,7 +203,7 @@ def do_image_remove_tag(cs, args):
 # ~~~~~~~~
 # cluster-list
 #
-# cluster-show --name <cluster>|--id <cluster_id>
+# cluster-show --name <cluster>|--id <cluster_id> [--json]
 #
 # TODO(mattf): cluster-create
 #
@@ -231,9 +231,17 @@ def do_cluster_list(cs, args):
            metavar='<cluster_id>',
            required=True,
            help='Id of cluster to show')
+@utils.arg('--json',
+           action='store_true',
+           default=False,
+           help='Print JSON representation of cluster')
 def do_cluster_show(cs, args):
     """Show details of a cluster."""
-    _show_cluster(cs.clusters.get(args.id))
+    cluster = cs.clusters.get(args.id)
+    if args.json:
+        print(json.dumps(cluster._info))
+    else:
+        _show_cluster(cluster)
 
 
 # TODO(mattf): Add --name
