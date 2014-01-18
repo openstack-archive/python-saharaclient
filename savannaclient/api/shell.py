@@ -240,7 +240,7 @@ def do_cluster_delete(cs, args):
 # ~~~~~~~~~~~~~~~~~~~~
 # node-group-template-list
 #
-# TODO(mattf): node-group-template-show --name <template>|--id <template_id>
+# node-group-template-show --name <template>|--id <template_id>
 #
 # TODO(mattf): node-group-template-create
 #
@@ -253,6 +253,24 @@ def do_node_group_template_list(cs, args):
     columns = ('name', 'id', 'plugin_name', 'node_processes', 'description')
     utils.print_list(templates, columns,
                      {'node_processes': _print_list_field('node_processes')})
+
+
+# TODO(mattf): Add --name
+#@utils.arg('--name',
+#           metavar='<template>',
+#           required=True,
+#           help='Template name')
+@utils.arg('--id',
+           metavar='<template_id>',
+           required=True,
+           help='Id of node group template to show')
+def do_node_group_template_show(cs, args):
+    """Show details of a node group template."""
+    template = cs.node_group_templates.get(args.id)
+    template._info['node_processes'] = (
+        ', '.join(template._info['node_processes'])
+    )
+    utils.print_dict(template._info)
 
 
 # TODO(mattf): Add --name
