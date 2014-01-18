@@ -34,6 +34,11 @@ def _show_node_group_template(template):
     utils.print_dict(template._info)
 
 
+def _show_cluster_template(template):
+    template._info['node_groups'] = _print_node_group_field(template)
+    utils.print_dict(template._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -322,9 +327,7 @@ def do_cluster_template_list(cs, args):
            help='Id of cluster template to show')
 def do_cluster_template_show(cs, args):
     """Show details of a cluster template."""
-    template = cs.cluster_templates.get(args.id)
-    template._info['node_groups'] = _print_node_group_field(template)
-    utils.print_dict(template._info)
+    _show_cluster_template(cs.cluster_templates.get(args.id))
 
 
 # TODO(mattf): Add --name
