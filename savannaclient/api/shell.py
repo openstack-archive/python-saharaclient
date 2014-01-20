@@ -27,6 +27,13 @@ def _print_node_group_field(cluster):
                           for node_group in cluster.node_groups]))
 
 
+def _show_node_group_template(template):
+    template._info['node_processes'] = (
+        ', '.join(template._info['node_processes'])
+    )
+    utils.print_dict(template._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -266,11 +273,7 @@ def do_node_group_template_list(cs, args):
            help='Id of node group template to show')
 def do_node_group_template_show(cs, args):
     """Show details of a node group template."""
-    template = cs.node_group_templates.get(args.id)
-    template._info['node_processes'] = (
-        ', '.join(template._info['node_processes'])
-    )
-    utils.print_dict(template._info)
+    _show_node_group_template(cs.node_group_templates.get(args.id))
 
 
 # TODO(mattf): Add --name
