@@ -13,8 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import argparse
+import inspect
 import json
 from savannaclient.nova import utils
+import sys
 
 
 def _print_list_field(field):
@@ -266,7 +269,7 @@ def do_cluster_delete(cs, args):
 #
 # node-group-template-show --name <template>|--id <template_id> [--json]
 #
-# TODO(mattf): node-group-template-create
+# node-group-template-create [--json <file>]
 #
 # node-group-template-delete --name <template>|--id <template_id>
 #
@@ -299,6 +302,22 @@ def do_node_group_template_show(cs, args):
         print(json.dumps(template._info))
     else:
         _show_node_group_template(template)
+
+
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of node group template')
+def do_node_group_template_create(cs, args):
+    """Create a node group template."""
+     # TODO(mattf): improve template validation, e.g. template w/o name key
+    template = json.loads(args.json.read())
+    valid_args = inspect.getargspec(cs.node_group_templates.create).args
+    for name in template.keys():
+        if name not in valid_args:
+            # TODO(mattf): make this verbose - bug/1271147
+            del template[name]
+    _show_node_group_template(cs.node_group_templates.create(**template))
 
 
 # TODO(mattf): Add --name
