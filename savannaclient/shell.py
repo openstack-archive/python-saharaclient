@@ -322,7 +322,7 @@ class OpenStackSavannaShell(object):
 
         parser.add_argument('--service-type',
                             metavar='<service-type>',
-                            help='Defaults to mapreduce for most actions')
+                            help='Defaults to data_processing for all actions')
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
 
