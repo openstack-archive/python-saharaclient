@@ -342,7 +342,7 @@ def do_node_group_template_delete(cs, args):
 #
 # cluster-template-show --name <template>|--id <template_id> [--json]
 #
-# TODO(mattf): cluster-template-create
+# cluster-template-create [--json <file>]
 #
 # cluster-template-delete --name <template>|--id <template_id>
 #
@@ -375,6 +375,22 @@ def do_cluster_template_show(cs, args):
         print(json.dumps(template._info))
     else:
         _show_cluster_template(template)
+
+
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of cluster template')
+def do_cluster_template_create(cs, args):
+    """Create a cluster template."""
+     # TODO(mattf): improve template validation, e.g. template w/o name key
+    template = json.loads(args.json.read())
+    valid_args = inspect.getargspec(cs.cluster_templates.create).args
+    for name in template.keys():
+        if name not in valid_args:
+            # TODO(mattf): make this verbose - bug/1271147
+            del template[name]
+    _show_cluster_template(cs.cluster_templates.create(**template))
 
 
 # TODO(mattf): Add --name
