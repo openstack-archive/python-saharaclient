@@ -208,7 +208,7 @@ def do_image_remove_tag(cs, args):
 #
 # cluster-show --name <cluster>|--id <cluster_id> [--json]
 #
-# TODO(mattf): cluster-create
+# cluster-create [--json <file>]
 #
 # TODO(mattf): cluster-scale
 #
@@ -245,6 +245,22 @@ def do_cluster_show(cs, args):
         print(json.dumps(cluster._info))
     else:
         _show_cluster(cluster)
+
+
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of cluster')
+def do_cluster_create(cs, args):
+    """Create a cluster."""
+     # TODO(mattf): improve template validation, e.g. template w/o name key
+    template = json.loads(args.json.read())
+    valid_args = inspect.getargspec(cs.clusters.create).args
+    for name in template.keys():
+        if name not in valid_args:
+            # TODO(mattf): make this verbose - bug/1271147
+            del template[name]
+    _show_cluster(cs.clusters.create(**template))
 
 
 # TODO(mattf): Add --name
