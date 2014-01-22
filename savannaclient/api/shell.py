@@ -580,3 +580,31 @@ def do_job_template_delete(cs, args):
     """Delete a job template."""
     cs.jobs.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Job Executions
+# ~~~~~~~~~~~~~~
+# job-list
+#
+# TODO(mattf): job-show --name <name>|--id <id>
+#
+# TODO(mattf): job-create --name <name> --job-template <id>
+#                                       --input-data <id>
+#                                       --output-data <id>
+#                                       --cluster-template <id>
+# NB: Optional job_configs
+# NB: POST /jobs/{job_template_id}/execute
+#
+# TODO(mattf): job-delete --name <name>|--id <id>
+#
+
+def do_job_list(cs, args):
+    """Print a list of jobs."""
+    jobs = cs.job_executions.list()
+    for job in jobs:
+        # why is status in info.status?
+        job.status = job.info['status']
+    # TODO(mattf): why can cluster_id be None?
+    columns = ('id', 'cluster_id', 'status')
+    utils.print_list(jobs, columns)
