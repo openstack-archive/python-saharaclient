@@ -587,7 +587,7 @@ def do_job_template_delete(cs, args):
 # ~~~~~~~~~~~~~~
 # job-list
 #
-# TODO(mattf): job-show --name <name>|--id <id>
+# job-show --name <name>|--id <id>
 #
 # TODO(mattf): job-create --name <name> --job-template <id>
 #                                       --input-data <id>
@@ -608,3 +608,15 @@ def do_job_list(cs, args):
     # TODO(mattf): why can cluster_id be None?
     columns = ('id', 'cluster_id', 'status')
     utils.print_list(jobs, columns)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of a job')
+# TODO(mattf): --name <name>, which is cluster name
+def do_job_show(cs, args):
+    """Show details of a job."""
+    job = cs.job_executions.get(args.id)
+    job._info['status'] = job._info['info']['status']
+    del job._info['info']
+    utils.print_dict(job._info)
