@@ -552,7 +552,7 @@ def do_job_binary_delete(cs, args):
 #                                  --mains <array of string>
 #                                  --libs <array of string>
 #
-# TODO(mattf): job-template-delete --name <name>|--id <id>
+# job-template-delete --name <name>|--id <id>
 #
 
 def do_job_template_list(cs, args):
@@ -571,3 +571,12 @@ def do_job_template_show(cs, args):
     template = cs.jobs.get(args.id)
     # TODO(mattf): Make "mains" property pretty
     utils.print_dict(template._info)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of a job template')
+def do_job_template_delete(cs, args):
+    """Delete a job template."""
+    cs.jobs.delete(args.id)
+    # TODO(mattf): No indication of result
