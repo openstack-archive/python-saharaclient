@@ -494,3 +494,26 @@ def do_job_binary_data_delete(cs, args):
     cs.job_binary_internals.delete(args.id)
     # TODO(mattf): No indication of result
     # TODO(mattf): Appears no DB constraints for removing data used by job
+
+
+#
+# Job Binaries
+# ~~~~~~~~~~~~
+# job-binary-list
+#
+# TODO(mattf): job-binary-show --name <name>|--id <id>
+#
+# TODO(mattf): job-binary-create --name <name> --url <url>
+#                                [--user <user> --password <password>]
+#                                [--description <desc>]
+# NB: user & password if url proto is swift-internal
+# NB: param for credentials should be "credentials" (like data-source)
+#
+# TODO(mattf): job-binary-delete --name <name>|--id <id>
+#
+
+def do_job_binary_list(cs, args):
+    """Print a list of job binaries."""
+    binaries = cs.job_binaries.list()
+    columns = ('id', 'name', 'description')
+    utils.print_list(binaries, columns)
