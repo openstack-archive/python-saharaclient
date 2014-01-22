@@ -509,7 +509,7 @@ def do_job_binary_data_delete(cs, args):
 # NB: user & password if url proto is swift-internal
 # NB: param for credentials should be "credentials" (like data-source)
 #
-# TODO(mattf): job-binary-delete --name <name>|--id <id>
+# job-binary-delete --name <name>|--id <id>
 #
 
 def do_job_binary_list(cs, args):
@@ -529,3 +529,12 @@ def do_job_binary_show(cs, args):
     # TODO(mattf): why are we passing credentials around like this?
     del binary._info['extra']
     utils.print_dict(binary._info)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of a job binary')
+def do_job_binary_delete(cs, args):
+    """Delete a job binary."""
+    cs.job_binaries.delete(args.id)
+    # TODO(mattf): No indication of result
