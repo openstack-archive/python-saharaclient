@@ -437,7 +437,7 @@ def do_cluster_template_delete(cs, args):
 #                                 [--description <desc>]
 # NB: user & password if type is swift
 #
-# TODO(mattf): data-source-delete --name <name>|--id <id>
+# data-source-delete --name <name>|--id <id>
 #
 
 def do_data_source_list(cs, args):
@@ -457,3 +457,13 @@ def do_data_source_show(cs, args):
     # TODO(mattf): why are we passing credentials around like this?
     del source._info['credentials']
     utils.print_dict(source._info)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of data source to delete')
+# TODO(mattf): Add --name
+def do_data_source_delete(cs, args):
+    """Delete a data source."""
+    cs.data_sources.delete(args.id)
+    # TODO(mattf): No indication of result
