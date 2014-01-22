@@ -538,3 +538,25 @@ def do_job_binary_delete(cs, args):
     """Delete a job binary."""
     cs.job_binaries.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Jobs
+# ~~~~
+# job-template-list
+#
+# TODO(mattf): job-template-show --name <name>|--id <id>
+#
+# TODO(mattf): job-template-create --name <name>
+#                                  --type <Pig|Hive|Jar>
+#                                  --mains <array of string>
+#                                  --libs <array of string>
+#
+# TODO(mattf): job-template-delete --name <name>|--id <id>
+#
+
+def do_job_template_list(cs, args):
+    """Print a list of job templates."""
+    templates = cs.jobs.list()
+    columns = ('id', 'name', 'description')
+    utils.print_list(templates, columns)
