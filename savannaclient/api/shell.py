@@ -467,3 +467,20 @@ def do_data_source_delete(cs, args):
     """Delete a data source."""
     cs.data_sources.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Job Binary Internals
+# ~~~~~~~~~~~~~~~~~~~~
+# job-binary-data-list
+#
+# TODO(mattf): job-binary-data-create [--file <file>]
+#
+# TODO(mattf): job-binary-data-delete --id <id>
+#
+
+def do_job_binary_data_list(cs, args):
+    """Print a list of internally stored job binary data."""
+    data = cs.job_binary_internals.list()
+    columns = ('id', 'name')
+    utils.print_list(data, columns)
