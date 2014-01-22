@@ -429,7 +429,7 @@ def do_cluster_template_delete(cs, args):
 # ~~~~~~~~~~~~
 # data-source-list
 #
-# TODO(mattf): data-source-show --name <name>|--id <id>
+# data-source-show --name <name>|--id <id>
 #
 # TODO(mattf): data-source-create --name <name> --type <type>
 #                                 --url <url>
@@ -445,3 +445,15 @@ def do_data_source_list(cs, args):
     sources = cs.data_sources.list()
     columns = ('name', 'id', 'type', 'description')
     utils.print_list(sources, columns)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of data source')
+# TODO(mattf): --name <name>
+def do_data_source_show(cs, args):
+    """Show details of a data source."""
+    source = cs.data_sources.get(args.id)
+    # TODO(mattf): why are we passing credentials around like this?
+    del source._info['credentials']
+    utils.print_dict(source._info)
