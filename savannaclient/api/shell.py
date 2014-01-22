@@ -422,3 +422,26 @@ def do_cluster_template_delete(cs, args):
     """Delete a cluster template."""
     cs.cluster_templates.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Data Sources
+# ~~~~~~~~~~~~
+# data-source-list
+#
+# TODO(mattf): data-source-show --name <name>|--id <id>
+#
+# TODO(mattf): data-source-create --name <name> --type <type>
+#                                 --url <url>
+#                                 [--user <user> --password <password>]
+#                                 [--description <desc>]
+# NB: user & password if type is swift
+#
+# TODO(mattf): data-source-delete --name <name>|--id <id>
+#
+
+def do_data_source_list(cs, args):
+    """Print a list of available data sources."""
+    sources = cs.data_sources.list()
+    columns = ('name', 'id', 'type', 'description')
+    utils.print_list(sources, columns)
