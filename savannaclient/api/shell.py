@@ -545,7 +545,7 @@ def do_job_binary_delete(cs, args):
 # ~~~~
 # job-template-list
 #
-# TODO(mattf): job-template-show --name <name>|--id <id>
+# job-template-show --name <name>|--id <id>
 #
 # TODO(mattf): job-template-create --name <name>
 #                                  --type <Pig|Hive|Jar>
@@ -560,3 +560,14 @@ def do_job_template_list(cs, args):
     templates = cs.jobs.list()
     columns = ('id', 'name', 'description')
     utils.print_list(templates, columns)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of a job template')
+# TODO(mattf): --name <name>
+def do_job_template_show(cs, args):
+    """Show details of a job template."""
+    template = cs.jobs.get(args.id)
+    # TODO(mattf): Make "mains" property pretty
+    utils.print_dict(template._info)
