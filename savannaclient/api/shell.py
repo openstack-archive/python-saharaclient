@@ -476,7 +476,7 @@ def do_data_source_delete(cs, args):
 #
 # TODO(mattf): job-binary-data-create [--file <file>]
 #
-# TODO(mattf): job-binary-data-delete --id <id>
+# job-binary-data-delete --id <id>
 #
 
 def do_job_binary_data_list(cs, args):
@@ -484,3 +484,13 @@ def do_job_binary_data_list(cs, args):
     data = cs.job_binary_internals.list()
     columns = ('id', 'name')
     utils.print_list(data, columns)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of internally stored job binary data')
+def do_job_binary_data_delete(cs, args):
+    """Delete an internally stored job binary data."""
+    cs.job_binary_internals.delete(args.id)
+    # TODO(mattf): No indication of result
+    # TODO(mattf): Appears no DB constraints for removing data used by job
