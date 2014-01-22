@@ -501,7 +501,7 @@ def do_job_binary_data_delete(cs, args):
 # ~~~~~~~~~~~~
 # job-binary-list
 #
-# TODO(mattf): job-binary-show --name <name>|--id <id>
+# job-binary-show --name <name>|--id <id>
 #
 # TODO(mattf): job-binary-create --name <name> --url <url>
 #                                [--user <user> --password <password>]
@@ -517,3 +517,15 @@ def do_job_binary_list(cs, args):
     binaries = cs.job_binaries.list()
     columns = ('id', 'name', 'description')
     utils.print_list(binaries, columns)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of job binary')
+# TODO(mattf): --name <name>
+def do_job_binary_show(cs, args):
+    """Show details of a job binary."""
+    binary = cs.job_binaries.get(args.id)
+    # TODO(mattf): why are we passing credentials around like this?
+    del binary._info['extra']
+    utils.print_dict(binary._info)
