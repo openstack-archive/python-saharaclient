@@ -596,7 +596,7 @@ def do_job_template_delete(cs, args):
 # NB: Optional job_configs
 # NB: POST /jobs/{job_template_id}/execute
 #
-# TODO(mattf): job-delete --name <name>|--id <id>
+# job-delete --name <name>|--id <id>
 #
 
 def do_job_list(cs, args):
@@ -620,3 +620,13 @@ def do_job_show(cs, args):
     job._info['status'] = job._info['info']['status']
     del job._info['info']
     utils.print_dict(job._info)
+
+
+@utils.arg('--id',
+           required=True,
+           help='Id of a job')
+# TODO(mattf): --name <name>, which is cluster name
+def do_job_delete(cs, args):
+    """Delete a job."""
+    cs.job_executions.delete(args.id)
+    # TODO(mattf): No indication of result
