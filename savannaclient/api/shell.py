@@ -14,6 +14,7 @@
 #    under the License.
 
 import argparse
+import datetime
 import inspect
 import json
 from savannaclient.nova import utils
@@ -487,6 +488,22 @@ def do_data_source_delete(cs, args):
 def do_job_binary_data_list(cs, args):
     """Print a list of internally stored job binary data."""
     _show_job_binary_data(cs.job_binary_internals.list())
+
+
+@utils.arg('--file',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='Data to store')
+def do_job_binary_data_create(cs, args):
+    """Store data in Savanna's internal DB.
+    Use 'swift upload' instead of this command.
+    Use this command only if Swift is not available.
+    """
+    # Should be %F-%T except for type validation errors
+    _show_job_binary_data((cs.job_binary_internals.create(
+        datetime.datetime.now().strftime('d%Y%m%d%H%M%S'),
+        args.file.read()),)
+    )
 
 
 @utils.arg('--id',
