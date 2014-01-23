@@ -49,6 +49,11 @@ def _show_cluster(cluster):
     utils.print_dict(cluster._info, wrap=47)
 
 
+def _show_job_binary_data(data):
+    columns = ('id', 'name')
+    utils.print_list(data, columns)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -474,16 +479,14 @@ def do_data_source_delete(cs, args):
 # ~~~~~~~~~~~~~~~~~~~~
 # job-binary-data-list
 #
-# TODO(mattf): job-binary-data-create [--file <file>]
+# job-binary-data-create [--file <file>]
 #
 # job-binary-data-delete --id <id>
 #
 
 def do_job_binary_data_list(cs, args):
     """Print a list of internally stored job binary data."""
-    data = cs.job_binary_internals.list()
-    columns = ('id', 'name')
-    utils.print_list(data, columns)
+    _show_job_binary_data(cs.job_binary_internals.list())
 
 
 @utils.arg('--id',
