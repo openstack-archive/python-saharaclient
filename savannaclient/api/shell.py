@@ -55,6 +55,12 @@ def _show_job_binary_data(data):
     utils.print_list(data, columns)
 
 
+def _show_data_source(source):
+    # TODO(mattf): why are we passing credentials around like this?
+    del source._info['credentials']
+    utils.print_dict(source._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -459,10 +465,7 @@ def do_data_source_list(cs, args):
 # TODO(mattf): --name <name>
 def do_data_source_show(cs, args):
     """Show details of a data source."""
-    source = cs.data_sources.get(args.id)
-    # TODO(mattf): why are we passing credentials around like this?
-    del source._info['credentials']
-    utils.print_dict(source._info)
+    _show_data_source(cs.data_sources.get(args.id))
 
 
 @utils.arg('--id',
