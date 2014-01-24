@@ -557,11 +557,9 @@ def do_job_binary_data_delete(cs, args):
 #
 # job-binary-show --name <name>|--id <id>
 #
-# TODO(mattf): job-binary-create --name <name> --url <url>
-#                                [--user <user> --password <password>]
-#                                [--description <desc>]
-# NB: user & password if url proto is swift-internal
-# NB: param for credentials should be "credentials" (like data-source)
+# job-binary-create --name <name> --url <url>
+#                   [--user <user> --password <password>]
+#                   [--description <desc>]
 #
 # job-binary-delete --name <name>|--id <id>
 #
@@ -580,6 +578,33 @@ def do_job_binary_list(cs, args):
 def do_job_binary_show(cs, args):
     """Show details of a job binary."""
     _show_job_binary(cs.job_binaries.get(args.id))
+
+
+@utils.arg('--name',
+           required=True,
+           help='Name of the job binary')
+@utils.arg('--url',
+           required=True,
+           help='URL for the job binary')
+@utils.arg('--description',
+           default='',
+           help='Description of the job binary')
+@utils.arg('--user',
+           default=None,
+           help='Username for accessing the job binary url')
+@utils.arg('--password',
+           default=None,
+           help='Password for accessing the job binary url')
+def do_job_binary_create(cs, args):
+    """Record a job binary."""
+    # TODO(mattf): make credentials consistent w/ data source
+    extra = {}
+    if args.user:
+        extra['user'] = args.user
+    if args.password:
+        extra['password'] = args.password
+    _show_job_binary(cs.job_binaries.create(args.name, args.url,
+                                            args.description, extra))
 
 
 @utils.arg('--id',
