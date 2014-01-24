@@ -67,6 +67,12 @@ def _show_job_binary(binary):
     utils.print_dict(binary._info)
 
 
+def _show_job_template(template):
+    # TODO(mattf): Make "mains" property pretty
+    # TODO(mattf): handle/remove "extra" creds
+    utils.print_dict(template._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -644,9 +650,7 @@ def do_job_template_list(cs, args):
 # TODO(mattf): --name <name>
 def do_job_template_show(cs, args):
     """Show details of a job template."""
-    template = cs.jobs.get(args.id)
-    # TODO(mattf): Make "mains" property pretty
-    utils.print_dict(template._info)
+    _show_job_template(cs.jobs.get(args.id))
 
 
 @utils.arg('--id',
