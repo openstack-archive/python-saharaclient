@@ -443,10 +443,10 @@ def do_cluster_template_delete(cs, args):
 #
 # data-source-show --name <name>|--id <id>
 #
-# TODO(mattf): data-source-create --name <name> --type <type>
-#                                 --url <url>
-#                                 [--user <user> --password <password>]
-#                                 [--description <desc>]
+# data-source-create --name <name> --type <type>
+#                    --url <url>
+#                    [--user <user> --password <password>]
+#                    [--description <desc>]
 # NB: user & password if type is swift
 #
 # data-source-delete --name <name>|--id <id>
@@ -466,6 +466,31 @@ def do_data_source_list(cs, args):
 def do_data_source_show(cs, args):
     """Show details of a data source."""
     _show_data_source(cs.data_sources.get(args.id))
+
+
+@utils.arg('--name',
+           required=True,
+           help='Name of the data source')
+@utils.arg('--type',
+           required=True,
+           help='Type of the data source')
+@utils.arg('--url',
+           required=True,
+           help='URL for data source')
+@utils.arg('--description',
+           default='',
+           help='Description of the data source')
+@utils.arg('--user',
+           default=None,
+           help='Username for accessing the data source url')
+@utils.arg('--password',
+           default=None,
+           help='Password for accessing the data source url')
+def do_data_source_create(cs, args):
+    """Create a data source that provides job input or receives job output."""
+    _show_data_source(cs.data_sources.create(args.name, args.description,
+                                             args.type, args.url,
+                                             args.user, args.password))
 
 
 @utils.arg('--id',
