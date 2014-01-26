@@ -73,6 +73,14 @@ def _show_job_template(template):
     utils.print_dict(template._info)
 
 
+def _show_job(job):
+    # TODO(mattf): make display of info pretty, until then
+    #              extract the important status information
+    job._info['status'] = job._info['info']['status']
+    del job._info['info']
+    utils.print_dict(job._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -696,10 +704,7 @@ def do_job_list(cs, args):
 # TODO(mattf): --name <name>, which is cluster name
 def do_job_show(cs, args):
     """Show details of a job."""
-    job = cs.job_executions.get(args.id)
-    job._info['status'] = job._info['info']['status']
-    del job._info['info']
-    utils.print_dict(job._info)
+    _show_job(cs.job_executions.get(args.id))
 
 
 @utils.arg('--id',
