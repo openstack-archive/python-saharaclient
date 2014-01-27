@@ -384,6 +384,7 @@ class OpenStackSavannaShell(object):
 
         parser.add_argument('--bypass-url',
                             metavar='<bypass-url>',
+                            default=cliutils.env('BYPASS_URL', default=None),
                             dest='bypass_url',
                             help="Use this API endpoint instead of the "
                             "Service Catalog")
