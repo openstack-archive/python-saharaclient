@@ -702,12 +702,11 @@ def do_job_template_delete(cs, args):
 #
 # job-show --name <name>|--id <id>
 #
-# TODO(mattf): job-create --name <name> --job-template <id>
-#                                       --input-data <id>
-#                                       --output-data <id>
-#                                       --cluster-template <id>
-# NB: Optional job_configs
-# NB: POST /jobs/{job_template_id}/execute
+# job-create --job-template <id> --cluster <id>
+#            [--input-data <id>] [--output-data <id>]
+#            [--param <name=value>]
+#            [--arg <arg>]
+#            [--config <name=value>]
 #
 # job-delete --name <name>|--id <id>
 #
@@ -730,6 +729,41 @@ def do_job_list(cs, args):
 def do_job_show(cs, args):
     """Show details of a job."""
     _show_job(cs.job_executions.get(args.id))
+
+
+@utils.arg('--job-template',
+           required=True,
+           help='Id of the job template to run')
+@utils.arg('--cluster',
+           required=True,
+           help='Id of the cluster to run the job in')
+@utils.arg('--input-data',
+           default=None,
+           help='Id of the input data source')
+@utils.arg('--output-data',
+           default=None,
+           help='Id of the output data source')
+@utils.arg('--param',
+           metavar='name=value',
+           action='append',
+           default=[],
+           help='Params to add to the job, repeatable')
+@utils.arg('--arg',
+           action='append',
+           default=[],
+           help='Args to add to the job, repeatable')
+@utils.arg('--config',
+           metavar='name=value',
+           action='append',
+           default=[],
+           help='Config parameters to add to the job, repeatable')
+def do_job_create(cs, args):
+    _convert = lambda ls: dict(map(lambda i: i.split('=', 1), ls))
+    _show_job(cs.job_executions.create(args.job_template, args.cluster,
+                                       args.input_data, args.output_data,
+                                       {'params': _convert(args.param),
+                                        'args': dict(zip(args.arg, args.arg)),
+                                        'configs': _convert(args.config)}))
 
 
 @utils.arg('--id',
