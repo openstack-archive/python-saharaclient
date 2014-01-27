@@ -637,10 +637,11 @@ def do_job_binary_delete(cs, args):
 #
 # job-template-show --name <name>|--id <id>
 #
-# TODO(mattf): job-template-create --name <name>
-#                                  --type <Pig|Hive|Jar>
-#                                  --mains <array of string>
-#                                  --libs <array of string>
+# job-template-create --name <name>
+#                     --type <Pig|Hive|MapReduce|Java|...>
+#                     [--mains <array of string>]
+#                     [--libs <array of string>]
+#                     [--description <desc>]
 #
 # job-template-delete --name <name>|--id <id>
 #
@@ -659,6 +660,30 @@ def do_job_template_list(cs, args):
 def do_job_template_show(cs, args):
     """Show details of a job template."""
     _show_job_template(cs.jobs.get(args.id))
+
+
+@utils.arg('--name',
+           required=True,
+           help='Name of the job template')
+@utils.arg('--type',
+           required=True,
+           help='Type of the job template')
+@utils.arg('--main',
+           action='append',
+           default=[],
+           help='Id for job\'s main job-binary')
+@utils.arg('--lib',
+           action='append',
+           default=[],
+           help='Id of job\'s lib job-binary, repeatable')
+@utils.arg('--description',
+           default='',
+           help='Description of the job template')
+def do_job_template_create(cs, args):
+    """Create a job template."""
+    _show_job_template(cs.jobs.create(args.name, args.type,
+                                      args.main, args.lib,
+                                      args.description))
 
 
 @utils.arg('--id',
