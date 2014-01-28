@@ -61,6 +61,12 @@ def _show_data_source(source):
     utils.print_dict(source._info)
 
 
+def _show_job_binary(binary):
+    # TODO(mattf): why are we passing credentials around like this?
+    del binary._info['extra']
+    utils.print_dict(binary._info)
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -573,10 +579,7 @@ def do_job_binary_list(cs, args):
 # TODO(mattf): --name <name>
 def do_job_binary_show(cs, args):
     """Show details of a job binary."""
-    binary = cs.job_binaries.get(args.id)
-    # TODO(mattf): why are we passing credentials around like this?
-    del binary._info['extra']
-    utils.print_dict(binary._info)
+    _show_job_binary(cs.job_binaries.get(args.id))
 
 
 @utils.arg('--id',
