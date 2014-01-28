@@ -287,6 +287,11 @@ def do_cluster_create(cs, args):
     """Create a cluster."""
      # TODO(mattf): improve template validation, e.g. template w/o name key
     template = json.loads(args.json.read())
+    # The neutron_management_network parameter to clusters.create is
+    # called net_id. Therefore, we must translate before invoking
+    # create w/ **template. It may be desirable to simple change
+    # clusters.create in the future.
+    template['net_id'] = template.get('neutron_management_network', None)
     valid_args = inspect.getargspec(cs.clusters.create).args
     for name in template.keys():
         if name not in valid_args:
