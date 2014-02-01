@@ -18,6 +18,7 @@ import datetime
 import inspect
 import json
 from savannaclient.nova import utils
+from savannaclient.openstack.common.apiclient import exceptions
 import sys
 
 
@@ -81,6 +82,23 @@ def _show_job(job):
     utils.print_dict(job._info)
 
 
+def _get_by_id_or_name(manager, id=None, name=None):
+    if not (name or id):
+        raise exceptions.CommandError("either NAME or ID is required")
+    if id:
+        return manager.get(id)
+    ls = manager.find(name=name)
+    if len(ls) == 0:
+        raise exceptions.CommandError("%s '%s' not found" %
+                                      (manager.resource_class.resource_name,
+                                       name))
+    elif len(ls) > 1:
+        raise exceptions.CommandError("%s '%s' not unique, try by ID" %
+                                      (manager.resource_class.resource_name,
+                                       name))
+    return ls[0]
+
+
 #
 # Plugins
 # ~~~~~~~
@@ -137,14 +155,14 @@ def do_image_list(cs, args):
     utils.print_list(images, columns, {'tags': _print_list_field('tags')})
 
 
+@utils.arg('--name',
+           help='Image name')
 @utils.arg('--id',
            metavar='<image_id>',
-           required=True,
            help='Id of image')
-# TODO(mattf): --name <image>
 def do_image_show(cs, args):
     """Show details of an image."""
-    image = cs.images.get(args.id)
+    image = _get_by_id_or_name(cs.images, args.id, args.name)
     del image._info['metadata']
     image._info['tags'] = ', '.join(image._info['tags'])
     utils.print_dict(image._info)
@@ -257,14 +275,10 @@ def do_cluster_list(cs, args):
     utils.print_list(clusters, columns)
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<cluster>',
-#           required=True,
-#           help='Cluster name')
+@utils.arg('--name',
+           help='Cluster name')
 @utils.arg('--id',
            metavar='<cluster_id>',
-           required=True,
            help='Id of cluster to show')
 @utils.arg('--json',
            action='store_true',
@@ -272,7 +286,7 @@ def do_cluster_list(cs, args):
            help='Print JSON representation of cluster')
 def do_cluster_show(cs, args):
     """Show details of a cluster."""
-    cluster = cs.clusters.get(args.id)
+    cluster = _get_by_id_or_name(cs.clusters, args.id, args.name)
     if args.json:
         print(json.dumps(cluster._info))
     else:
@@ -335,14 +349,10 @@ def do_node_group_template_list(cs, args):
                      {'node_processes': _print_list_field('node_processes')})
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<template>',
-#           required=True,
-#           help='Template name')
+@utils.arg('--name',
+           help='Node group template name')
 @utils.arg('--id',
            metavar='<template_id>',
-           required=True,
            help='Id of node group template to show')
 @utils.arg('--json',
            action='store_true',
@@ -350,7 +360,7 @@ def do_node_group_template_list(cs, args):
            help='Print JSON representation of node group template')
 def do_node_group_template_show(cs, args):
     """Show details of a node group template."""
-    template = cs.node_group_templates.get(args.id)
+    template = _get_by_id_or_name(cs.node_group_templates, args.id, args.name)
     if args.json:
         print(json.dumps(template._info))
     else:
@@ -408,14 +418,10 @@ def do_cluster_template_list(cs, args):
                      {'node_groups': _print_node_group_field})
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<template>',
-#           required=True,
-#           help='Template name')
+@utils.arg('--name',
+           help='Cluster template name')
 @utils.arg('--id',
            metavar='<template_id>',
-           required=True,
            help='Id of cluster template to show')
 @utils.arg('--json',
            action='store_true',
@@ -423,7 +429,7 @@ def do_cluster_template_list(cs, args):
            help='Print JSON representation of cluster template')
 def do_cluster_template_show(cs, args):
     """Show details of a cluster template."""
-    template = cs.cluster_templates.get(args.id)
+    template = _get_by_id_or_name(cs.cluster_templates, args.id, args.name)
     if args.json:
         print(json.dumps(template._info))
     else:
@@ -484,13 +490,13 @@ def do_data_source_list(cs, args):
     utils.print_list(sources, columns)
 
 
+@utils.arg('--name',
+           help='Data source name')
 @utils.arg('--id',
-           required=True,
            help='Id of data source')
-# TODO(mattf): --name <name>
 def do_data_source_show(cs, args):
     """Show details of a data source."""
-    _show_data_source(cs.data_sources.get(args.id))
+    _show_data_source(_get_by_id_or_name(cs.data_sources, args.id, args.name))
 
 
 @utils.arg('--name',
@@ -590,13 +596,13 @@ def do_job_binary_list(cs, args):
     utils.print_list(binaries, columns)
 
 
+@utils.arg('--name',
+           help='Job binary name')
 @utils.arg('--id',
-           required=True,
            help='Id of job binary')
-# TODO(mattf): --name <name>
 def do_job_binary_show(cs, args):
     """Show details of a job binary."""
-    _show_job_binary(cs.job_binaries.get(args.id))
+    _show_job_binary(_get_by_id_or_name(cs.job_binaries, args.id, args.name))
 
 
 @utils.arg('--name',
@@ -658,13 +664,13 @@ def do_job_template_list(cs, args):
     utils.print_list(templates, columns)
 
 
+@utils.arg('--name',
+           help='Job template name')
 @utils.arg('--id',
-           required=True,
            help='Id of a job template')
-# TODO(mattf): --name <name>
 def do_job_template_show(cs, args):
     """Show details of a job template."""
-    _show_job_template(cs.jobs.get(args.id))
+    _show_job_template(_get_by_id_or_name(cs.jobs, args.id, args.name))
 
 
 @utils.arg('--name',
@@ -705,7 +711,7 @@ def do_job_template_delete(cs, args):
 # ~~~~~~~~~~~~~~
 # job-list
 #
-# job-show --name <name>|--id <id>
+# job-show --id <id>
 #
 # job-create --job-template <id> --cluster <id>
 #            [--input-data <id>] [--output-data <id>]
@@ -713,7 +719,7 @@ def do_job_template_delete(cs, args):
 #            [--arg <arg>]
 #            [--config <name=value>]
 #
-# job-delete --name <name>|--id <id>
+# job-delete --id <id>
 #
 
 def do_job_list(cs, args):
@@ -730,7 +736,6 @@ def do_job_list(cs, args):
 @utils.arg('--id',
            required=True,
            help='Id of a job')
-# TODO(mattf): --name <name>, which is cluster name
 def do_job_show(cs, args):
     """Show details of a job."""
     _show_job(cs.job_executions.get(args.id))
@@ -774,7 +779,6 @@ def do_job_create(cs, args):
 @utils.arg('--id',
            required=True,
            help='Id of a job')
-# TODO(mattf): --name <name>, which is cluster name
 def do_job_delete(cs, args):
     """Delete a job."""
     cs.job_executions.delete(args.id)
