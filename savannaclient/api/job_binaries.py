@@ -17,7 +17,7 @@ from savannaclient.api import base
 
 
 class JobBinaries(base.Resource):
-    resource_name = 'JobBinary'
+    resource_name = 'Job Binary'
 
 
 class JobBinariesManager(base.ResourceManager):

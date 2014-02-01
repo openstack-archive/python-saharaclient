@@ -17,7 +17,7 @@ from savannaclient.api import base
 
 
 class DataSources(base.Resource):
-    resource_name = 'DataSource'
+    resource_name = 'Data Source'
 
 
 class DataSourceManager(base.ResourceManager):
