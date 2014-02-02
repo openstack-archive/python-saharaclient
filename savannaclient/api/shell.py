@@ -168,11 +168,7 @@ def do_image_show(cs, args):
     utils.print_dict(image._info)
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<image>',
-#           required=True,
-#           help='Name from Image index (e.g. glance index)')
+# TODO(mattf): Add --name, must lookup in glance index
 @utils.arg('--id',
            metavar='<image_id>',
            required=True,
@@ -192,29 +188,23 @@ def do_image_register(cs, args):
     # TODO(mattf): No indication of result, expect image details
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<image>',
-#           required=True,
-#           help='Name from Image index (e.g. glance index)')
+@utils.arg('--name',
+           help='Image name')
 @utils.arg('--id',
            metavar='<image_id>',
-           required=True,
            help='Image to unregister')
 def do_image_unregister(cs, args):
     """Unregister an image."""
-    cs.images.unregister_image(args.id)
+    cs.images.unregister_image(
+        args.id or _get_by_id_or_name(cs.images, name=args.name).id
+    )
     # TODO(mattf): No indication of result, expect result to display
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<image>',
-#           required=True,
-#           help='Name from Image index (e.g. glance index)')
+@utils.arg('--name',
+           help='Image name')
 @utils.arg('--id',
            metavar='<image_id>',
-           required=True,
            help='Image to tag')
 # TODO(mattf): Change --tag to --tag+
 @utils.arg('--tag',
@@ -224,18 +214,15 @@ def do_image_unregister(cs, args):
 def do_image_add_tag(cs, args):
     """Add a tag to an image."""
     # TODO(mattf): Need proper add_tag API call
-    cs.images.update_tags(args.id, cs.images.get(args.id).tags + [args.tag, ])
+    id = args.id or _get_by_id_or_name(cs.images, name=args.name).id
+    cs.images.update_tags(id, cs.images.get(id).tags + [args.tag, ])
     # TODO(mattf): No indication of result, expect image details
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<image>',
-#           required=True,
-#           help='Name from Image index (e.g. glance index)')
+@utils.arg('--name',
+           help='Image name')
 @utils.arg('--id',
            metavar='<image_id>',
-           required=True,
            help='Image to tag')
 # TODO(mattf): Change --tag to --tag+
 @utils.arg('--tag',
@@ -245,9 +232,10 @@ def do_image_add_tag(cs, args):
 def do_image_remove_tag(cs, args):
     """Remove a tag from an image."""
     # TODO(mattf): Need proper remove_tag API call
-    cs.images.update_tags(args.id,
+    id = args.id or _get_by_id_or_name(cs.images, name=args.name).id
+    cs.images.update_tags(id,
                           filter(lambda x: x != args.tag,
-                                 cs.images.get(args.id).tags))
+                                 cs.images.get(id).tags))
     # TODO(mattf): No indication of result, expect image details
 
 
