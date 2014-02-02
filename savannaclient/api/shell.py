@@ -314,18 +314,16 @@ def do_cluster_create(cs, args):
     _show_cluster(cs.clusters.create(**template))
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<cluster>',
-#           required=True,
-#           help='Cluster name')
+@utils.arg('--name',
+           help='Cluster name')
 @utils.arg('--id',
            metavar='<cluster_id>',
-           required=True,
            help='Id of cluster to delete')
 def do_cluster_delete(cs, args):
     """Delete a cluster."""
-    cs.clusters.delete(args.id)
+    cs.clusters.delete(
+        args.id or _get_by_id_or_name(cs.clusters, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
@@ -383,18 +381,17 @@ def do_node_group_template_create(cs, args):
     _show_node_group_template(cs.node_group_templates.create(**template))
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<template>',
-#           required=True,
-#           help='Template name')
+@utils.arg('--name',
+           help='Node group template name')
 @utils.arg('--id',
            metavar='<template_id>',
-           required=True,
            help='Id of node group template to delete')
 def do_node_group_template_delete(cs, args):
     """Delete a node group template."""
-    cs.node_group_templates.delete(args.id)
+    cs.node_group_templates.delete(
+        args.id or
+        _get_by_id_or_name(cs.node_group_templates, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
@@ -452,18 +449,16 @@ def do_cluster_template_create(cs, args):
     _show_cluster_template(cs.cluster_templates.create(**template))
 
 
-# TODO(mattf): Add --name
-#@utils.arg('--name',
-#           metavar='<template>',
-#           required=True,
-#           help='Template name')
+@utils.arg('--name',
+           help='Cluster template name')
 @utils.arg('--id',
            metavar='<template_id>',
-           required=True,
            help='Id of cluster template to delete')
 def do_cluster_template_delete(cs, args):
     """Delete a cluster template."""
-    cs.cluster_templates.delete(args.id)
+    cs.cluster_templates.delete(
+        args.id or _get_by_id_or_name(cs.cluster_templates, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
@@ -524,13 +519,15 @@ def do_data_source_create(cs, args):
                                              args.user, args.password))
 
 
+@utils.arg('--name',
+           help='Data source name')
 @utils.arg('--id',
-           required=True,
            help='Id of data source to delete')
-# TODO(mattf): Add --name
 def do_data_source_delete(cs, args):
     """Delete a data source."""
-    cs.data_sources.delete(args.id)
+    cs.data_sources.delete(
+        args.id or _get_by_id_or_name(cs.data_sources, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
@@ -632,12 +629,15 @@ def do_job_binary_create(cs, args):
                                             args.description, extra))
 
 
+@utils.arg('--name',
+           help='Job binary name')
 @utils.arg('--id',
-           required=True,
            help='Id of a job binary')
 def do_job_binary_delete(cs, args):
     """Delete a job binary."""
-    cs.job_binaries.delete(args.id)
+    cs.job_binaries.delete(
+        args.id or _get_by_id_or_name(cs.job_binaries, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
@@ -697,12 +697,15 @@ def do_job_template_create(cs, args):
                                       args.description))
 
 
+@utils.arg('--name',
+           help='Job template name')
 @utils.arg('--id',
-           required=True,
            help='Id of a job template')
 def do_job_template_delete(cs, args):
     """Delete a job template."""
-    cs.jobs.delete(args.id)
+    cs.jobs.delete(
+        args.id or _get_by_id_or_name(cs.jobs, name=args.name).id
+    )
     # TODO(mattf): No indication of result
 
 
