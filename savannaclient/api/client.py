@@ -62,20 +62,8 @@ class Client(object):
         if not savanna_catalog_url:
             raise RuntimeError("Could not find Savanna endpoint in catalog")
 
-        if not project_id:
-            keystone = self.get_keystone_client(username=username,
-                                                api_key=api_key,
-                                                auth_url=auth_url,
-                                                token=input_auth_token,
-                                                project_name=project_name)
-            project_id = self.get_projects_list(keystone).find(
-                name=project_name).id
-            if not project_id:
-                raise RuntimeError("Could not determine tenant id")
-
-        savanna_url = savanna_catalog_url + "/" + project_id
-
-        self.client = httpclient.HTTPClient(savanna_url, input_auth_token)
+        self.client = httpclient.HTTPClient(savanna_catalog_url,
+                                            input_auth_token)
 
         self.clusters = clusters.ClusterManager(self)
         self.cluster_templates = cluster_templates.ClusterTemplateManager(self)
