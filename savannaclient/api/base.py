@@ -26,6 +26,7 @@ class Resource(object):
 
     def __init__(self, manager, info):
         self.manager = manager
+        info = info.copy()
         self._info = info
         self._set_defaults(info)
         self._add_details(info)
