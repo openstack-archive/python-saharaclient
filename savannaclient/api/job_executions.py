@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
 from savannaclient.api import base
 
 
@@ -33,10 +32,12 @@ class JobExecutionsManager(base.ResourceManager):
     def delete(self, obj_id):
         self._delete('/job-executions/%s' % obj_id)
 
-    def create(self, job_id, cluster_id, input_id, output_id, configs,
-               job_exec_data={}):
+    def create(self, job_id, cluster_id, input_id, output_id, configs):
         url = "/jobs/%s/execute" % job_id
-        data = copy.copy(job_exec_data)
+        data = {
+            "cluster_id": cluster_id,
+            "job_configs": configs
+        }
 
         # Leave these out if they are null.  For Java job types they
         # are not part of the schema
@@ -45,12 +46,5 @@ class JobExecutionsManager(base.ResourceManager):
         for key, value in io_ids:
             if value is not None:
                 data.update({key: value})
-
-        # These are always required
-        data.update(
-            {
-                "cluster_id": cluster_id,
-                "job_configs": configs
-            })
 
         return self._create(url, data, 'job_execution')
