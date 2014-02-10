@@ -181,9 +181,6 @@ def print_list(objs, fields, formatters={}, sortby_index=None):
     else:
         result = strutils.safe_encode(pt.get_string())
 
-    if six.PY3:
-        result = result.decode()
-
     print(result)
 
 
