@@ -149,7 +149,7 @@ def do_plugin_show(cs, args):
 
 # TODO(mattf): [--tag <tag>]*
 def do_image_list(cs, args):
-    """Print a list of available plugins."""
+    """Print a list of available images."""
     images = cs.images.list()
     columns = ('name', 'id', 'username', 'tags', 'description')
     utils.print_list(images, columns, {'tags': _print_list_field('tags')})
