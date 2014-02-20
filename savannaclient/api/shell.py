@@ -118,7 +118,7 @@ def do_plugin_list(cs, args):
 @utils.arg('--name',
            metavar='<plugin>',
            required=True,
-           help='Name of plugin')
+           help='Name of the plugin.')
 # TODO(mattf) - savannaclient does not support query w/ version
 #@utils.arg('--version',
 #           metavar='<version>',
@@ -156,10 +156,10 @@ def do_image_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Image name')
+           help='Name of the image.')
 @utils.arg('--id',
            metavar='<image_id>',
-           help='Id of image')
+           help='ID of the image.')
 def do_image_show(cs, args):
     """Show details of an image."""
     image = _get_by_id_or_name(cs.images, args.id, args.name)
@@ -172,15 +172,15 @@ def do_image_show(cs, args):
 @utils.arg('--id',
            metavar='<image_id>',
            required=True,
-           help='Id from Image index (e.g. glance index)')
+           help='ID of image, run "glance image-list" to see all IDs.')
 @utils.arg('--username',
            default='root',
            metavar='<name>',
-           help='Username of privileged user in the image')
+           help='Username of privileged user in the image.')
 @utils.arg('--description',
            default='',
            metavar='<desc>',
-           help='Description of image')
+           help='Description of the image.')
 def do_image_register(cs, args):
     """Register an image from the Image index."""
     # TODO(mattf): image register should not be through update
@@ -189,10 +189,10 @@ def do_image_register(cs, args):
 
 
 @utils.arg('--name',
-           help='Image name')
+           help='Name of the image.')
 @utils.arg('--id',
            metavar='<image_id>',
-           help='Image to unregister')
+           help='ID of image to unregister.')
 def do_image_unregister(cs, args):
     """Unregister an image."""
     cs.images.unregister_image(
@@ -202,15 +202,15 @@ def do_image_unregister(cs, args):
 
 
 @utils.arg('--name',
-           help='Image name')
+           help='Name of the image.')
 @utils.arg('--id',
            metavar='<image_id>',
-           help='Image to tag')
+           help='ID of image to tag.')
 # TODO(mattf): Change --tag to --tag+
 @utils.arg('--tag',
            metavar='<tag>',
            required=True,
-           help='Tag to add')
+           help='Tag to add.')
 def do_image_add_tag(cs, args):
     """Add a tag to an image."""
     # TODO(mattf): Need proper add_tag API call
@@ -220,15 +220,15 @@ def do_image_add_tag(cs, args):
 
 
 @utils.arg('--name',
-           help='Image name')
+           help='Name of the image.')
 @utils.arg('--id',
            metavar='<image_id>',
-           help='Image to tag')
+           help='Image to tag.')
 # TODO(mattf): Change --tag to --tag+
 @utils.arg('--tag',
            metavar='<tag>',
            required=True,
-           help='Tag to add')
+           help='Tag to remove.')
 def do_image_remove_tag(cs, args):
     """Remove a tag from an image."""
     # TODO(mattf): Need proper remove_tag API call
@@ -264,14 +264,14 @@ def do_cluster_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Cluster name')
+           help='Name of the cluster.')
 @utils.arg('--id',
            metavar='<cluster_id>',
-           help='Id of cluster to show')
+           help='ID of the cluster to show.')
 @utils.arg('--json',
            action='store_true',
            default=False,
-           help='Print JSON representation of cluster')
+           help='Print JSON representation of the cluster.')
 def do_cluster_show(cs, args):
     """Show details of a cluster."""
     cluster = _get_by_id_or_name(cs.clusters, args.id, args.name)
@@ -284,7 +284,7 @@ def do_cluster_show(cs, args):
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
-           help='JSON representation of cluster')
+           help='JSON representation of cluster.')
 def do_cluster_create(cs, args):
     """Create a cluster."""
      # TODO(mattf): improve template validation, e.g. template w/o name key
@@ -303,10 +303,10 @@ def do_cluster_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Cluster name')
+           help='Name of the cluster.')
 @utils.arg('--id',
            metavar='<cluster_id>',
-           help='Id of cluster to delete')
+           help='ID of the cluster to delete.')
 def do_cluster_delete(cs, args):
     """Delete a cluster."""
     cs.clusters.delete(
@@ -336,14 +336,14 @@ def do_node_group_template_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Node group template name')
+           help='Name of the node group template.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='Id of node group template to show')
+           help='ID of the node group template to show.')
 @utils.arg('--json',
            action='store_true',
            default=False,
-           help='Print JSON representation of node group template')
+           help='Print JSON representation of node group template.')
 def do_node_group_template_show(cs, args):
     """Show details of a node group template."""
     template = _get_by_id_or_name(cs.node_group_templates, args.id, args.name)
@@ -356,7 +356,7 @@ def do_node_group_template_show(cs, args):
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
-           help='JSON representation of node group template')
+           help='JSON representation of node group template.')
 def do_node_group_template_create(cs, args):
     """Create a node group template."""
      # TODO(mattf): improve template validation, e.g. template w/o name key
@@ -370,10 +370,10 @@ def do_node_group_template_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Node group template name')
+           help='Name of the node group template.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='Id of node group template to delete')
+           help='ID of the node group template to delete.')
 def do_node_group_template_delete(cs, args):
     """Delete a node group template."""
     cs.node_group_templates.delete(
@@ -404,14 +404,14 @@ def do_cluster_template_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Cluster template name')
+           help='Name of the cluster template.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='Id of cluster template to show')
+           help='ID of the cluster template to show.')
 @utils.arg('--json',
            action='store_true',
            default=False,
-           help='Print JSON representation of cluster template')
+           help='Print JSON representation of cluster template.')
 def do_cluster_template_show(cs, args):
     """Show details of a cluster template."""
     template = _get_by_id_or_name(cs.cluster_templates, args.id, args.name)
@@ -424,7 +424,7 @@ def do_cluster_template_show(cs, args):
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
-           help='JSON representation of cluster template')
+           help='JSON representation of cluster template.')
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
      # TODO(mattf): improve template validation, e.g. template w/o name key
@@ -438,10 +438,10 @@ def do_cluster_template_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Cluster template name')
+           help='Name of the cluster template.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='Id of cluster template to delete')
+           help='ID of the cluster template to delete.')
 def do_cluster_template_delete(cs, args):
     """Delete a cluster template."""
     cs.cluster_templates.delete(
@@ -474,9 +474,9 @@ def do_data_source_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Data source name')
+           help='Name of the data source.')
 @utils.arg('--id',
-           help='Id of data source')
+           help='ID of the data source.')
 def do_data_source_show(cs, args):
     """Show details of a data source."""
     _show_data_source(_get_by_id_or_name(cs.data_sources, args.id, args.name))
@@ -484,22 +484,22 @@ def do_data_source_show(cs, args):
 
 @utils.arg('--name',
            required=True,
-           help='Name of the data source')
+           help='Name of the data source.')
 @utils.arg('--type',
            required=True,
-           help='Type of the data source')
+           help='Type of the data source.')
 @utils.arg('--url',
            required=True,
-           help='URL for data source')
+           help='URL for the data source.')
 @utils.arg('--description',
            default='',
-           help='Description of the data source')
+           help='Description of the data source.')
 @utils.arg('--user',
            default=None,
-           help='Username for accessing the data source url')
+           help='Username for accessing the data source URL.')
 @utils.arg('--password',
            default=None,
-           help='Password for accessing the data source url')
+           help='Password for accessing the data source URL.')
 def do_data_source_create(cs, args):
     """Create a data source that provides job input or receives job output."""
     _show_data_source(cs.data_sources.create(args.name, args.description,
@@ -508,9 +508,9 @@ def do_data_source_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Data source name')
+           help='Name of the data source.')
 @utils.arg('--id',
-           help='Id of data source to delete')
+           help='ID of data source to delete.')
 def do_data_source_delete(cs, args):
     """Delete a data source."""
     cs.data_sources.delete(
@@ -537,7 +537,7 @@ def do_job_binary_data_list(cs, args):
 @utils.arg('--file',
            default=sys.stdin,
            type=argparse.FileType('r'),
-           help='Data to store')
+           help='Data to store.')
 def do_job_binary_data_create(cs, args):
     """Store data in Savanna's internal DB.
     Use 'swift upload' instead of this command.
@@ -552,7 +552,7 @@ def do_job_binary_data_create(cs, args):
 
 @utils.arg('--id',
            required=True,
-           help='Id of internally stored job binary data')
+           help='ID of internally stored job binary data.')
 def do_job_binary_data_delete(cs, args):
     """Delete an internally stored job binary data."""
     cs.job_binary_internals.delete(args.id)
@@ -582,9 +582,9 @@ def do_job_binary_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Job binary name')
+           help='Name of the job binary.')
 @utils.arg('--id',
-           help='Id of job binary')
+           help='ID of the job binary.')
 def do_job_binary_show(cs, args):
     """Show details of a job binary."""
     _show_job_binary(_get_by_id_or_name(cs.job_binaries, args.id, args.name))
@@ -592,19 +592,19 @@ def do_job_binary_show(cs, args):
 
 @utils.arg('--name',
            required=True,
-           help='Name of the job binary')
+           help='Name of the job binary.')
 @utils.arg('--url',
            required=True,
-           help='URL for the job binary')
+           help='URL for the job binary.')
 @utils.arg('--description',
            default='',
-           help='Description of the job binary')
+           help='Description of the job binary.')
 @utils.arg('--user',
            default=None,
-           help='Username for accessing the job binary url')
+           help='Username for accessing the job binary URL.')
 @utils.arg('--password',
            default=None,
-           help='Password for accessing the job binary url')
+           help='Password for accessing the job binary URL.')
 def do_job_binary_create(cs, args):
     """Record a job binary."""
     # TODO(mattf): make credentials consistent w/ data source
@@ -618,9 +618,9 @@ def do_job_binary_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Job binary name')
+           help='Name of the job binary.')
 @utils.arg('--id',
-           help='Id of a job binary')
+           help='ID of the job binary to delete.')
 def do_job_binary_delete(cs, args):
     """Delete a job binary."""
     cs.job_binaries.delete(
@@ -653,9 +653,9 @@ def do_job_template_list(cs, args):
 
 
 @utils.arg('--name',
-           help='Job template name')
+           help='Name of the job template.')
 @utils.arg('--id',
-           help='Id of a job template')
+           help='ID of the job template.')
 def do_job_template_show(cs, args):
     """Show details of a job template."""
     _show_job_template(_get_by_id_or_name(cs.jobs, args.id, args.name))
@@ -663,21 +663,21 @@ def do_job_template_show(cs, args):
 
 @utils.arg('--name',
            required=True,
-           help='Name of the job template')
+           help='Name of the job template.')
 @utils.arg('--type',
            required=True,
-           help='Type of the job template')
+           help='Type of the job template.')
 @utils.arg('--main',
            action='append',
            default=[],
-           help='Id for job\'s main job-binary')
+           help='ID for job\'s main job-binary.')
 @utils.arg('--lib',
            action='append',
            default=[],
-           help='Id of job\'s lib job-binary, repeatable')
+           help='ID of job\'s lib job-binary, repeatable.')
 @utils.arg('--description',
            default='',
-           help='Description of the job template')
+           help='Description of the job template.')
 def do_job_template_create(cs, args):
     """Create a job template."""
     _show_job_template(cs.jobs.create(args.name, args.type,
@@ -686,9 +686,9 @@ def do_job_template_create(cs, args):
 
 
 @utils.arg('--name',
-           help='Job template name')
+           help='Name of the job template.')
 @utils.arg('--id',
-           help='Id of a job template')
+           help='ID of the job template.')
 def do_job_template_delete(cs, args):
     """Delete a job template."""
     cs.jobs.delete(
@@ -726,7 +726,7 @@ def do_job_list(cs, args):
 
 @utils.arg('--id',
            required=True,
-           help='Id of a job')
+           help='ID of the job.')
 def do_job_show(cs, args):
     """Show details of a job."""
     _show_job(cs.job_executions.get(args.id))
@@ -734,30 +734,30 @@ def do_job_show(cs, args):
 
 @utils.arg('--job-template',
            required=True,
-           help='Id of the job template to run')
+           help='ID of the job template to run.')
 @utils.arg('--cluster',
            required=True,
-           help='Id of the cluster to run the job in')
+           help='ID of the cluster to run the job in.')
 @utils.arg('--input-data',
            default=None,
-           help='Id of the input data source')
+           help='ID of the input data source.')
 @utils.arg('--output-data',
            default=None,
-           help='Id of the output data source')
+           help='ID of the output data source.')
 @utils.arg('--param',
            metavar='name=value',
            action='append',
            default=[],
-           help='Params to add to the job, repeatable')
+           help='Parameters to add to the job, repeatable.')
 @utils.arg('--arg',
            action='append',
            default=[],
-           help='Args to add to the job, repeatable')
+           help='Arguments to add to the job, repeatable.')
 @utils.arg('--config',
            metavar='name=value',
            action='append',
            default=[],
-           help='Config parameters to add to the job, repeatable')
+           help='Config parameters to add to the job, repeatable.')
 def do_job_create(cs, args):
     _convert = lambda ls: dict(map(lambda i: i.split('=', 1), ls))
     _show_job(cs.job_executions.create(args.job_template, args.cluster,
@@ -769,7 +769,7 @@ def do_job_create(cs, args):
 
 @utils.arg('--id',
            required=True,
-           help='Id of a job')
+           help='ID of a job.')
 def do_job_delete(cs, args):
     """Delete a job."""
     cs.job_executions.delete(args.id)
