@@ -30,7 +30,6 @@ from six import moves
 
 from savannaclient.openstack.common.apiclient import exceptions
 from savannaclient.openstack.common.gettextutils import _
-from savannaclient.openstack.common import importutils
 from savannaclient.openstack.common import strutils
 from savannaclient.openstack.common import uuidutils
 
@@ -181,9 +180,9 @@ def print_dict(dct, dict_property="Property", wrap=0):
     for k, v in six.iteritems(dct):
         # convert dict to str to check length
         if isinstance(v, dict):
-            v = str(v)
+            v = six.text_type(v)
         if wrap > 0:
-            v = textwrap.fill(str(v), wrap)
+            v = textwrap.fill(six.text_type(v), wrap)
         # if value has a newline, add in multiple rows
         # e.g. fault with stacktrace
         if v and isinstance(v, six.string_types) and r'\n' in v:
@@ -302,20 +301,6 @@ def get_service_type(f):
 
 def pretty_choice_list(l):
     return ', '.join("'%s'" % i for i in l)
-
-
-def import_class(import_str):
-    """Returns a class from a string including module and class."""
-    mod_str, _sep, class_str = import_str.rpartition('.')
-    __import__(mod_str)
-    return getattr(sys.modules[mod_str], class_str)
-
-
-def import_versioned_module(version, submodule=None):
-    module = 'savannaclient.v%s' % version
-    if submodule:
-        module = '.'.join((module, submodule))
-    return importutils.import_module(module)
 
 
 def exit(msg=''):
