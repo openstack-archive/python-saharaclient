@@ -130,7 +130,9 @@ class ResourceManager(object):
 
     def _raise_api_exception(self, resp):
         error_data = get_json(resp)
-        raise APIException(error_data["error_message"])
+        raise APIException(error_code=error_data.get("error_code"),
+                           error_name=error_data.get("error_name"),
+                           error_message=error_data.get("error_message"))
 
 
 def get_json(response):
@@ -146,4 +148,8 @@ def get_json(response):
 
 
 class APIException(Exception):
-    pass
+    def __init__(self, error_code=None, error_name=None, error_message=None):
+        super(APIException, self).__init__(error_message)
+        self.error_code = error_code
+        self.error_name = error_name
+        self.error_message = error_message
