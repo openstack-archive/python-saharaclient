@@ -5,5 +5,5 @@ mock>=1.0
 discover
 docutils==0.9.1
 oslosphinx
-testrepository>=0.0.17
+testrepository>=0.0.18
 sphinx>=1.1.2,<1.2
