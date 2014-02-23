@@ -247,7 +247,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--debug',
                             default=False,
                             action='store_true',
-                            help="Print debugging output")
+                            help="Print debugging output.")
 
         parser.add_argument('--os-cache',
                             default=strutils.bool_from_string(
@@ -322,7 +322,8 @@ class OpenStackSavannaShell(object):
 
         parser.add_argument('--service-type',
                             metavar='<service-type>',
-                            help='Defaults to data_processing for all actions')
+                            help='Defaults to data_processing for all '
+                                 'actions.')
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
 
@@ -371,7 +372,7 @@ class OpenStackSavannaShell(object):
                             default=cliutils.env('OS_CACERT', default=None),
                             help='Specify a CA bundle file to use in '
                             'verifying a TLS (https) server certificate. '
-                            'Defaults to env[OS_CACERT]')
+                            'Defaults to env[OS_CACERT].')
 
 # NA for Savanna
 #        parser.add_argument('--insecure',
@@ -387,7 +388,7 @@ class OpenStackSavannaShell(object):
                             default=cliutils.env('BYPASS_URL', default=None),
                             dest='bypass_url',
                             help="Use this API endpoint instead of the "
-                            "Service Catalog")
+                            "Service Catalog.")
         parser.add_argument('--bypass_url',
                             help=argparse.SUPPRESS)
 
@@ -728,7 +729,7 @@ class OpenStackSavannaShell(object):
         print(' '.join(commands | options))
 
     @cliutils.arg('command', metavar='<subcommand>', nargs='?',
-                  help='Display help for <subcommand>')
+                  help='Display help for <subcommand>.')
     def do_help(self, args):
         """Display help about this program or one of its subcommands."""
         if args.command:
