@@ -763,7 +763,7 @@ def do_job_create(cs, args):
     _show_job(cs.job_executions.create(args.job_template, args.cluster,
                                        args.input_data, args.output_data,
                                        {'params': _convert(args.param),
-                                        'args': dict(zip(args.arg, args.arg)),
+                                        'args': args.arg,
                                         'configs': _convert(args.config)}))
 
 
