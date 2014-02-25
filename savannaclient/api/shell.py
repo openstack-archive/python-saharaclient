@@ -64,7 +64,8 @@ def _show_data_source(source):
 
 def _show_job_binary(binary):
     # TODO(mattf): why are we passing credentials around like this?
-    del binary._info['extra']
+    if 'extra' in binary._info:
+        del binary._info['extra']
     utils.print_dict(binary._info)
 
 
