@@ -4,3 +4,4 @@ netaddr>=0.7.6
 python-keystoneclient>=0.6.0
 requests>=1.1
 six>=1.5.2
+PrettyTable>=0.7,<0.8
