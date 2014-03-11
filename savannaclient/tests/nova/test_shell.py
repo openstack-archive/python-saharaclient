@@ -119,9 +119,9 @@ class ShellTest(utils.TestCase):
 
     def test_help(self):
         required = [
-            '.*?^usage: savanna',
+            '.*?^usage: sahara',
             '.*?^\s+plugin-list\s+Print a list of available plugins.',
-            '.*?^See "savanna help COMMAND" for help on a specific command',
+            '.*?^See "sahara help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('help')
         for r in required:
@@ -130,7 +130,7 @@ class ShellTest(utils.TestCase):
 
     def test_help_on_subcommand(self):
         required = [
-            '.*?^usage: savanna plugin-list',
+            '.*?^usage: sahara plugin-list',
             '.*?^Print a list of available plugins.',
         ]
         stdout, stderr = self.shell('help plugin-list')
@@ -140,9 +140,9 @@ class ShellTest(utils.TestCase):
 
     def test_help_no_options(self):
         required = [
-            '.*?^usage: savanna',
+            '.*?^usage: sahara',
             '.*?^\s+plugin-list\s+Print a list of available plugins.',
-            '.*?^See "savanna help COMMAND" for help on a specific command',
+            '.*?^See "sahara help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('')
         for r in required:

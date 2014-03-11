@@ -19,7 +19,7 @@
 ###
 
 """
-Command-line interface to the OpenStack Savanna API.
+Command-line interface to the OpenStack Sahara API.
 """
 
 from __future__ import print_function
@@ -60,9 +60,9 @@ from savannaclient.openstack.common.apiclient import exceptions as exc
 from savannaclient.openstack.common import cliutils
 from savannaclient.openstack.common import strutils
 
-DEFAULT_SAVANNA_API_VERSION = 'api'
+DEFAULT_SAHARA_API_VERSION = 'api'
 DEFAULT_ENDPOINT_TYPE = 'publicURL'
-DEFAULT_SAVANNA_SERVICE_TYPE = 'data_processing'
+DEFAULT_SAHARA_SERVICE_TYPE = 'data_processing'
 
 logger = logging.getLogger(__name__)
 
@@ -226,9 +226,9 @@ class OpenStackSavannaShell(object):
 
     def get_base_parser(self):
         parser = SavannaClientArgumentParser(
-            prog='savanna',
+            prog='sahara',
             description=__doc__.strip(),
-            epilog='See "savanna help COMMAND" '
+            epilog='See "sahara help COMMAND" '
                    'for help on a specific command.',
             add_help=False,
             formatter_class=OpenStackHelpFormatter,
@@ -272,7 +272,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--os-username',
                             metavar='<auth-user-name>',
                             default=cliutils.env('OS_USERNAME',
-                                                 'SAVANNA_USERNAME'),
+                                                 'SAHARA_USERNAME'),
                             help='Defaults to env[OS_USERNAME].')
         parser.add_argument('--os_username',
                             help=argparse.SUPPRESS)
@@ -280,7 +280,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--os-password',
                             metavar='<auth-password>',
                             default=cliutils.env('OS_PASSWORD',
-                                                 'SAVANNA_PASSWORD'),
+                                                 'SAHARA_PASSWORD'),
                             help='Defaults to env[OS_PASSWORD].')
         parser.add_argument('--os_password',
                             help=argparse.SUPPRESS)
@@ -288,7 +288,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--os-tenant-name',
                             metavar='<auth-tenant-name>',
                             default=cliutils.env('OS_TENANT_NAME',
-                                                 'SAVANNA_PROJECT_ID'),
+                                                 'SAHARA_PROJECT_ID'),
                             help='Defaults to env[OS_TENANT_NAME].')
         parser.add_argument('--os_tenant_name',
                             help=argparse.SUPPRESS)
@@ -300,7 +300,7 @@ class OpenStackSavannaShell(object):
 
         parser.add_argument('--os-auth-url',
                             metavar='<auth-url>',
-                            default=cliutils.env('OS_AUTH_URL', 'SAVANNA_URL'),
+                            default=cliutils.env('OS_AUTH_URL', 'SAHARA_URL'),
                             help='Defaults to env[OS_AUTH_URL].')
         parser.add_argument('--os_auth_url',
                             help=argparse.SUPPRESS)
@@ -346,9 +346,9 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--endpoint-type',
                             metavar='<endpoint-type>',
                             default=cliutils.env(
-                                'SAVANNA_ENDPOINT_TYPE',
+                                'SAHARA_ENDPOINT_TYPE',
                                 default=DEFAULT_ENDPOINT_TYPE),
-                            help='Defaults to env[SAVANNA_ENDPOINT_TYPE] or '
+                            help='Defaults to env[SAHARA_ENDPOINT_TYPE] or '
                             + DEFAULT_ENDPOINT_TYPE + '.')
         # NOTE(dtroyer): We can't add --endpoint_type here due to argparse
         #                thinking usage-list --end is ambiguous; but it
@@ -357,14 +357,14 @@ class OpenStackSavannaShell(object):
         #parser.add_argument('--endpoint_type',
         #    help=argparse.SUPPRESS)
 
-        parser.add_argument('--savanna-api-version',
-                            metavar='<savanna-api-ver>',
+        parser.add_argument('--sahara-api-version',
+                            metavar='<sahara-api-ver>',
                             default=cliutils.env(
-                                'SAVANNA_API_VERSION',
-                                default=DEFAULT_SAVANNA_API_VERSION),
+                                'SAHARA_API_VERSION',
+                                default=DEFAULT_SAHARA_API_VERSION),
                             help='Accepts "api", '
-                                 'defaults to env[SAVANNA_API_VERSION].')
-        parser.add_argument('--savanna_api_version',
+                                 'defaults to env[SAHARA_API_VERSION].')
+        parser.add_argument('--sahara_api_version',
                             help=argparse.SUPPRESS)
 
         parser.add_argument('--os-cacert',
@@ -521,7 +521,7 @@ class OpenStackSavannaShell(object):
 
         # build available subcommands based on version
         self.extensions = \
-            self._discover_extensions(options.savanna_api_version)
+            self._discover_extensions(options.sahara_api_version)
         self._run_extension_hooks('__pre_parse_args__')
 
         # NOTE(dtroyer): Hackery to handle --endpoint_type due to argparse
@@ -533,7 +533,7 @@ class OpenStackSavannaShell(object):
             argv[spot] = '--endpoint-type'
 
         subcommand_parser = \
-            self.get_subcommand_parser(options.savanna_api_version)
+            self.get_subcommand_parser(options.sahara_api_version)
         self.parser = subcommand_parser
 
         if options.help or not argv:
@@ -586,7 +586,7 @@ class OpenStackSavannaShell(object):
             endpoint_type = DEFAULT_ENDPOINT_TYPE
 
         if not service_type:
-            service_type = DEFAULT_SAVANNA_SERVICE_TYPE
+            service_type = DEFAULT_SAHARA_SERVICE_TYPE
 # NA for Savanna - there is only one service this CLI accesses
 #            service_type = utils.get_service_type(args.func) or service_type
 
@@ -715,7 +715,7 @@ class OpenStackSavannaShell(object):
 
     def do_bash_completion(self, _args):
         """Prints all of the commands and options to stdout so that the
-        savanna.bash_completion script doesn't have to hard code them.
+        sahara.bash_completion script doesn't have to hard code them.
         """
         commands = set()
         options = set()

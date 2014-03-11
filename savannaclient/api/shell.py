@@ -541,7 +541,7 @@ def do_job_binary_data_list(cs, args):
            type=argparse.FileType('r'),
            help='Data to store.')
 def do_job_binary_data_create(cs, args):
-    """Store data in Savanna's internal DB.
+    """Store data in the internal DB.
     Use 'swift upload' instead of this command.
     Use this command only if Swift is not available.
     """
