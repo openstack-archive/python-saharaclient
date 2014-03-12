@@ -435,7 +435,7 @@ class OpenStackSavannaShell(object):
 
     def _discover_via_python_path(self):
         for (module_loader, name, _ispkg) in pkgutil.iter_modules():
-            if name.endswith('_python_savannaclient_ext'):
+            if name.endswith('_python_saharaclient_ext'):
                 if not hasattr(module_loader, 'load_module'):
                     # Python 2.6 compat: actually get an ImpImporter obj
                     module_loader = module_loader.find_module(name)
