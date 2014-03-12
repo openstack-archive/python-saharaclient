@@ -31,7 +31,7 @@ from saharaclient.api import plugins
 
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
-                 project_name=None, auth_url=None, savanna_url=None,
+                 project_name=None, auth_url=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data_processing',
                  input_auth_token=None):
 
@@ -45,8 +45,8 @@ class Client(object):
         if not input_auth_token:
             raise RuntimeError("Not Authorized")
 
-        savanna_catalog_url = savanna_url
-        if not savanna_url:
+        sahara_catalog_url = sahara_url
+        if not sahara_url:
             keystone = self.get_keystone_client(username=username,
                                                 api_key=api_key,
                                                 auth_url=auth_url,
@@ -57,12 +57,12 @@ class Client(object):
             if service_type in catalog:
                 for e_type, endpoint in catalog.get(service_type)[0].items():
                     if str(e_type).lower() == str(endpoint_type).lower():
-                        savanna_catalog_url = endpoint
+                        sahara_catalog_url = endpoint
                         break
-        if not savanna_catalog_url:
+        if not sahara_catalog_url:
             raise RuntimeError("Could not find Sahara endpoint in catalog")
 
-        self.client = httpclient.HTTPClient(savanna_catalog_url,
+        self.client = httpclient.HTTPClient(sahara_catalog_url,
                                             input_auth_token)
 
         self.clusters = clusters.ClusterManager(self)

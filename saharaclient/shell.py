@@ -200,10 +200,10 @@ class SecretsHelper(object):
         return tenant_id
 
 
-class SavannaClientArgumentParser(argparse.ArgumentParser):
+class SaharaClientArgumentParser(argparse.ArgumentParser):
 
     def __init__(self, *args, **kwargs):
-        super(SavannaClientArgumentParser, self).__init__(*args, **kwargs)
+        super(SaharaClientArgumentParser, self).__init__(*args, **kwargs)
 
     def error(self, message):
         """error(message: string)
@@ -222,10 +222,10 @@ class SavannaClientArgumentParser(argparse.ArgumentParser):
                       'subp': progparts[2]})
 
 
-class OpenStackSavannaShell(object):
+class OpenStackSaharaShell(object):
 
     def get_base_parser(self):
-        parser = SavannaClientArgumentParser(
+        parser = SaharaClientArgumentParser(
             prog='sahara',
             description=__doc__.strip(),
             epilog='See "sahara help COMMAND" '
@@ -239,7 +239,7 @@ class OpenStackSavannaShell(object):
                             action='store_true',
                             help=argparse.SUPPRESS)
 
-# NA for Savanna
+# NA
 #        parser.add_argument('--version',
 #                            action='version',
 #                            version=saharaclient.__version__)
@@ -305,7 +305,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--os_auth_url',
                             help=argparse.SUPPRESS)
 
-# NA for Savanna
+# NA
 #        parser.add_argument('--os-region-name',
 #            metavar='<region-name>',
 #            default=utils.env('OS_REGION_NAME', 'SAHARA_REGION_NAME'),
@@ -327,7 +327,7 @@ class OpenStackSavannaShell(object):
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
 
-# NA for Savanna
+# NA
 #        parser.add_argument('--service-name',
 #            metavar='<service-name>',
 #            default=utils.env('SAHARA_SERVICE_NAME'),
@@ -335,7 +335,7 @@ class OpenStackSavannaShell(object):
 #        parser.add_argument('--service_name',
 #            help=argparse.SUPPRESS)
 
-# NA for Savanna
+# NA
 #        parser.add_argument('--volume-service-name',
 #            metavar='<volume-service-name>',
 #            default=utils.env('NOVA_VOLUME_SERVICE_NAME'),
@@ -374,7 +374,7 @@ class OpenStackSavannaShell(object):
                             'verifying a TLS (https) server certificate. '
                             'Defaults to env[OS_CACERT].')
 
-# NA for Savanna
+# NA
 #        parser.add_argument('--insecure',
 #            default=utils.env('NOVACLIENT_INSECURE', default=False),
 #            action='store_true',
@@ -587,7 +587,7 @@ class OpenStackSavannaShell(object):
 
         if not service_type:
             service_type = DEFAULT_SERVICE_TYPE
-# NA for Savanna - there is only one service this CLI accesses
+# NA - there is only one service this CLI accesses
 #            service_type = utils.get_service_type(args.func) or service_type
 
         #FIXME(usrleon): Here should be restrict for project id same as
@@ -620,7 +620,7 @@ class OpenStackSavannaShell(object):
                                            "default url with --os-auth-system "
                                            "or env[OS_AUTH_SYSTEM]")
 
-# NA for Savanna
+# NA
 #        if (options.os_compute_api_version and
 #                options.os_compute_api_version != '1.0'):
 #            if not os_tenant_name and not os_tenant_id:
@@ -640,7 +640,7 @@ class OpenStackSavannaShell(object):
         # Now check for the password/token of which pieces of the
         # identifying keyring key can come from the underlying client
         if not cliutils.isunauthenticated(args.func):
-# NA for Savanna - Client can't be used with SecretsHelper
+# NA - Client can't be used with SecretsHelper
 #            helper = SecretsHelper(args, self.cs.client)
             if (auth_plugin and auth_plugin.opts and
                     "os_password" not in auth_plugin.opts):
@@ -674,7 +674,7 @@ class OpenStackSavannaShell(object):
 #                self.cs.client.password = os_password
 #                self.cs.client.keyring_saver = helper
 
-# NA for Savanna
+# NA
 #        try:
 #            if not utils.isunauthenticated(args.func):
 #                self.cs.authenticate()
@@ -688,7 +688,7 @@ class OpenStackSavannaShell(object):
                                 project_id=os_tenant_id,
                                 project_name=os_tenant_name,
                                 auth_url=os_auth_url,
-                                savanna_url=bypass_url)
+                                sahara_url=bypass_url)
 
         args.func(self.cs, args)
 
@@ -752,7 +752,7 @@ class OpenStackHelpFormatter(argparse.HelpFormatter):
 
 def main():
     try:
-        OpenStackSavannaShell().main(map(strutils.safe_decode, sys.argv[1:]))
+        OpenStackSaharaShell().main(map(strutils.safe_decode, sys.argv[1:]))
 
     except Exception as e:
         logger.debug(e, exc_info=1)

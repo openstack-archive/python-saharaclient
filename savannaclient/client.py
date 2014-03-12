@@ -16,4 +16,8 @@
 from saharaclient import client as saharaclient
 
 
-Client = saharaclient.Client
+def Client(version, *args, **kwargs):
+    if 'savanna_url' in kwargs:
+        kwargs['sahara_url'] = kwargs['savanna_url']
+        del kwargs['savanna_url']
+    return saharaclient.Client(version, *args, **kwargs)
