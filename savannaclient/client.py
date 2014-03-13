@@ -13,33 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from savannaclient.openstack.common import importutils
+from saharaclient import client as saharaclient
 
 
-class UnsupportedVersion(Exception):
-    """Indicates that the user is trying to use an unsupported
-    version of the API.
-    """
-    pass
-
-
-def get_client_class(version):
-    version_map = {
-        '1.0': 'savannaclient.api.client.Client',
-        '1.1': 'savannaclient.api.client.Client',
-    }
-    try:
-        client_path = version_map[str(version)]
-    except (KeyError, ValueError):
-        supported_versions = ''.join(version_map.keys())
-        msg = ("Invalid client version '%(version)s'; must be one of: "
-               "%(versions)s") % {'version': version,
-                                  'versions': supported_versions}
-        raise UnsupportedVersion(msg)
-
-    return importutils.import_class(client_path)
-
-
-def Client(version, *args, **kwargs):
-    client_class = get_client_class(version)
-    return client_class(*args, **kwargs)
+Client = saharaclient.Client
