@@ -76,7 +76,7 @@ class ShellTest(utils.TestCase):
 
     def setUp(self):
         super(ShellTest, self).setUp()
-# NA for Savanna atm
+# NA atm
 #       self.useFixture(fixtures.MonkeyPatch(
 #                       'novaclient.client.get_client_class',
 #                       mock.MagicMock))
@@ -89,7 +89,7 @@ class ShellTest(utils.TestCase):
         try:
             sys.stdout = six.StringIO()
             sys.stderr = six.StringIO()
-            _shell = saharaclient.shell.OpenStackSavannaShell()
+            _shell = saharaclient.shell.OpenStackSaharaShell()
             _shell.main(argstr.split())
         except SystemExit:
             exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -106,7 +106,7 @@ class ShellTest(utils.TestCase):
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.shell, 'help foofoo')
 
-# NA for Savanna
+# NA
 #    def test_invalid_timeout(self):
 #        for f in [0, -1, -10]:
 #            cmd_text = '--timeout %s' % (f)
