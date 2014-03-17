@@ -36,6 +36,7 @@ import sys
 import pkg_resources
 import six
 
+
 HAS_KEYRING = False
 all_errors = ValueError
 try:
@@ -59,6 +60,7 @@ from saharaclient.nova import extension as nova_extension
 from saharaclient.openstack.common.apiclient import exceptions as exc
 from saharaclient.openstack.common import cliutils
 from saharaclient.openstack.common import strutils
+from saharaclient import version
 
 DEFAULT_API_VERSION = 'api'
 DEFAULT_ENDPOINT_TYPE = 'publicURL'
@@ -239,10 +241,9 @@ class OpenStackSaharaShell(object):
                             action='store_true',
                             help=argparse.SUPPRESS)
 
-# NA
-#        parser.add_argument('--version',
-#                            action='version',
-#                            version=saharaclient.__version__)
+        parser.add_argument('--version',
+                            action='version',
+                            version=version.version_info.version_string())
 
         parser.add_argument('--debug',
                             default=False,
