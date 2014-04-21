@@ -1,0 +1,34 @@
+[COMMON]
+
+# Username for OpenStack (string value)
+#OS_USERNAME = 'admin'
+
+# Password for OpenStack (string value)
+#OS_PASSWORD = 'admin'
+
+# Tenant name for OpenStack (string value)
+#OS_TENANT_NAME = 'admin'
+
+# URL for OpenStack (string value)
+#OS_AUTH_URL = 'http://127.0.0.1:5000/v2.0'
+
+# OpenStack auth version for Swift (string value)
+#SWIFT_AUTH_VERSION = 2
+
+#  Project name for OpenStack (string value)
+#OS_PROJECT_NAME = 'admin'
+
+# The BYPASS_URL value to pass to the cli (string value)
+#BYPASS_URL = ''
+
+[VANILLA]
+
+#SKIP_ALL_TESTS_FOR_PLUGIN = False
+
+[VANILLA2]
+
+#SKIP_ALL_TESTS_FOR_PLUGIN = True
+
+[HDP]
+
+#SKIP_ALL_TESTS_FOR_PLUGIN = True
