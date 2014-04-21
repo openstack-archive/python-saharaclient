@@ -25,7 +25,7 @@ from testtools import matchers
 import saharaclient.api.client
 from saharaclient.openstack.common.apiclient import exceptions
 import saharaclient.shell
-from saharaclient.tests.nova import utils
+from saharaclient.tests.unit.nova import utils
 
 FAKE_ENV = {'OS_USERNAME': 'username',
             'OS_PASSWORD': 'password',
