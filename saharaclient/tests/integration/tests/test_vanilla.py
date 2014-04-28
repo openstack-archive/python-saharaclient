@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import testtools
 
 from saharaclient.tests.integration.configs import config as cfg
@@ -27,5 +28,30 @@ class ClusterVanilla(driver.FullTestDriver):
     @testtools.skipIf(vanilla.SKIP_ALL_TESTS_FOR_PLUGIN,
                       'All tests for Vanilla plugin were skipped')
     def test_cluster_vanilla(self):
-        ng_templates = {}
+        marker = str(os.getpid())
+        ng_templates = [
+            {
+                "values": {
+                    "name": "w-%s" % marker,
+                    "flavor_id": "2",
+                    "plugin_name": vanilla.PLUGIN_NAME,
+                    "hadoop_version": vanilla.HADOOP_VERSION,
+                    "node_processes": ["tasktracker", "datanode"],
+                    "floating_ip_pool": self.floating_ip_pool
+                },
+                "count": 1
+            },
+            {
+                "values": {
+                    "name": "m-%s" % marker,
+                    "flavor_id": "2",
+                    "plugin_name": vanilla.PLUGIN_NAME,
+                    "hadoop_version": vanilla.HADOOP_VERSION,
+                    "node_processes": ["jobtracker", "namenode",
+                                       "oozie"],
+                    "floating_ip_pool": self.floating_ip_pool
+                },
+                "count": 1
+            }
+        ]
         self.drive_full_test(vanilla, ng_templates)

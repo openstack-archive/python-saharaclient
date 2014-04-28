@@ -13,10 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import saharaclient.tests.integration.tests.base as base
+import saharaclient.tests.integration.tests.cluster as cluster
 
 
-class FullTestDriver(base.ITestBase):
+class FullTestDriver(cluster.ClusterTest):
 
     def drive_full_test(self, config, ng_templates):
-        pass
+        # If we get an exception during cluster launch, the cluster has already
+        # been cleaned up and we don't have to do anything here
+        skip_teardown = self.launch_cluster_or_use_existing(config,
+                                                            ng_templates)
+        try:
+            if not skip_teardown:
+                self.teardown_cluster()
+        except Exception as e:
+            # Oops.  Teardown via CLI is part of the test,
+            # but something went wrong early.  Try tear down via the client.
+            #TODO(tmckay): use excutils from openstack/common
+            import traceback
+            traceback.print_exc()
+            if not skip_teardown:
+                self.teardown_via_client()
+            raise(e)

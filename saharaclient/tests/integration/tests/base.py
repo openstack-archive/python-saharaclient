@@ -19,7 +19,7 @@ import saharaclient.tests.integration.tests.clidriver as clidriver
 import saharaclient.tests.integration.tests.utils as utils
 
 
-class ITestBase(testtools.TestCase):
+class ITestBase(testtools.TestCase, utils.AssertionWrappers):
     def setUp(self):
         super(ITestBase, self).setUp()
 
