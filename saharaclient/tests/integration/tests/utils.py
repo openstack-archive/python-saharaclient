@@ -14,7 +14,10 @@
 # limitations under the License.
 
 import json
+import random
+import re
 import six
+import string
 import tempfile
 import time
 
@@ -63,6 +66,47 @@ class Utils(object):
         return self.find_object_by_field(name,
                                          self.client.clusters.list())
 
+    def find_job_by_id(self, id):
+        return self.client.job_executions.get(id)
+
+    def find_job_binary_by_id(self, id):
+        return self.client.job_binaries.get(id)
+
+    def find_job_template_by_id(self, id):
+        return self.client.jobs.get(id)
+
+    def find_data_source_by_id(self, id):
+        return self.client.data_sources.get(id)
+
+    def find_binary_internal_by_id(self, id):
+        return self.client.job_binary_internals.get(id)
+
+    def find_job_binary_by_name(self, name):
+        return self.find_object_by_field(name,
+                                         self.client.job_binaries.list())
+
+    def find_job_template_by_name(self, name):
+        return self.find_object_by_field(name,
+                                         self.client.jobs.list())
+
+    def find_data_source_by_name(self, name):
+        return self.find_object_by_field(name,
+                                         self.client.data_sources.list())
+
+    def find_job_by_job_template_id(self, id):
+        return self.find_object_by_field(id,
+                                         self.client.job_executions.list(),
+                                         "job_id")
+
+    def find_binary_internal_id(self, output):
+        pattern = '\|\s*%s\s*\|\s*%s'  # match '| id | name'
+        internals = [(i.id,
+                      i.name) for i in self.client.job_binary_internals.list()]
+        for i in internals:
+            prog = re.compile(pattern % i)
+            if prog.search(output):
+                return i[0]
+
     def generate_json_file(self, temp):
         f = tempfile.NamedTemporaryFile(delete=True)
         f.write(json.dumps(temp))
@@ -82,15 +126,54 @@ class Utils(object):
             cluster = self.client.clusters.get(id)
         return str(cluster.status)
 
+    def poll_job_execution(self, id):
+        #TODO(tmckay): this should use timeutils but we need
+        #to add it to openstack/common
+        timeout = common['JOB_LAUNCH_TIMEOUT'] * 60
+        status = self.client.job_executions.get(id).info['status']
+        while status != 'SUCCEEDED':
+            if status == 'KILLED' or timeout <= 0:
+                break
+            time.sleep(10)
+            timeout -= 10
+            status = self.client.job_executions.get(id).info['status']
+        return status
+
 
 class SwiftUtils(object):
     def __init__(self):
+        self.containers = []
         self.client = swift_client.Connection(
             authurl=common['OS_AUTH_URL'],
             user=common['OS_USERNAME'],
             key=common['OS_PASSWORD'],
             tenant_name=common['OS_TENANT_NAME'],
             auth_version=common['SWIFT_AUTH_VERSION'])
+
+    def create_container(self, marker):
+        container_name = 'cli-test-%s' % marker
+        self.client.put_container(container_name)
+        self.containers.append(container_name)
+        return container_name
+
+    def generate_input(self, container_name, input_name):
+        self.client.put_object(
+            container_name, input_name, ''.join(
+                random.choice(':' + ' ' + '\n' + string.ascii_lowercase)
+                for x in range(10000)
+            )
+        )
+
+    def upload(self, container_name, obj_name, data):
+        self.client.put_object(container_name, obj_name, data)
+
+    def delete_containers(self):
+        for container in self.containers:
+            objects = [obj['name'] for obj in (
+                self.client.get_container(container)[1])]
+            for obj in objects:
+                self.client.delete_object(container, obj)
+            self.client.delete_container(container)
 
 
 class AssertionWrappers(object):

@@ -86,11 +86,24 @@ COMMON_CONFIG_OPTS = [
                      'INTERNAL_NEUTRON_NETWORK.'),
     cfg.StrOpt('INTERNAL_NEUTRON_NETWORK',
                default='private',
-               help='Name for internal Neutron network.')
+               help='Name for internal Neutron network.'),
+    cfg.IntOpt('JOB_LAUNCH_TIMEOUT',
+               default=10,
+               help='Job launch timeout (in minutes); '
+               'minimal value is 1.'),
+    cfg.BoolOpt('INTERNAL_JOB_BINARIES',
+                default=True,
+                help='Store job binary data in the sahara '
+                'internal database.  If this option is set to '
+                'False, job binary data will be stored in swift.'),
+    cfg.StrOpt('CLUSTER_NAME',
+               default='test',
+               help='Name for cluster.')
 ]
 
 
-def general_cluster_config_opts():
+def general_cluster_config_opts(plugin_text, plugin_name, hadoop_ver,
+                                skip_all=False):
     return [
         cfg.StrOpt('EXISTING_CLUSTER_ID',
                    help='The id of an existing active cluster '
@@ -122,54 +135,40 @@ def general_cluster_config_opts():
                    'chosen by the tag "sahara_i_tests".'),
         cfg.StrOpt('SSH_USERNAME',
                    help='Username used to log into a cluster node via SSH.'),
-        cfg.BoolOpt('SKIP_CLUSTER_TEARDOWN',
-                    default=False,
-                    help='Skip tearing down the cluster. If an existing '
-                    'cluster is used it will never be torn down by the test.')
-    ]
-
-
-def skip_config_opts(plugin, skip_all=False):
-    return [
+        cfg.StrOpt('HADOOP_VERSION',
+                   default='%s' % hadoop_ver,
+                   help='Version of Hadoop'),
+        cfg.StrOpt('PLUGIN_NAME',
+                   default='%s' % plugin_name,
+                   help='Name of plugin'),
         cfg.BoolOpt('SKIP_ALL_TESTS_FOR_PLUGIN',
                     default=skip_all,
                     help='If this flag is True, then all tests for the %s '
-                    'plugin will be skipped.' % plugin)
+                    'plugin will be skipped.' % plugin_text),
+        cfg.BoolOpt('SKIP_CLUSTER_TEARDOWN',
+                    default=False,
+                    help='Skip tearing down the cluster. If an existing '
+                    'cluster is used it will never be torn down by the test.'),
+        cfg.BoolOpt('SKIP_JAVA_EDP_TEST', default=False),
+        cfg.BoolOpt('SKIP_MAPREDUCE_EDP_TEST', default=False),
+        cfg.BoolOpt('SKIP_MAPREDUCE_STREAMING_EDP_TEST', default=False),
+        cfg.BoolOpt('SKIP_PIG_EDP_TEST', default=False)
     ]
 
 
 VANILLA_CONFIG_GROUP = cfg.OptGroup(name='VANILLA')
-VANILLA_CONFIG_OPTS = skip_config_opts(
-    "Vanilla") + general_cluster_config_opts() + [
-        cfg.StrOpt('HADOOP_VERSION',
-                   default="1.2.1",
-                   help='Version of Hadoop'),
-        cfg.StrOpt('PLUGIN_NAME',
-                   default='vanilla',
-                   help='Name of plugin')
-    ]
+VANILLA_CONFIG_OPTS = general_cluster_config_opts("Vanilla",
+                                                  "vanilla", "1.2.1")
 
 VANILLA2_CONFIG_GROUP = cfg.OptGroup(name='VANILLA2')
-VANILLA2_CONFIG_OPTS = skip_config_opts(
-    "Vanilla2", skip_all=True) + general_cluster_config_opts() + [
-        cfg.StrOpt('HADOOP_VERSION',
-                   default="2.3.0",
-                   help='Version of Hadoop'),
-        cfg.StrOpt('PLUGIN_NAME',
-                   default='vanilla',
-                   help='Name of plugin')
-    ]
+VANILLA2_CONFIG_OPTS = general_cluster_config_opts("Vanilla2",
+                                                   "vanilla", "2.3.0",
+                                                   skip_all=True)
 
 HDP_CONFIG_GROUP = cfg.OptGroup(name='HDP')
-HDP_CONFIG_OPTS = skip_config_opts(
-    "HDP", skip_all=True) + general_cluster_config_opts() + [
-        cfg.StrOpt('HADOOP_VERSION',
-                   default="1.3.2",
-                   help='Version of Hadoop'),
-        cfg.StrOpt('PLUGIN_NAME',
-                   default='hdp',
-                   help='Name of plugin')
-    ]
+HDP_CONFIG_OPTS = general_cluster_config_opts("HDP",
+                                              "hdp", "1.3.2",
+                                              skip_all=True)
 
 
 def register_config(config, config_group, config_opts):

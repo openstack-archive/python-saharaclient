@@ -187,8 +187,9 @@ class ClusterTest(base.ITestBase):
 
     def build_cluster(self, config, node_group_info):
         self.init_keypair()
-        cluster_name = "test-%s-%s" % (config.PLUGIN_NAME,
-                                       config.HADOOP_VERSION.replace(".", ""))
+        cluster_name = "%s-%s-%s" % (common.CLUSTER_NAME,
+                                     config.PLUGIN_NAME,
+                                     config.HADOOP_VERSION.replace(".", ""))
         # Create and tag an image
         image_id, username = self.find_image_id(config)
         self.cli.register_image(image_id, username, cluster_name)

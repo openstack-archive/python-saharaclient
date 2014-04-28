@@ -14,9 +14,10 @@
 # limitations under the License.
 
 import saharaclient.tests.integration.tests.cluster as cluster
+import saharaclient.tests.integration.tests.edp as edp
 
 
-class FullTestDriver(cluster.ClusterTest):
+class FullTestDriver(edp.EDPTest, cluster.ClusterTest):
 
     def drive_full_test(self, config, ng_templates):
         # If we get an exception during cluster launch, the cluster has already
@@ -24,6 +25,7 @@ class FullTestDriver(cluster.ClusterTest):
         skip_teardown = self.launch_cluster_or_use_existing(config,
                                                             ng_templates)
         try:
+            self.run_edp_jobs(config)
             if not skip_teardown:
                 self.teardown_cluster()
         except Exception as e:

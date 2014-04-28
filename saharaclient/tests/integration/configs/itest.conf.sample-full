@@ -56,6 +56,18 @@
 # Name for internal Neutron network (string value)
 #INTERNAL_NEUTRON_NETWORK = 'private'
 
+# Job launch timeout (in minutes); minimal value is 1
+# (integer value)
+#JOB_LAUNCH_TIMEOUT = 10
+
+# Store job binary data in the sahara internal database.
+# If this option is set to False, job binary data will be stored in swift
+# (boolean value)
+#INTERNAL_JOB_BINARIES = True
+
+# Name for cluster (string value)
+#CLUSTER_NAME = 'test'
+
 [VANILLA]
 
 # The id of an existing active cluster
@@ -104,9 +116,25 @@
 # Name of plugin (string value)
 #PLUGIN_NAME = 'vanilla'
 
-# If this option is set True, no tests for this plugin will be run
+# If this option is set True no tests for this plugin will be run
 # (boolean value)
 #SKIP_ALL_TESTS_FOR_PLUGIN = False
+
+# If this option is set True no Java EDP job will be submitted
+# (boolean value)
+#SKIP_JAVA_EDP_TEST = False
+
+# If this option is set True no MapReduce EDP job will be submitted
+# (boolean value)
+#SKIP_MAPREDUCE_EDP_TEST = False
+
+# If this option is set True no Streaming MapReduce EDP job
+# will be submitted  (boolean value)
+#SKIP_MAPREDUCE_STREAMING_EDP_TEST = False
+
+# If this option is set True no Pig EDP job will be submitted
+# (boolean value)
+#SKIP_PIG_EDP_TEST = False
 
 [VANILLA2]
 
@@ -160,6 +188,22 @@
 # (boolean value)
 #SKIP_ALL_TESTS_FOR_PLUGIN = True
 
+# If this option is set True no Java EDP job will be submitted
+# (boolean value)
+#SKIP_JAVA_EDP_TEST = False
+
+# If this option is set True no MapReduce EDP job will be submitted
+# (boolean value)
+#SKIP_MAPREDUCE_EDP_TEST = False
+
+# If this option is set True no Streaming MapReduce EDP job
+# will be submitted  (boolean value)
+#SKIP_MAPREDUCE_STREAMING_EDP_TEST = False
+
+# If this option is set True no Pig EDP job will be submitted
+# (boolean value)
+#SKIP_PIG_EDP_TEST = False
+
 [HDP]
 
 # The id of an existing active cluster
@@ -211,3 +255,19 @@
 # If this option is set True, no tests for this plugin will be run
 # (boolean value)
 #SKIP_ALL_TESTS_FOR_PLUGIN = True
+
+# If this option is set True no Java EDP job will be submitted
+# (boolean value)
+#SKIP_JAVA_EDP_TEST = False
+
+# If this option is set True no MapReduce EDP job will be submitted
+# (boolean value)
+#SKIP_MAPREDUCE_EDP_TEST = False
+
+# If this option is set True no Streaming MapReduce EDP job
+# will be submitted  (boolean value)
+#SKIP_MAPREDUCE_STREAMING_EDP_TEST = False
+
+# If this option is set True no Pig EDP job will be submitted
+# (boolean value)
+#SKIP_PIG_EDP_TEST = False
