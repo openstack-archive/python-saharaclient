@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import testtools
 
 from saharaclient.tests.integration.configs import config as cfg
@@ -27,5 +28,35 @@ class ClusterHDP(driver.FullTestDriver):
     @testtools.skipIf(hdp.SKIP_ALL_TESTS_FOR_PLUGIN,
                       'All tests for Hdp plugin were skipped')
     def test_cluster_hdp(self):
-        ng_templates = {}
+        marker = str(os.getpid())
+        ng_templates = [
+            {
+                "values": {
+                    "name": "w-%s" % marker,
+                    "flavor_id": "2",
+                    "plugin_name": hdp.PLUGIN_NAME,
+                    "hadoop_version": hdp.HADOOP_VERSION,
+                    "node_processes": ['TASKTRACKER', 'DATANODE',
+                                       'HDFS_CLIENT',
+                                       'MAPREDUCE_CLIENT',
+                                       'OOZIE_CLIENT', 'PIG'],
+                    "floating_ip_pool": self.floating_ip_pool
+                },
+                "count": 1
+            },
+            {
+                "values": {
+                    "name": "m-%s" % marker,
+                    "flavor_id": "2",
+                    "plugin_name": hdp.PLUGIN_NAME,
+                    "hadoop_version": hdp.HADOOP_VERSION,
+                    "node_processes": [
+                        'JOBTRACKER', 'NAMENODE', 'SECONDARY_NAMENODE',
+                        'GANGLIA_SERVER', 'NAGIOS_SERVER',
+                        'AMBARI_SERVER', 'OOZIE_SERVER'],
+                    "floating_ip_pool": self.floating_ip_pool
+                },
+                "count": 1
+            }
+        ]
         self.drive_full_test(hdp, ng_templates)

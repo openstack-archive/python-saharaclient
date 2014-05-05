@@ -49,36 +49,127 @@ COMMON_CONFIG_OPTS = [
                default='admin',
                help='Project name for OpenStack.'),
     cfg.StrOpt('BYPASS_URL',
-               default='',
                help='The BYPASS_URL value to pass to the cli'),
     cfg.StrOpt('SWIFT_AUTH_VERSION',
                default=2,
-               help='OpenStack auth version for Swift.')
+               help='OpenStack auth version for Swift.'),
+    cfg.IntOpt('CLUSTER_CREATION_TIMEOUT',
+               default=10,
+               help='Cluster creation timeout (in minutes); '
+               'minimal value is 1.'),
+    cfg.StrOpt('USER_KEYPAIR_ID',
+               help='A keypair id to use during cluster launch. '
+               'If the id is left blank, an id will be generated. '
+               'If the id names an existing keypair, that keypair will '
+               'be used. If the named keypair does not exist, it will be '
+               'created and deleted after the test.'),
+    cfg.IntOpt('DELAY_AFTER_ACTIVE',
+               default=2,
+               help='Length of time (in minutes) to '
+               'wait after cluster is active before running jobs.'),
+    cfg.StrOpt('FLOATING_IP_POOL',
+               help='Pool name for floating IPs. If Sahara uses Nova '
+                    'management network and auto assignment of IPs was '
+                    'enabled then you should leave default value of this '
+                    'parameter. If auto assignment was not enabled, then you '
+                    'should specify value (floating IP pool name) of this '
+                    'parameter. If Sahara uses Neutron management network, '
+                    'then you should always specify value (floating IP pool '
+                    'name) of this parameter.'),
+    cfg.BoolOpt('NEUTRON_ENABLED',
+                default=False,
+                help='If Sahara uses Nova management network, then you '
+                     'should leave default value of this flag. If Sahara '
+                     'uses Neutron management network, then you should set '
+                     'this flag to True and specify values of the following '
+                     'parameters: FLOATING_IP_POOL and '
+                     'INTERNAL_NEUTRON_NETWORK.'),
+    cfg.StrOpt('INTERNAL_NEUTRON_NETWORK',
+               default='private',
+               help='Name for internal Neutron network.')
 ]
+
+
+def general_cluster_config_opts():
+    return [
+        cfg.StrOpt('EXISTING_CLUSTER_ID',
+                   help='The id of an existing active cluster '
+                   'to use for the test instead of building one. '
+                   'Cluster teardown will be skipped. This has priority '
+                   'over EXISTING_CLUSTER_NAME'),
+        cfg.StrOpt('EXISTING_CLUSTER_NAME',
+                   help='The name of an existing active cluster '
+                   'to use for the test instead of building one. '
+                   'Cluster teardown will be skipped. This is superseded '
+                   'by EXISTING_CLUSTER_ID'),
+        cfg.StrOpt('IMAGE_ID',
+                   help='ID for image which is used for cluster creation. '
+                   'You can also specify image name or tag of image instead '
+                   'of image ID. If you do not specify image related '
+                   'parameters then the image for cluster creation will be '
+                   'chosen by tag "sahara_i_tests".'),
+        cfg.StrOpt('IMAGE_NAME',
+                   help='Name for image which is used for cluster creation. '
+                   'You can also specify image ID or tag of image instead of '
+                   'image name. If you do not specify image related '
+                   'parameters then the image for cluster creation will be '
+                   'chosen by tag "sahara_i_tests".'),
+        cfg.StrOpt('IMAGE_TAG',
+                   help='Tag for image which is used for cluster creation. '
+                   'You can also specify image ID or image name instead of '
+                   'the image tag. If you do not specify image related '
+                   'parameters, then the image for cluster creation will be '
+                   'chosen by the tag "sahara_i_tests".'),
+        cfg.StrOpt('SSH_USERNAME',
+                   help='Username used to log into a cluster node via SSH.'),
+        cfg.BoolOpt('SKIP_CLUSTER_TEARDOWN',
+                    default=False,
+                    help='Skip tearing down the cluster. If an existing '
+                    'cluster is used it will never be torn down by the test.')
+    ]
+
+
+def skip_config_opts(plugin, skip_all=False):
+    return [
+        cfg.BoolOpt('SKIP_ALL_TESTS_FOR_PLUGIN',
+                    default=skip_all,
+                    help='If this flag is True, then all tests for the %s '
+                    'plugin will be skipped.' % plugin)
+    ]
+
 
 VANILLA_CONFIG_GROUP = cfg.OptGroup(name='VANILLA')
-VANILLA_CONFIG_OPTS = [
-    cfg.BoolOpt('SKIP_ALL_TESTS_FOR_PLUGIN',
-                default=False,
-                help='If this flag is True, then all tests for Vanilla plugin '
-                     'will be skipped.')
-]
+VANILLA_CONFIG_OPTS = skip_config_opts(
+    "Vanilla") + general_cluster_config_opts() + [
+        cfg.StrOpt('HADOOP_VERSION',
+                   default="1.2.1",
+                   help='Version of Hadoop'),
+        cfg.StrOpt('PLUGIN_NAME',
+                   default='vanilla',
+                   help='Name of plugin')
+    ]
 
 VANILLA2_CONFIG_GROUP = cfg.OptGroup(name='VANILLA2')
-VANILLA2_CONFIG_OPTS = [
-    cfg.BoolOpt('SKIP_ALL_TESTS_FOR_PLUGIN',
-                default=True,
-                help='If this flag is True, then all tests for Vanilla2 plugin'
-                     ' will be skipped.')
-]
+VANILLA2_CONFIG_OPTS = skip_config_opts(
+    "Vanilla2", skip_all=True) + general_cluster_config_opts() + [
+        cfg.StrOpt('HADOOP_VERSION',
+                   default="2.3.0",
+                   help='Version of Hadoop'),
+        cfg.StrOpt('PLUGIN_NAME',
+                   default='vanilla',
+                   help='Name of plugin')
+    ]
 
 HDP_CONFIG_GROUP = cfg.OptGroup(name='HDP')
-HDP_CONFIG_OPTS = [
-    cfg.BoolOpt('SKIP_ALL_TESTS_FOR_PLUGIN',
-                default=True,
-                help='If this flag is True, then all tests for HDP plugin '
-                     'will be skipped.')
-]
+HDP_CONFIG_OPTS = skip_config_opts(
+    "HDP", skip_all=True) + general_cluster_config_opts() + [
+        cfg.StrOpt('HADOOP_VERSION',
+                   default="1.3.2",
+                   help='Version of Hadoop'),
+        cfg.StrOpt('PLUGIN_NAME',
+                   default='hdp',
+                   help='Name of plugin')
+    ]
 
 
 def register_config(config, config_group, config_opts):
