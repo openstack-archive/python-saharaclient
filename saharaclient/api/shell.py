@@ -761,6 +761,7 @@ def do_job_show(cs, args):
            default=[],
            help='Config parameters to add to the job, repeatable.')
 def do_job_create(cs, args):
+    """Create a job."""
     _convert = lambda ls: dict(map(lambda i: i.split('=', 1), ls))
     _show_job(cs.job_executions.create(args.job_template, args.cluster,
                                        args.input_data, args.output_data,
