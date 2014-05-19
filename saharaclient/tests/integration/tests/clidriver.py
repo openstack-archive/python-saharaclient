@@ -51,7 +51,7 @@ class CommandBase(object):
             merge_stderr=False):
         """Executes specified command for the given action."""
         cmd = ' '.join([cmd, flags, action, params])
-        LOG.info("running: '%s'" % cmd)
+        LOG.info("running: '%s'", cmd)
         cmd_str = cmd
         cmd = shlex.split(cmd)
         result = ''
@@ -67,9 +67,9 @@ class CommandBase(object):
                                     cmd,
                                     result)
         finally:
-            LOG.debug('output of %s:\n%s' % (cmd_str, result))
+            LOG.debug('output of %s:\n%s', cmd_str, result)
             if not merge_stderr and result_err:
-                LOG.debug('error output of %s:\n%s' % (cmd_str, result_err))
+                LOG.debug('error output of %s:\n%s', cmd_str, result_err)
         return result
 
 
