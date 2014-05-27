@@ -90,26 +90,6 @@ def add_resource_manager_extra_kwargs_hook(f, hook):
         f.resource_manager_kwargs_hooks.append(hook)
 
 
-# Unused and does not pass pep8 (F821)
-#def get_resource_manager_extra_kwargs(f, args, allow_conflicts=False):
-#    """Return extra_kwargs by calling resource manager kwargs hooks."""
-#    hooks = getattr(f, "resource_manager_kwargs_hooks", [])
-#    extra_kwargs = {}
-#    for hook in hooks:
-#        hook_kwargs = hook(args)
-#
-#        conflicting_keys = set(hook_kwargs.keys()) & set(extra_kwargs.keys())
-#        if conflicting_keys and not allow_conflicts:
-#            raise Exception("Hook '%(hook_name)s' is attempting to redefine"
-#                            " attributes '%(conflicting_keys)s'" %
-#                            {'hook_name': hook_name,
-#                             'conflicting_keys': conflicting_keys})
-#
-#        extra_kwargs.update(hook_kwargs)
-#
-#    return extra_kwargs
-
-
 def unauthenticated(f):
     """Adds 'unauthenticated' attribute to decorated function.
     Usage:
@@ -390,13 +370,3 @@ def _load_entry_point(ep_name, name=None):
             return ep.load()
         except (ImportError, pkg_resources.UnknownExtra, AttributeError):
             continue
-
-
-# Unused and doesn't pass pep8 (F841)
-#def is_integer_like(val):
-#    """Returns validation of a value as an integer."""
-#    try:
-#        value = int(val)
-#        return True
-#    except (TypeError, ValueError, AttributeError):
-#        return False
