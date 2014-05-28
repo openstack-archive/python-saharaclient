@@ -5,7 +5,7 @@ discover
 docutils==0.9.1
 oslosphinx
 testrepository>=0.0.18
-sphinx>=1.1.2,<1.2
+sphinx>=1.2.1,<1.3
 python-swiftclient>=2.0.2
 python-novaclient>=2.17.0
 python-neutronclient>=2.3.4,<3
