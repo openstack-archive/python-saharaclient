@@ -25,15 +25,17 @@ class HTTPClient(object):
         return requests.get(self.base_url + url,
                             headers={'x-auth-token': self.token})
 
-    def post(self, url, body):
-        return requests.post(self.base_url + url, body,
-                             headers={'x-auth-token': self.token,
-                                      'content-type': 'application/json'})
+    def post(self, url, body, json=True):
+        headers = {'x-auth-token': self.token}
+        if json:
+            headers['content-type'] = 'application/json'
+        return requests.post(self.base_url + url, body, headers=headers)
 
-    def put(self, url, body):
-        return requests.put(self.base_url + url, body,
-                            headers={'x-auth-token': self.token,
-                                     'content-type': 'application/json'})
+    def put(self, url, body, json=True):
+        headers = {'x-auth-token': self.token}
+        if json:
+            headers['content-type'] = 'application/json'
+        return requests.put(self.base_url + url, body, headers=headers)
 
     def delete(self, url):
         return requests.delete(self.base_url + url,
