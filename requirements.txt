@@ -3,5 +3,5 @@ pbr>=0.6,!=0.7,<1.0
 netaddr>=0.7.6
 python-keystoneclient>=0.9.0
 requests>=1.1
-six>=1.6.0
+six>=1.7.0
 PrettyTable>=0.7,<0.8
