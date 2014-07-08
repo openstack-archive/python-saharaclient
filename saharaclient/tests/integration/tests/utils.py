@@ -16,13 +16,15 @@
 import json
 import random
 import re
-import six
 import string
 import tempfile
 import time
 
+import six
+
 import saharaclient.api.client as client
 from saharaclient.tests.integration.configs import config as cfg
+
 from swiftclient import client as swift_client
 
 cfg = cfg.ITConfig()
@@ -115,8 +117,8 @@ class Utils(object):
 
     def poll_cluster_state(self, id):
         cluster = self.client.clusters.get(id)
-        #TODO(tmckay): this should use timeutils but we need
-        #to add it to openstack/common
+        # TODO(tmckay): this should use timeutils but we need
+        # to add it to openstack/common
         timeout = common['CLUSTER_CREATION_TIMEOUT'] * 60
         while str(cluster.status) != 'Active':
             if str(cluster.status) == 'Error' or timeout <= 0:
@@ -127,8 +129,8 @@ class Utils(object):
         return str(cluster.status)
 
     def poll_job_execution(self, id):
-        #TODO(tmckay): this should use timeutils but we need
-        #to add it to openstack/common
+        # TODO(tmckay): this should use timeutils but we need
+        # to add it to openstack/common
         timeout = common['JOB_LAUNCH_TIMEOUT'] * 60
         status = self.client.job_executions.get(id).info['status']
         while status != 'SUCCEEDED':

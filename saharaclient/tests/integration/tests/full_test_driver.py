@@ -31,7 +31,7 @@ class FullTestDriver(edp.EDPTest, cluster.ClusterTest):
         except Exception as e:
             # Oops.  Teardown via CLI is part of the test,
             # but something went wrong early.  Try tear down via the client.
-            #TODO(tmckay): use excutils from openstack/common
+            # TODO(tmckay): use excutils from openstack/common
             import traceback
             traceback.print_exc()
             if not skip_teardown:

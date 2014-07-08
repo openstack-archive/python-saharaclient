@@ -17,9 +17,10 @@ import argparse
 import datetime
 import inspect
 import json
+import sys
+
 from saharaclient.nova import utils
 from saharaclient.openstack.common.apiclient import exceptions
-import sys
 
 
 def _print_list_field(field):
@@ -147,7 +148,7 @@ def do_plugin_list(cs, args):
            required=True,
            help='Name of the plugin.')
 # TODO(mattf) - saharaclient does not support query w/ version
-#@utils.arg('--version',
+# @utils.arg('--version',
 #           metavar='<version>',
 #           help='Optional version')
 def do_plugin_show(cs, args):
@@ -314,7 +315,7 @@ def do_cluster_show(cs, args):
            help='JSON representation of cluster.')
 def do_cluster_create(cs, args):
     """Create a cluster."""
-     # TODO(mattf): improve template validation, e.g. template w/o name key
+    # TODO(mattf): improve template validation, e.g. template w/o name key
     template = json.loads(args.json.read())
     # The neutron_management_network parameter to clusters.create is
     # called net_id. Therefore, we must translate before invoking
@@ -383,7 +384,7 @@ def do_node_group_template_show(cs, args):
            help='JSON representation of node group template.')
 def do_node_group_template_create(cs, args):
     """Create a node group template."""
-     # TODO(mattf): improve template validation, e.g. template w/o name key
+    # TODO(mattf): improve template validation, e.g. template w/o name key
     template = json.loads(args.json.read())
     _filter_call_args(template, cs.node_group_templates.create)
 
@@ -448,7 +449,7 @@ def do_cluster_template_show(cs, args):
            help='JSON representation of cluster template.')
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
-     # TODO(mattf): improve template validation, e.g. template w/o name key
+    # TODO(mattf): improve template validation, e.g. template w/o name key
     template = json.loads(args.json.read())
     remap = {'neutron_management_network': 'net_id'}
     _filter_call_args(template, cs.cluster_templates.create, remap)
@@ -559,6 +560,8 @@ def do_job_binary_data_list(cs, args):
            help='Data to store.')
 def do_job_binary_data_create(cs, args):
     """Store data in the internal DB.
+
+    Store data in the internal DB.
     Use 'swift upload' instead of this command.
     Use this command only if Swift is not available.
     """

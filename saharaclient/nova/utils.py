@@ -13,11 +13,11 @@
 
 import json
 import os
-import pkg_resources
 import sys
 import textwrap
 import uuid
 
+import pkg_resources
 import prettytable
 import six
 
@@ -35,6 +35,7 @@ def arg(*args, **kwargs):
 
 def env(*args, **kwargs):
     """returns the first environment variable set
+
     if none are non-empty, defaults to '' or keyword arg default
     """
     for arg in args:
@@ -92,6 +93,7 @@ def add_resource_manager_extra_kwargs_hook(f, hook):
 
 def unauthenticated(f):
     """Adds 'unauthenticated' attribute to decorated function.
+
     Usage:
         @unauthenticated
         def mymethod(f):
@@ -102,7 +104,9 @@ def unauthenticated(f):
 
 
 def isunauthenticated(f):
-    """Checks to see if the function is marked as not requiring authentication
+    """Checks to see if the function is marked as not requiring authentication.
+
+    Checks to see if the function is marked as not requiring authentication
     with the @unauthenticated decorator. Returns True if decorator is
     set to True, False otherwise.
     """
@@ -111,6 +115,7 @@ def isunauthenticated(f):
 
 def service_type(stype):
     """Adds 'service_type' attribute to decorated function.
+
     Usage:
         @service_type('volume')
         def mymethod(f):
@@ -123,8 +128,7 @@ def service_type(stype):
 
 
 def get_service_type(f):
-    """Retrieves service type from function
-    """
+    """Retrieves service type from function."""
     return getattr(f, 'service_type', None)
 
 
@@ -185,7 +189,9 @@ def _flatten(data, prefix=None):
 
 
 def flatten_dict(data):
-    """Return a new dict whose sub-dicts have been merged into the
+    """Return a new flattened dict.
+
+    Return a new dict whose sub-dicts have been merged into the
     original.  Each of the parents keys are prepended to the child's
     to prevent collisions.  Any string elements will be JSON parsed
     before flattening.
@@ -269,8 +275,8 @@ def find_resource(manager, name_or_id, **find_args):
             kwargs.update(find_args)
             return manager.find(**kwargs)
         except exceptions.NotFound:
-            msg = "No %s with a name or ID of '%s' exists." % \
-                (manager.resource_class.__name__.lower(), name_or_id)
+            msg = ("No %s with a name or ID of '%s' exists." %
+                   (manager.resource_class.__name__.lower(), name_or_id))
             raise exceptions.CommandError(msg)
     except exceptions.NoUniqueMatch:
         msg = ("Multiple %s matches found for '%s', use an ID to be more"
@@ -308,7 +314,9 @@ def _format_field_name(attr):
 
 
 def _make_field_formatter(attr, filters=None):
-    """Given an object attribute, return a formatted field name and a
+    """Return a field name & formatter suitable for passing to print_list.
+
+    Given an object attribute, return a formatted field name and a
     formatter suitable for passing to print_list.
 
     Optionally pass a dict mapping attribute names to a function. The function

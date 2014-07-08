@@ -15,7 +15,7 @@
 #    under the License.
 
 ###
-### This code is taken from python-novaclient. Goal is minimal modification.
+# This code is taken from python-novaclient. Goal is minimal modification.
 ###
 
 """
@@ -136,8 +136,8 @@ class SecretsHelper(object):
     def save(self, auth_token, management_url, tenant_id):
         if not HAS_KEYRING or not self.args.os_cache:
             return
-        if auth_token == self.auth_token and \
-           management_url == self.management_url:
+        if (auth_token == self.auth_token and
+           management_url == self.management_url):
             # Nothing changed....
             return
         if not all([management_url, auth_token, tenant_id]):
@@ -151,8 +151,9 @@ class SecretsHelper(object):
     def password(self):
         if self._validate_string(self.args.os_password):
             return self.args.os_password
-        verify_pass = \
+        verify_pass = (
             strutils.bool_from_string(cliutils.env("OS_VERIFY_PASSWORD"))
+        )
         return self._prompt_password(verify_pass)
 
     @property
@@ -214,7 +215,7 @@ class SaharaClientArgumentParser(argparse.ArgumentParser):
         exits.
         """
         self.print_usage(sys.stderr)
-        #FIXME(lzyeval): if changes occur in argparse.ArgParser._check_value
+        # FIXME(lzyeval): if changes occur in argparse.ArgParser._check_value
         choose_from = ' (choose from'
         progparts = self.prog.partition(' ')
         self.exit(2, "error: %(errmsg)s\nTry '%(mainp)s help %(subp)s'"
@@ -355,7 +356,7 @@ class OpenStackSaharaShell(object):
         #                thinking usage-list --end is ambiguous; but it
         #                works fine with only --endpoint-type present
         #                Go figure.  I'm leaving this here for doc purposes.
-        #parser.add_argument('--endpoint_type',
+        # parser.add_argument('--endpoint_type',
         #    help=argparse.SUPPRESS)
 
         parser.add_argument('--sahara-api-version',
@@ -470,10 +471,11 @@ class OpenStackSaharaShell(object):
             yield name, module
 
     def _add_bash_completion_subparser(self, subparsers):
-        subparser = \
+        subparser = (
             subparsers.add_parser('bash_completion',
                                   add_help=False,
                                   formatter_class=OpenStackHelpFormatter)
+        )
         self.subcommands['bash_completion'] = subparser
         subparser.set_defaults(func=self.do_bash_completion)
 
@@ -486,12 +488,13 @@ class OpenStackSaharaShell(object):
             action_help = desc.strip()
             arguments = getattr(callback, 'arguments', [])
 
-            subparser = \
+            subparser = (
                 subparsers.add_parser(command,
                                       help=action_help,
                                       description=desc,
                                       add_help=False,
                                       formatter_class=OpenStackHelpFormatter)
+            )
             subparser.add_argument('-h', '--help',
                                    action='help',
                                    help=argparse.SUPPRESS,)
@@ -521,8 +524,9 @@ class OpenStackSaharaShell(object):
         nova_auth_plugin.discover_auth_systems()
 
         # build available subcommands based on version
-        self.extensions = \
+        self.extensions = (
             self._discover_extensions(options.sahara_api_version)
+        )
         self._run_extension_hooks('__pre_parse_args__')
 
         # NOTE(dtroyer): Hackery to handle --endpoint_type due to argparse
@@ -533,8 +537,9 @@ class OpenStackSaharaShell(object):
             spot = argv.index('--endpoint_type')
             argv[spot] = '--endpoint-type'
 
-        subcommand_parser = \
+        subcommand_parser = (
             self.get_subcommand_parser(options.sahara_api_version)
+        )
         self.parser = subcommand_parser
 
         if options.help or not argv:
@@ -568,12 +573,11 @@ class OpenStackSaharaShell(object):
 #                        args.os_cacert, args.timeout)
         (os_username, os_tenant_name, os_tenant_id,
          os_auth_url, os_auth_system, endpoint_type,
-         service_type, bypass_url, os_cache,
-         cacert) = \
+         service_type, bypass_url) = (
             (args.os_username, args.os_tenant_name, args.os_tenant_id,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
-             args.service_type, args.bypass_url, args.os_cache,
-             args.os_cacert)
+             args.service_type, args.bypass_url)
+        )
 
         if os_auth_system and os_auth_system != "keystone":
             auth_plugin = nova_auth_plugin.load_plugin(os_auth_system)
@@ -591,7 +595,7 @@ class OpenStackSaharaShell(object):
 # NA - there is only one service this CLI accesses
 #            service_type = utils.get_service_type(args.func) or service_type
 
-        #FIXME(usrleon): Here should be restrict for project id same as
+        # FIXME(usrleon): Here should be restrict for project id same as
         # for os_username or os_password but for compatibility it is not.
         if not cliutils.isunauthenticated(args.func):
             if auth_plugin:
@@ -641,8 +645,8 @@ class OpenStackSaharaShell(object):
         # Now check for the password/token of which pieces of the
         # identifying keyring key can come from the underlying client
         if not cliutils.isunauthenticated(args.func):
-# NA - Client can't be used with SecretsHelper
-#            helper = SecretsHelper(args, self.cs.client)
+            # NA - Client can't be used with SecretsHelper
+            # helper = SecretsHelper(args, self.cs.client)
             if (auth_plugin and auth_plugin.opts and
                     "os_password" not in auth_plugin.opts):
                 use_pw = False
@@ -665,7 +669,7 @@ class OpenStackSaharaShell(object):
                 # at all, so now switch to password mode and save
                 # the token when its gotten... using our keyring
                 # saver
-#                os_password = helper.password
+                # os_password = helper.password
                 os_password = args.os_password
                 if not os_password:
                     raise exc.CommandError(
@@ -715,7 +719,9 @@ class OpenStackSaharaShell(object):
             extension.run_hooks(hook_type, *args, **kwargs)
 
     def do_bash_completion(self, _args):
-        """Prints all of the commands and options to stdout so that the
+        """Prints all of the commands to stdout to support bash completion.
+
+        Prints all of the commands and options to stdout so that the
         sahara.bash_completion script doesn't have to hard code them.
         """
         commands = set()

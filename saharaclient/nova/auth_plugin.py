@@ -15,8 +15,8 @@
 #    under the License.
 
 import logging
-import pkg_resources
 
+import pkg_resources
 import six
 
 from saharaclient.nova import utils

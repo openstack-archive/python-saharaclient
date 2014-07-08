@@ -35,7 +35,9 @@ from saharaclient.openstack.common import strutils
 
 
 def getid(obj):
-    """Abstracts the common pattern of allowing both an object or an object's
+    """Abstracts the common pattern of allowing an object or ID as parameter.
+
+    Abstracts the common pattern of allowing both an object or an object's
     ID as a parameter when dealing with relationships.
     """
     try:
@@ -45,7 +47,9 @@ def getid(obj):
 
 
 class Manager(utils.HookableMixin):
-    """Managers interact with a particular type of API (servers, flavors,
+    """Managers interact with API and provide CRUD operations for them.
+
+    Managers interact with a particular type of API (servers, flavors,
     images, etc.) and provide CRUD operations for them.
     """
     resource_class = None
@@ -79,7 +83,9 @@ class Manager(utils.HookableMixin):
 
     @contextlib.contextmanager
     def completion_cache(self, cache_type, obj_class, mode):
-        """The completion cache store items that can be used for bash
+        """Completion cache store items used for bash autocompletion.
+
+        The completion cache store items that can be used for bash
         autocompletion, like UUIDs or human-friendly IDs.
 
         A resource listing will clear and repopulate the cache.
@@ -168,8 +174,7 @@ class Manager(utils.HookableMixin):
 
 @six.add_metaclass(abc.ABCMeta)
 class ManagerWithFind(Manager):
-    """Like a `Manager`, but with additional `find()`/`findall()` methods.
-    """
+    """Like a `Manager`, but with additional `find()`/`findall()` methods."""
 
     @abc.abstractmethod
     def list(self):
@@ -342,8 +347,9 @@ class BootingManagerWithFind(ManagerWithFind):
         body["server"]["max_count"] = max_count
 
         if security_groups:
-            body["server"]["security_groups"] =\
+            body["server"]["security_groups"] = (
                 [{'name': sg} for sg in security_groups]
+            )
 
         # Files are a slight bit tricky. They're passed in a "personality"
         # list to the POST. Each item is a dict giving a file name and the
@@ -367,8 +373,9 @@ class BootingManagerWithFind(ManagerWithFind):
 
         # Block device mappings are passed as a list of dictionaries
         if block_device_mapping:
-            body['server']['block_device_mapping'] = \
+            body['server']['block_device_mapping'] = (
                 self._parse_block_device_mapping(block_device_mapping)
+            )
         elif block_device_mapping_v2:
             # Append the image to the list only if we have new style BDMs
             if image:
@@ -402,7 +409,9 @@ class BootingManagerWithFind(ManagerWithFind):
 
 
 class Resource(object):
-    """A resource represents a particular instance of an object (server,
+    """A resource represents a particular instance of an object.
+
+    A resource represents a particular instance of an object (server,
     flavor, etc). This is pretty much just a bag for attributes.
 
     :param manager: Manager object
@@ -430,9 +439,8 @@ class Resource(object):
 
     @property
     def human_id(self):
-        """Subclasses may override this provide a pretty ID which can be used
-        for bash completion.
-        """
+        """Provide a pretty ID which can be used for bash completion."""
+
         if self.NAME_ATTR in self.__dict__ and self.HUMAN_ID:
             return strutils.to_slug(getattr(self, self.NAME_ATTR))
         return None
@@ -448,7 +456,7 @@ class Resource(object):
 
     def __getattr__(self, k):
         if k not in self.__dict__:
-            #NOTE(bcwaldon): disallow lazy-loading if already loaded once
+            # NOTE(bcwaldon): disallow lazy-loading if already loaded once
             if not self.is_loaded():
                 self.get()
                 return self.__getattr__(k)

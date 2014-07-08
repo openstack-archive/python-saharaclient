@@ -15,8 +15,9 @@
 
 import logging
 import shlex
-import six
 import subprocess
+
+import six
 
 from saharaclient.tests.integration.configs import config as cfg
 
@@ -27,7 +28,7 @@ LOG = logging.getLogger(__name__)
 
 # This is modeled after the client interface in tempest cli tests.2
 class CommandBase(object):
-    def sahara(self, action,  flags='', params='', fail_ok=False):
+    def sahara(self, action, flags='', params='', fail_ok=False):
         return self.cmd_with_bypass('sahara', action, flags, params, fail_ok)
 
     def cmd_with_bypass(self, cmd, action, flags='', params='', fail_ok=False):

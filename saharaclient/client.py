@@ -17,7 +17,9 @@ from saharaclient.openstack.common import importutils
 
 
 class UnsupportedVersion(Exception):
-    """Indicates that the user is trying to use an unsupported
+    """Indication for using an unsupported version of the API.
+
+    Indicates that the user is trying to use an unsupported
     version of the API.
     """
     pass
