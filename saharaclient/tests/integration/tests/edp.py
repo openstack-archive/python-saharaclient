@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+
 import saharaclient.api.base as api_base
 from saharaclient.tests.integration.configs import config as cfg
 import saharaclient.tests.integration.tests.base as base

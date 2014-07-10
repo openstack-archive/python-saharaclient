@@ -16,13 +16,13 @@
 import os
 import time
 
-from neutronclient.v2_0 import client as neutron_client
-import novaclient.exceptions
-from novaclient.v1_1 import client as nova_client
 import saharaclient.api.base as api_base
 from saharaclient.tests.integration.configs import config as cfg
 import saharaclient.tests.integration.tests.base as base
 
+from neutronclient.v2_0 import client as neutron_client
+import novaclient.exceptions
+from novaclient.v1_1 import client as nova_client
 
 cfg = cfg.ITConfig()
 
@@ -275,7 +275,7 @@ class ClusterTest(base.ITestBase):
                     self.teardown_via_client()
                 raise(e)
             # A delay here seems necessary to make sure Oozie is active
-            time.sleep(common.DELAY_AFTER_ACTIVE*60)
+            time.sleep(common.DELAY_AFTER_ACTIVE * 60)
         return skip_teardown
 
     def teardown_cluster(self):

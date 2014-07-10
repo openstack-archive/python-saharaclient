@@ -36,9 +36,7 @@ class TestCase(testtools.TestCase):
 
 
 class TestResponse(requests.Response):
-    """Class used to wrap requests.Response and provide some
-    convenience to initialize with a dict
-    """
+    """Wrap requests.Response and provide a way to initialize with a dict."""
 
     def __init__(self, data):
         self._text = None

@@ -183,10 +183,10 @@ class ITConfig:
         config_files = []
         config_path = '%s/saharaclient/tests/integration/configs/%s'
         if not os.path.exists(config_path % (os.getcwd(), config)):
-            message = '\n**************************************************' \
-                      '\nINFO: Configuration file "%s" not found  *\n' \
-                      '**************************************************' \
-                      % config
+            message = ('\n**************************************************'
+                       '\nINFO: Configuration file "%s" not found  *\n'
+                       '**************************************************'
+                       % config)
             print(message, file=sys.stderr)
         else:
             config = os.path.join(

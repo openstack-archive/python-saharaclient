@@ -11,15 +11,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-#import prettytable
 import re
-import six
 import sys
-
-#from distutils.version import StrictVersion
 
 import fixtures
 import mock
+import six
 from testtools import matchers
 
 import saharaclient.api.client

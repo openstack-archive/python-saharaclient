@@ -76,15 +76,16 @@ class Client(object):
         self.jobs = jobs.JobsManager(self)
         self.job_executions = job_executions.JobExecutionsManager(self)
         self.job_binaries = job_binaries.JobBinariesManager(self)
-        self.job_binary_internals =\
+        self.job_binary_internals = (
             job_binary_internals.JobBinaryInternalsManager(self)
+        )
 
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):
         if not auth_url:
                 raise RuntimeError("No auth url specified")
-        imported_client = keystone_client_v2 if "v2.0" in auth_url\
-            else keystone_client_v3
+        imported_client = (keystone_client_v2 if "v2.0" in auth_url
+                           else keystone_client_v3)
         if not getattr(self, "keystone_client", None):
             self.keystone_client = imported_client.Client(
                 username=username,

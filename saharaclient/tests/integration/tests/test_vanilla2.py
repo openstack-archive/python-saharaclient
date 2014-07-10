@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+
 import testtools
 
 from saharaclient.tests.integration.configs import config as cfg
