@@ -13,7 +13,7 @@ You may want to read the `OpenStack Sahara Docs`__  -- the overview, at
 least -- to get an idea of the concepts. By understanding the concepts
 this library should make more sense.
 
- __ http://docs.openstack.org/developer/sahara/api/index.html
+ __ http://docs.openstack.org/developer/sahara/
 
 Contents:
 
