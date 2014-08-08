@@ -18,6 +18,8 @@ import logging
 
 import six
 
+from saharaclient.openstack.common.gettextutils import _
+
 LOG = logging.getLogger(__name__)
 
 
@@ -130,7 +132,14 @@ class ResourceManager(object):
         return self.resource_class.resource_name + 's'
 
     def _raise_api_exception(self, resp):
-        error_data = get_json(resp)
+        try:
+            error_data = get_json(resp)
+        except Exception:
+            raise APIException(
+                error_code=resp.status_code,
+                error_message=_("Failed to parse response from Sahara. Check "
+                                "if service catalog configured properly."))
+
         raise APIException(error_code=error_data.get("error_code"),
                            error_name=error_data.get("error_name"),
                            error_message=error_data.get("error_message"))
