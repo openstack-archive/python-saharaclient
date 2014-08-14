@@ -719,7 +719,7 @@ class OpenStackSaharaShell(object):
             extension.run_hooks(hook_type, *args, **kwargs)
 
     def do_bash_completion(self, _args):
-        """Prints all of the commands to stdout to support bash completion.
+        """Prints arguments for bash-completion.
 
         Prints all of the commands and options to stdout so that the
         sahara.bash_completion script doesn't have to hard code them.
