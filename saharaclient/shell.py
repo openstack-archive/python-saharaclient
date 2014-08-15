@@ -47,6 +47,11 @@ try:
 except ImportError:
     pass
 
+from keystoneclient.auth.identity.generic import password
+from keystoneclient.auth.identity.generic import token
+from keystoneclient.auth.identity import v3 as identity
+from keystoneclient import session
+
 from saharaclient.api import client
 from saharaclient.api import shell as shell_api
 from saharaclient.openstack.common.apiclient import auth
@@ -251,6 +256,7 @@ class OpenStackSaharaShell(object):
                             help="Use the auth token cache. Defaults to False "
                             "if env[OS_CACHE] is not set.")
 
+
 # TODO(mattf) - add get_timings support to Client
 #        parser.add_argument('--timings',
 #            default=False,
@@ -263,11 +269,6 @@ class OpenStackSaharaShell(object):
 #            metavar='<seconds>',
 #            type=positive_non_zero_float,
 #            help="Set HTTP call timeout (in seconds)")
-
-        parser.add_argument('--os-tenant-id',
-                            metavar='<auth-tenant-id>',
-                            default=cliutils.env('OS_TENANT_ID'),
-                            help='Defaults to env[OS_TENANT_ID].')
 
 # NA
 #        parser.add_argument('--os-region-name',
@@ -324,22 +325,6 @@ class OpenStackSaharaShell(object):
         parser.add_argument('--sahara_api_version',
                             help=argparse.SUPPRESS)
 
-        parser.add_argument('--os-cacert',
-                            metavar='<ca-certificate>',
-                            default=cliutils.env('OS_CACERT', default=None),
-                            help='Specify a CA bundle file to use in '
-                            'verifying a TLS (https) server certificate. '
-                            'Defaults to env[OS_CACERT].')
-
-# NA
-#        parser.add_argument('--insecure',
-#            default=utils.env('NOVACLIENT_INSECURE', default=False),
-#            action='store_true',
-#            help="Explicitly allow novaclient to perform \"insecure\" "
-#                 "SSL (https) requests. The server's certificate will "
-#                 "not be verified against any certificate authorities. "
-#                 "This option should be used with caution.")
-
         parser.add_argument('--bypass-url',
                             metavar='<bypass-url>',
                             default=cliutils.env('BYPASS_URL', default=None),
@@ -349,8 +334,25 @@ class OpenStackSaharaShell(object):
         parser.add_argument('--bypass_url',
                             help=argparse.SUPPRESS)
 
-        # The auth-system-plugins might require some extra options
-        auth.load_auth_system_opts(parser)
+        parser.add_argument('--os-tenant-name',
+                            default=cliutils.env('OS_TENANT_NAME'),
+                            help='Defaults to env[OS_TENANT_NAME].')
+
+        parser.add_argument('--os-tenant-id',
+                            default=cliutils.env('OS_TENANT_ID'),
+                            help='Defaults to env[OS_TENANT_ID].')
+
+        parser.add_argument('--os-auth-system',
+                            default=cliutils.env('OS_AUTH_SYSTEM'),
+                            help='Defaults to env[OS_AUTH_SYSTEM].')
+
+        parser.add_argument('--os-auth-token',
+                            default=cliutils.env('OS_AUTH_TOKEN'),
+                            help='Defaults to env[OS_AUTH_TOKEN].')
+
+        # Use Keystoneclient API to parse authentication arguments
+        session.Session.register_cli_options(parser)
+        identity.Password.register_argparse_arguments(parser)
 
         return parser
 
@@ -418,12 +420,27 @@ class OpenStackSaharaShell(object):
         logging.basicConfig(level=logging.DEBUG,
                             format=streamformat)
 
+    def _get_keystone_auth(self, session, auth_url, **kwargs):
+        auth_token = kwargs.pop('auth_token', None)
+        if auth_token:
+            return token.Token(auth_url, auth_token, **kwargs)
+        else:
+            return password.Password(
+                auth_url,
+                username=kwargs.pop('username'),
+                user_id=kwargs.pop('user_id'),
+                password=kwargs.pop('password'),
+                user_domain_id=kwargs.pop('user_domain_id'),
+                user_domain_name=kwargs.pop('user_domain_name'),
+                **kwargs)
+
     def main(self, argv):
 
         # Parse args once to find version and debug settings
         parser = self.get_base_parser()
         (options, args) = parser.parse_known_args(argv)
         self.setup_debugging(options.debug)
+        self.options = options
 
         # NOTE(dtroyer): Hackery to handle --endpoint_type due to argparse
         #                thinking usage-list --end is ambiguous; but it
@@ -502,12 +519,6 @@ class OpenStackSaharaShell(object):
                                            "via either --os-username or "
                                            "env[OS_USERNAME]")
 
-            if not os_tenant_name and not os_tenant_id:
-                raise exc.CommandError("You must provide a tenant name "
-                                       "or tenant id via --os-tenant-name, "
-                                       "--os-tenant-id, env[OS_TENANT_NAME] "
-                                       "or env[OS_TENANT_ID]")
-
             if not os_auth_url:
                 if os_auth_system and os_auth_system != 'keystone':
                     os_auth_url = auth_plugin.get_auth_url()
@@ -574,21 +585,63 @@ class OpenStackSaharaShell(object):
 #                self.cs.client.password = os_password
 #                self.cs.client.keyring_saver = helper
 
-# NA
-#        try:
-#            if not utils.isunauthenticated(args.func):
-#                self.cs.authenticate()
-#        except exc.Unauthorized:
-#            raise exc.CommandError("Invalid OpenStack Sahara credentials.")
-#        except exc.AuthorizationFailure:
-#            raise exc.CommandError("Unable to authorize user")
+        # V3 stuff
+        project_info_provided = (self.options.os_tenant_name or
+                                 self.options.os_tenant_id or
+                                 (self.options.os_project_name and
+                                  (self.options.os_project_domain_name or
+                                   self.options.os_project_domain_id)) or
+                                 self.options.os_project_id)
+
+        if (not project_info_provided):
+            raise exc.CommandError(
+                ("You must provide a tenant_name, tenant_id, "
+                 "project_id or project_name (with "
+                 "project_domain_name or project_domain_id) via "
+                 "  --os-tenant-name (env[OS_TENANT_NAME]),"
+                 "  --os-tenant-id (env[OS_TENANT_ID]),"
+                 "  --os-project-id (env[OS_PROJECT_ID])"
+                 "  --os-project-name (env[OS_PROJECT_NAME]),"
+                 "  --os-project-domain-id "
+                 "(env[OS_PROJECT_DOMAIN_ID])"
+                 "  --os-project-domain-name "
+                 "(env[OS_PROJECT_DOMAIN_NAME])"))
+
+        if not os_auth_url:
+            raise exc.CommandError(
+                "You must provide an auth url "
+                "via either --os-auth-url or env[OS_AUTH_URL]")
+
+        keystone_session = None
+        keystone_auth = None
+        if not auth_plugin:
+            project_id = args.os_project_id or args.os_tenant_id
+            project_name = args.os_project_name or args.os_tenant_name
+
+            keystone_session = (session.Session.
+                                load_from_cli_options(args))
+            keystone_auth = self._get_keystone_auth(
+                keystone_session,
+                args.os_auth_url,
+                username=args.os_username,
+                user_id=args.os_user_id,
+                user_domain_id=args.os_user_domain_id,
+                user_domain_name=args.os_user_domain_name,
+                password=args.os_password,
+                auth_token=args.os_auth_token,
+                project_id=project_id,
+                project_name=project_name,
+                project_domain_id=args.os_project_domain_id,
+                project_domain_name=args.os_project_domain_name)
 
         self.cs = client.Client(username=os_username,
                                 api_key=os_password,
                                 project_id=os_tenant_id,
                                 project_name=os_tenant_name,
                                 auth_url=os_auth_url,
-                                sahara_url=bypass_url)
+                                sahara_url=bypass_url,
+                                session=keystone_session,
+                                auth=keystone_auth)
 
         args.func(self.cs, args)
 

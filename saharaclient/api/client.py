@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from keystoneclient import adapter
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
@@ -33,26 +34,38 @@ class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data_processing',
-                 input_auth_token=None):
+                 service_name=None, region_name=None,
+                 input_auth_token=None, session=None, auth=None):
+
+        keystone = None
+        sahara_catalog_url = sahara_url
 
         if not input_auth_token:
-            keystone = self.get_keystone_client(username=username,
-                                                api_key=api_key,
-                                                auth_url=auth_url,
-                                                project_id=project_id,
-                                                project_name=project_name)
-            input_auth_token = keystone.auth_token
+
+            if session:
+                keystone = adapter.LegacyJsonAdapter(
+                    session=session,
+                    auth=auth,
+                    interface=endpoint_type,
+                    service_type=service_type,
+                    service_name=service_name,
+                    region_name=region_name)
+                input_auth_token = keystone.session.get_token(auth)
+                sahara_catalog_url = keystone.session.get_endpoint(
+                    auth, interface=endpoint_type, service_type=service_type)
+            else:
+                keystone = self.get_keystone_client(
+                    username=username,
+                    api_key=api_key,
+                    auth_url=auth_url,
+                    project_id=project_id,
+                    project_name=project_name)
+                input_auth_token = keystone.auth_token
+
         if not input_auth_token:
             raise RuntimeError("Not Authorized")
 
-        sahara_catalog_url = sahara_url
-        if not sahara_url:
-            keystone = self.get_keystone_client(username=username,
-                                                api_key=api_key,
-                                                auth_url=auth_url,
-                                                token=input_auth_token,
-                                                project_id=project_id,
-                                                project_name=project_name)
+        if not sahara_catalog_url:
             catalog = keystone.service_catalog.get_endpoints(service_type)
             if service_type in catalog:
                 for e_type, endpoint in catalog.get(service_type)[0].items():
@@ -83,10 +96,12 @@ class Client(object):
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):
         if not auth_url:
-                raise RuntimeError("No auth url specified")
-        imported_client = (keystone_client_v2 if "v2.0" in auth_url
-                           else keystone_client_v3)
+            raise RuntimeError("No auth url specified")
+
         if not getattr(self, "keystone_client", None):
+            imported_client = (keystone_client_v2 if "v2.0" in auth_url
+                               else keystone_client_v3)
+
             self.keystone_client = imported_client.Client(
                 username=username,
                 password=api_key,
