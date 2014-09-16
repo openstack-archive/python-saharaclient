@@ -28,7 +28,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
                       volumes_per_node=None, volumes_size=None,
                       node_processes=None, node_configs=None,
                       floating_ip_pool=None, security_groups=None,
-                      auto_security_group=False):
+                      auto_security_group=None):
 
         data = {
             'name': name,
@@ -55,7 +55,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
     def create(self, name, plugin_name, hadoop_version, flavor_id,
                description=None, volumes_per_node=None, volumes_size=None,
                node_processes=None, node_configs=None, floating_ip_pool=None,
-               security_groups=None, auto_security_group=False):
+               security_groups=None, auto_security_group=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node, volumes_size,
@@ -70,7 +70,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
                flavor_id, description=None, volumes_per_node=None,
                volumes_size=None, node_processes=None,
                node_configs=None, floating_ip_pool=None,
-               security_groups=None, auto_security_group=False):
+               security_groups=None, auto_security_group=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node,
