@@ -275,7 +275,7 @@ class ShellTest(utils.TestCase):
             '+------+------------+----------+------+-------------+\n'
             '| name | id         | username | tags | description |\n'
             '+------+------------+----------+------+-------------+\n'
-            '| fake | aaa-bb-ccc | you      |      | -           |\n'
+            '| fake | aaa-bb-ccc | you      |      | None        |\n'
             '+------+------------+----------+------+-------------+\n'
         )
         self.make_env()

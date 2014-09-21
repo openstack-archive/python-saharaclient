@@ -25,15 +25,9 @@ Command-line interface to the OpenStack Sahara API.
 from __future__ import print_function
 import argparse
 import getpass
-import glob
-import imp
-import itertools
 import logging
-import os
-import pkgutil
 import sys
 
-import pkg_resources
 import six
 
 
@@ -55,8 +49,7 @@ except ImportError:
 
 from saharaclient.api import client
 from saharaclient.api import shell as shell_api
-from saharaclient.nova import auth_plugin as nova_auth_plugin
-from saharaclient.nova import extension as nova_extension
+from saharaclient.openstack.common.apiclient import auth
 from saharaclient.openstack.common.apiclient import exceptions as exc
 from saharaclient.openstack.common import cliutils
 from saharaclient.openstack.common import strutils
@@ -271,56 +264,18 @@ class OpenStackSaharaShell(object):
 #            type=positive_non_zero_float,
 #            help="Set HTTP call timeout (in seconds)")
 
-        parser.add_argument('--os-username',
-                            metavar='<auth-user-name>',
-                            default=cliutils.env('OS_USERNAME',
-                                                 'SAHARA_USERNAME'),
-                            help='Defaults to env[OS_USERNAME].')
-        parser.add_argument('--os_username',
-                            help=argparse.SUPPRESS)
-
-        parser.add_argument('--os-password',
-                            metavar='<auth-password>',
-                            default=cliutils.env('OS_PASSWORD',
-                                                 'SAHARA_PASSWORD'),
-                            help='Defaults to env[OS_PASSWORD].')
-        parser.add_argument('--os_password',
-                            help=argparse.SUPPRESS)
-
-        parser.add_argument('--os-tenant-name',
-                            metavar='<auth-tenant-name>',
-                            default=cliutils.env('OS_TENANT_NAME',
-                                                 'SAHARA_PROJECT_ID'),
-                            help='Defaults to env[OS_TENANT_NAME].')
-        parser.add_argument('--os_tenant_name',
-                            help=argparse.SUPPRESS)
-
         parser.add_argument('--os-tenant-id',
                             metavar='<auth-tenant-id>',
                             default=cliutils.env('OS_TENANT_ID'),
                             help='Defaults to env[OS_TENANT_ID].')
 
-        parser.add_argument('--os-auth-url',
-                            metavar='<auth-url>',
-                            default=cliutils.env('OS_AUTH_URL', 'SAHARA_URL'),
-                            help='Defaults to env[OS_AUTH_URL].')
-        parser.add_argument('--os_auth_url',
-                            help=argparse.SUPPRESS)
-
 # NA
 #        parser.add_argument('--os-region-name',
 #            metavar='<region-name>',
-#            default=utils.env('OS_REGION_NAME', 'SAHARA_REGION_NAME'),
+#            default=cliutils.env('OS_REGION_NAME', 'SAHARA_REGION_NAME'),
 #            help='Defaults to env[OS_REGION_NAME].')
 #        parser.add_argument('--os_region_name',
 #            help=argparse.SUPPRESS)
-
-        parser.add_argument('--os-auth-system',
-                            metavar='<auth-system>',
-                            default=cliutils.env('OS_AUTH_SYSTEM'),
-                            help='Defaults to env[OS_AUTH_SYSTEM].')
-        parser.add_argument('--os_auth_system',
-                            help=argparse.SUPPRESS)
 
         parser.add_argument('--service-type',
                             metavar='<service-type>',
@@ -395,7 +350,7 @@ class OpenStackSaharaShell(object):
                             help=argparse.SUPPRESS)
 
         # The auth-system-plugins might require some extra options
-        nova_auth_plugin.load_auth_system_opts(parser)
+        auth.load_auth_system_opts(parser)
 
         return parser
 
@@ -416,59 +371,9 @@ class OpenStackSaharaShell(object):
         self._find_actions(subparsers, actions_module)
         self._find_actions(subparsers, self)
 
-        for extension in self.extensions:
-            self._find_actions(subparsers, extension.module)
-
         self._add_bash_completion_subparser(subparsers)
 
         return parser
-
-    def _discover_extensions(self, version):
-        extensions = []
-        for name, module in itertools.chain(
-                self._discover_via_python_path(),
-                self._discover_via_contrib_path(version),
-                self._discover_via_entry_points()):
-
-            extension = nova_extension.Extension(name, module)
-            extensions.append(extension)
-
-        return extensions
-
-    def _discover_via_python_path(self):
-        for (module_loader, name, _ispkg) in pkgutil.iter_modules():
-            if name.endswith('_python_saharaclient_ext'):
-                if not hasattr(module_loader, 'load_module'):
-                    # Python 2.6 compat: actually get an ImpImporter obj
-                    module_loader = module_loader.find_module(name)
-
-                module = module_loader.load_module(name)
-                if hasattr(module, 'extension_name'):
-                    name = module.extension_name
-
-                yield name, module
-
-    def _discover_via_contrib_path(self, version):
-        module_path = os.path.dirname(os.path.abspath(__file__))
-        version_str = "v%s" % version.replace('.', '_')
-        ext_path = os.path.join(module_path, version_str, 'contrib')
-        ext_glob = os.path.join(ext_path, "*.py")
-
-        for ext_path in glob.iglob(ext_glob):
-            name = os.path.basename(ext_path)[:-3]
-
-            if name == "__init__":
-                continue
-
-            module = imp.load_source(name, ext_path)
-            yield name, module
-
-    def _discover_via_entry_points(self):
-        for ep in pkg_resources.iter_entry_points('saharaclient.extension'):
-            name = ep.name
-            module = ep.load()
-
-            yield name, module
 
     def _add_bash_completion_subparser(self, subparsers):
         subparser = (
@@ -520,15 +425,6 @@ class OpenStackSaharaShell(object):
         (options, args) = parser.parse_known_args(argv)
         self.setup_debugging(options.debug)
 
-        # Discover available auth plugins
-        nova_auth_plugin.discover_auth_systems()
-
-        # build available subcommands based on version
-        self.extensions = (
-            self._discover_extensions(options.sahara_api_version)
-        )
-        self._run_extension_hooks('__pre_parse_args__')
-
         # NOTE(dtroyer): Hackery to handle --endpoint_type due to argparse
         #                thinking usage-list --end is ambiguous; but it
         #                works fine with only --endpoint-type present
@@ -547,7 +443,6 @@ class OpenStackSaharaShell(object):
             return 0
 
         args = subcommand_parser.parse_args(argv)
-        self._run_extension_hooks('__post_parse_args__', args)
 
         # Short-circuit and deal with help right away.
         if args.func == self.do_help:
@@ -580,7 +475,7 @@ class OpenStackSaharaShell(object):
         )
 
         if os_auth_system and os_auth_system != "keystone":
-            auth_plugin = nova_auth_plugin.load_plugin(os_auth_system)
+            auth_plugin = auth.load_plugin(os_auth_system)
         else:
             auth_plugin = None
 
@@ -712,11 +607,6 @@ class OpenStackSaharaShell(object):
             total += tyme.seconds
         results.append(Tyme("Total", total))
         cliutils.print_list(results, ["url", "seconds"], sortby_index=None)
-
-    def _run_extension_hooks(self, hook_type, *args, **kwargs):
-        """Run hooks for all registered extensions."""
-        for extension in self.extensions:
-            extension.run_hooks(hook_type, *args, **kwargs)
 
     def do_bash_completion(self, _args):
         """Prints arguments for bash-completion.

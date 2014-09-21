@@ -19,8 +19,8 @@ import inspect
 import json
 import sys
 
-from saharaclient.nova import utils
 from saharaclient.openstack.common.apiclient import exceptions
+from saharaclient.openstack.common import cliutils as utils
 
 
 def _print_list_field(field):
