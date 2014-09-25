@@ -21,6 +21,7 @@ Contents:
    :maxdepth: 2
 
    api
+   how_to_participate
 
 Contributing
 ============
