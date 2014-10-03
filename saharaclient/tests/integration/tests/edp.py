@@ -53,8 +53,8 @@ class EDPTest(base.ITestBase):
                                    password=common.OS_PASSWORD)
         binary_obj = self.util.find_job_binary_by_name(binary_name)
         self.assertIsNotNone(binary_obj)
-        self.assertEqual(binary_obj.name, binary_name)
-        self.assertEqual(binary_obj.url, url)
+        self.assertEqual(binary_name, binary_obj.name)
+        self.assertEqual(url, binary_obj.url)
         return binary_obj
 
     def _create_swift_binary(self, marker, container, info):
@@ -136,14 +136,14 @@ class EDPTest(base.ITestBase):
         self.job_template = self.util.find_job_template_by_name(
             job_template_name)
         self.assertIsNotNone(self.job_template)
-        self.assertEqual(self.job_template.name, job_template_name)
-        self.assertEqual(self.job_template.type, job_type)
+        self.assertEqual(job_template_name, self.job_template.name)
+        self.assertEqual(job_type, self.job_template.type)
         if self.lib_binary:
-            self.assertEqual(len(self.job_template.libs), 1)
+            self.assertEqual(1, len(self.job_template.libs))
             self.assertEqual(self.job_template.libs[0]['id'],
                              self.lib_binary.id)
         if self.main_binary:
-            self.assertEqual(len(self.job_template.mains), 1)
+            self.assertEqual(1, len(self.job_template.mains))
             self.assertEqual(self.job_template.mains[0]['id'],
                              self.main_binary.id)
 
@@ -164,11 +164,11 @@ class EDPTest(base.ITestBase):
         # Find the job using the job_template_id
         self.job = self.util.find_job_by_job_template_id(self.job_template.id)
         self.assertIsNotNone(self.job)
-        self.assertEqual(self.job.cluster_id, self.cluster.id)
+        self.assertEqual(self.cluster.id, self.job.cluster_id)
 
         # poll for status
         status = self.util.poll_job_execution(self.job.id)
-        self.assertEqual(status, 'SUCCEEDED')
+        self.assertEqual('SUCCEEDED', status)
 
         # follow up with a deletion of the stuff we made from a util function
         self.delete_job_objects()

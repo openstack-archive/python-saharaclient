@@ -194,7 +194,7 @@ class ClusterTest(base.ITestBase):
         image_id, username = self.find_image_id(config)
         self.cli.register_image(image_id, username, cluster_name)
         self.image = self.util.find_image_by_id(image_id)
-        self.assertEqual(self.image.description, cluster_name)
+        self.assertEqual(cluster_name, self.image.description)
 
         for t in (config.PLUGIN_NAME, config.HADOOP_VERSION):
             self.cli.tag_image(self.image.id, t)
@@ -264,12 +264,12 @@ class ClusterTest(base.ITestBase):
             # Always skip teardown if we used an existing cluster
             skip_teardown = True
             status = self.util.poll_cluster_state(self.cluster.id)
-            self.assertEqual(status, 'Active')
+            self.assertEqual('Active', status)
         else:
             try:
                 self.build_cluster(config, ng_templates)
                 status = self.util.poll_cluster_state(self.cluster.id)
-                self.assertEqual(status, 'Active')
+                self.assertEqual('Active', status)
             except Exception as e:
                 if not skip_teardown:
                     self.teardown_via_client()
