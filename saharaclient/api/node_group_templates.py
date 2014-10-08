@@ -28,7 +28,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
                       volumes_per_node=None, volumes_size=None,
                       node_processes=None, node_configs=None,
                       floating_ip_pool=None, security_groups=None,
-                      auto_security_group=None):
+                      auto_security_group=None, availability_zone=None):
 
         data = {
             'name': name,
@@ -43,7 +43,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                               node_configs=node_configs,
                               floating_ip_pool=floating_ip_pool,
                               security_groups=security_groups,
-                              auto_security_group=auto_security_group
+                              auto_security_group=auto_security_group,
+                              availability_zone=availability_zone
                               )
 
         if volumes_per_node:
@@ -55,13 +56,14 @@ class NodeGroupTemplateManager(base.ResourceManager):
     def create(self, name, plugin_name, hadoop_version, flavor_id,
                description=None, volumes_per_node=None, volumes_size=None,
                node_processes=None, node_configs=None, floating_ip_pool=None,
-               security_groups=None, auto_security_group=None):
+               security_groups=None, auto_security_group=None,
+               availability_zone=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node, volumes_size,
                                   node_processes, node_configs,
                                   floating_ip_pool, security_groups,
-                                  auto_security_group)
+                                  auto_security_group, availability_zone)
 
         return self._create('/node-group-templates', data,
                             'node_group_template')
@@ -70,13 +72,15 @@ class NodeGroupTemplateManager(base.ResourceManager):
                flavor_id, description=None, volumes_per_node=None,
                volumes_size=None, node_processes=None,
                node_configs=None, floating_ip_pool=None,
-               security_groups=None, auto_security_group=None):
+               security_groups=None, auto_security_group=None,
+               availability_zone=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node,
                                   volumes_size, node_processes,
                                   node_configs, floating_ip_pool,
-                                  security_groups, auto_security_group)
+                                  security_groups, auto_security_group,
+                                  availability_zone)
 
         return self._update('/node-group-templates/%s' % ng_template_id, data,
                             'node_group_template')
