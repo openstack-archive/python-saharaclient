@@ -221,7 +221,7 @@ class ShellTest(utils.TestCase):
 #        self.make_env(exclude='OS_PASSWORD')
         self.make_env()
         stdout, stderr = self.shell('plugin-list')
-        self.assertEqual((stdout + stderr), ex)
+        self.assertEqual(ex, (stdout + stderr))
 
 #    @mock.patch('sys.stdin', side_effect=mock.MagicMock)
 #    @mock.patch('getpass.getpass', side_effect=EOFError)
@@ -280,4 +280,4 @@ class ShellTest(utils.TestCase):
         )
         self.make_env()
         stdout, stderr = self.shell('image-list')
-        self.assertEqual((stdout + stderr), ex)
+        self.assertEqual(ex, (stdout + stderr))
