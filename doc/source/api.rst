@@ -133,7 +133,7 @@ Image Registry ops
 Node Group Template ops
 ~~~~~~~~~~~~~~~~~~~~~~~
 
- * create(name, plugin_name, hadoop_version, flavor_id, description, volumes_per_node, volumes_size, node_processes, node_configs, floating_ip_pool, availability_zone) - Create a Node Group Template with specified parameters.
+ * create(name, plugin_name, hadoop_version, flavor_id, description, volumes_per_node, volumes_size, node_processes, node_configs, floating_ip_pool, availability_zone, volumes_availability_zone) - Create a Node Group Template with specified parameters.
 
 Cluster Template ops
 ~~~~~~~~~~~~~~~~~~~~
