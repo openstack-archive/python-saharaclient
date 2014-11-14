@@ -35,18 +35,18 @@ FAKE_ENV2 = {'OS_USERNAME': 'username',
              'OS_AUTH_URL': 'http://no.where'}
 
 
-class FakePlugin:
+class FakePlugin(object):
     name = 'fake'
     versions = ['1.0', ]
     title = 'a fake plugin'
 
 
-class FakePluginManager:
+class FakePluginManager(object):
     def list(self):
         return (FakePlugin(),)
 
 
-class FakeImage:
+class FakeImage(object):
     name = 'fake'
     id = 'aaa-bb-ccc'
     username = 'you'
@@ -54,12 +54,12 @@ class FakeImage:
     tags = []
 
 
-class FakeImageManager:
+class FakeImageManager(object):
     def list(self):
         return (FakeImage(),)
 
 
-class FakePluginClient:
+class FakePluginClient(object):
     def __init__(self, *args, **kwargs):
         self.plugins = FakePluginManager()
         self.images = FakeImageManager()
