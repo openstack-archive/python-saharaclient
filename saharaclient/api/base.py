@@ -17,6 +17,7 @@ import json
 import logging
 
 import six
+from six.moves.urllib import parse
 
 from saharaclient.openstack.common.gettextutils import _
 
@@ -161,3 +162,12 @@ class APIException(Exception):
         self.error_code = error_code
         self.error_name = error_name
         self.error_message = error_message
+
+
+def get_query_string(search_opts):
+    if search_opts:
+        qparams = sorted(search_opts.items(), key=lambda x: x[0])
+        query_string = "?%s" % parse.urlencode(qparams)
+    else:
+        query_string = ""
+    return query_string

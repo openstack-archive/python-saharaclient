@@ -23,8 +23,9 @@ class JobExecution(base.Resource):
 class JobExecutionsManager(base.ResourceManager):
     resource_class = JobExecution
 
-    def list(self):
-        return self._list('/job-executions', 'job_executions')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/job-executions%s' % query, 'job_executions')
 
     def get(self, obj_id):
         return self._get('/job-executions/%s' % obj_id, 'job_execution')

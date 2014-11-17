@@ -31,8 +31,9 @@ class Plugin(base.Resource):
 class PluginManager(base.ResourceManager):
     resource_class = Plugin
 
-    def list(self):
-        return self._list('/plugins', 'plugins')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/plugins%s' % query, 'plugins')
 
     def get(self, plugin_name):
         return self._get('/plugins/%s' % plugin_name, 'plugin')

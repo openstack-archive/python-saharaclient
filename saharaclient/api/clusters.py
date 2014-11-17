@@ -64,8 +64,9 @@ class ClusterManager(base.ResourceManager):
     def scale(self, cluster_id, scale_object):
         return self._update('/clusters/%s' % cluster_id, scale_object)
 
-    def list(self):
-        return self._list('/clusters', 'clusters')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/clusters%s' % query, 'clusters')
 
     def get(self, cluster_id):
         return self._get('/clusters/%s' % cluster_id, 'cluster')

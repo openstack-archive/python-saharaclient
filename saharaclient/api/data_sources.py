@@ -37,8 +37,9 @@ class DataSourceManager(base.ResourceManager):
                               password=credential_pass)
         return self._create('/data-sources', data, 'data_source')
 
-    def list(self):
-        return self._list('/data-sources', 'data_sources')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/data-sources%s' % query, 'data_sources')
 
     def get(self, data_source_id):
         return self._get('/data-sources/%s' % data_source_id, 'data_source')

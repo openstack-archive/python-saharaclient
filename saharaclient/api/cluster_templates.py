@@ -60,8 +60,9 @@ class ClusterTemplateManager(base.ResourceManager):
         return self._update('/cluster-templates/%s' % cluster_template_id,
                             data, 'cluster_template')
 
-    def list(self):
-        return self._list('/cluster-templates', 'cluster_templates')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/cluster-templates%s' % query, 'cluster_templates')
 
     def get(self, cluster_template_id):
         return self._get('/cluster-templates/%s' % cluster_template_id,
