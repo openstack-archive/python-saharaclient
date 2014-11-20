@@ -796,3 +796,32 @@ def do_job_delete(cs, args):
     """Delete a job."""
     cs.job_executions.delete(args.id)
     # TODO(mattf): No indication of result
+
+#
+# Events
+# ~~~~~~~~
+# events-list --name <cluster>|--id <cluster_id>
+#             [--step <step_id>]
+#
+
+
+@utils.arg('--name',
+           metavar='<cluster_name>',
+           help='Name of the cluster to show events.')
+@utils.arg('--id',
+           metavar='<cluster_id>',
+           help='ID of the cluster to show events.')
+@utils.arg('--step',
+           metavar='<step_id>',
+           default=None,
+           help='ID of provision step to show events.')
+def do_event_list(cs, args):
+    """Show events of a cluster."""
+    cluster = _get_by_id_or_name(cs.clusters, args.id, args.name)
+    if args.step:
+        events = cs.events.list(cluster.id, args.step)
+    else:
+        events = cs.events.list(cluster.id)
+    columns = ('node_group_id', 'instance_name',
+               'event_info', 'successful', 'step_id')
+    utils.print_list(events, columns)
