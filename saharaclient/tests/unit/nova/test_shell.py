@@ -170,9 +170,19 @@ class ShellTest(utils.TestCase):
             self.fail('CommandError not raised')
 
     def test_no_tenant_name(self):
-        required = ('You must provide a tenant name or tenant id'
-                    ' via --os-tenant-name, --os-tenant-id,'
-                    ' env[OS_TENANT_NAME] or env[OS_TENANT_ID]',)
+        required = (
+            'You must provide a tenant_name, tenant_id, '
+            'project_id or project_name (with '
+            'project_domain_name or project_domain_id) via '
+            '  --os-tenant-name (env[OS_TENANT_NAME]),'
+            '  --os-tenant-id (env[OS_TENANT_ID]),'
+            '  --os-project-id (env[OS_PROJECT_ID])'
+            '  --os-project-name (env[OS_PROJECT_NAME]),'
+            '  --os-project-domain-id '
+            '(env[OS_PROJECT_DOMAIN_ID])'
+            '  --os-project-domain-name '
+            '(env[OS_PROJECT_DOMAIN_NAME])',
+        )
         self.make_env(exclude='OS_TENANT_NAME')
         try:
             self.shell('plugin-list')
@@ -182,9 +192,19 @@ class ShellTest(utils.TestCase):
             self.fail('CommandError not raised')
 
     def test_no_tenant_id(self):
-        required = ('You must provide a tenant name or tenant id'
-                    ' via --os-tenant-name, --os-tenant-id,'
-                    ' env[OS_TENANT_NAME] or env[OS_TENANT_ID]',)
+        required = (
+            'You must provide a tenant_name, tenant_id, '
+            'project_id or project_name (with '
+            'project_domain_name or project_domain_id) via '
+            '  --os-tenant-name (env[OS_TENANT_NAME]),'
+            '  --os-tenant-id (env[OS_TENANT_ID]),'
+            '  --os-project-id (env[OS_PROJECT_ID])'
+            '  --os-project-name (env[OS_PROJECT_NAME]),'
+            '  --os-project-domain-id '
+            '(env[OS_PROJECT_DOMAIN_ID])'
+            '  --os-project-domain-name '
+            '(env[OS_PROJECT_DOMAIN_NAME])',
+        )
         self.make_env(exclude='OS_TENANT_ID', fake_env=FAKE_ENV2)
         try:
             self.shell('plugin-list')
@@ -281,3 +301,67 @@ class ShellTest(utils.TestCase):
         self.make_env()
         stdout, stderr = self.shell('image-list')
         self.assertEqual(ex, (stdout + stderr))
+
+
+class ShellTestKeystoneV3(ShellTest):
+
+    FAKE_V3_ENV = {'OS_USERNAME': 'username',
+                   'OS_PASSWORD': 'password',
+                   'OS_PROJECT_NAME': 'project_name',
+                   'OS_PROJECT_DOMAIN_NAME': 'project_domain_name',
+                   'OS_USER_DOMAIN_NAME': 'user_domain_name',
+                   'OS_AUTH_URL': 'http://no.where/v3'}
+
+    version_id = u'v3'
+    links = [{u'href': u'http://no.where/v3', u'rel': u'self'}]
+
+    def make_env(self, exclude=None, fake_env=FAKE_V3_ENV):
+        if 'OS_AUTH_URL' in fake_env:
+            fake_env.update({'OS_AUTH_URL': 'http://no.where/v3'})
+        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
+        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
+
+    def test_no_tenant_name(self):
+        # In V3, tenant_name = project_name
+        required = (
+            'You must provide a tenant_name, tenant_id, '
+            'project_id or project_name (with '
+            'project_domain_name or project_domain_id) via '
+            '  --os-tenant-name (env[OS_TENANT_NAME]),'
+            '  --os-tenant-id (env[OS_TENANT_ID]),'
+            '  --os-project-id (env[OS_PROJECT_ID])'
+            '  --os-project-name (env[OS_PROJECT_NAME]),'
+            '  --os-project-domain-id '
+            '(env[OS_PROJECT_DOMAIN_ID])'
+            '  --os-project-domain-name '
+            '(env[OS_PROJECT_DOMAIN_NAME])',
+        )
+        self.make_env(exclude='OS_PROJECT_NAME')
+        try:
+            self.shell('plugin-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args)
+        else:
+            self.fail('CommandError not raised')
+
+    def test_job_list(self):
+        expected = '\n'.join([
+            '+----+------------+--------+',
+            '| id | cluster_id | status |',
+            '+----+------------+--------+',
+            '+----+------------+--------+',
+            ''
+        ])
+
+        mock_session_class_name = 'keystoneclient.adapter.LegacyJsonAdapter'
+        mock_job_executions_class_name = (
+            'saharaclient.api.job_executions.JobExecutionsManager')
+
+        with mock.patch(mock_session_class_name) as mock_session:
+            with mock.patch(mock_job_executions_class_name):
+                ms = mock_session.return_value
+                ms.session.get_endpoint.return_value = 'http://no.where'
+
+                self.make_env()
+                stdout, stderr = self.shell('job-list')
+                self.assertEqual((stdout + stderr), expected)
