@@ -17,7 +17,7 @@ The client constructor has a list of parameters to authenticate and locate Sahar
 
  * auth_url - Keystone URL that will be used for authentication.
  * sahara_url - Sahara REST API URL to communicate with.
- * service_type - Sahara service name in Keystone catalog. (Default: data_processing)
+ * service_type - Sahara service name in Keystone catalog. (Default: data-processing)
  * endpoint_type - Desired Sahara endpoint type. (Default: publicURL)
  * username - Username for Keystone authentication.
  * api_key - Password for Keystone authentication.

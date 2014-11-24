@@ -54,6 +54,9 @@ class Client(object):
                                                 project_id=project_id,
                                                 project_name=project_name)
             catalog = keystone.service_catalog.get_endpoints(service_type)
+            if service_type not in catalog:
+                service_type = service_type.replace('-', '_')
+
             if service_type in catalog:
                 for e_type, endpoint in catalog.get(service_type)[0].items():
                     if str(e_type).lower() == str(endpoint_type).lower():
