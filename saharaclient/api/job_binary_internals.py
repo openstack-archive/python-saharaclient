@@ -27,8 +27,9 @@ class JobBinaryInternalsManager(base.ResourceManager):
         return self._update('/job-binary-internals/%s' % name, data,
                             'job_binary_internal', dump_json=False)
 
-    def list(self):
-        return self._list('/job-binary-internals', 'binaries')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/job-binary-internals%s' % query, 'binaries')
 
     def get(self, job_binary_id):
         return self._get('/job-binary-internals/%s' % job_binary_id,

@@ -26,8 +26,9 @@ class Image(base.Resource):
 class ImageManager(base.ResourceManager):
     resource_class = Image
 
-    def list(self):
-        return self._list('/images', 'images')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/images%s' % query, 'images')
 
     def get(self, id):
         return self._get('/images/%s' % id, 'image')

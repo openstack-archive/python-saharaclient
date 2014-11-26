@@ -34,8 +34,9 @@ class JobsManager(base.ResourceManager):
 
         return self._create('/jobs', data, 'job')
 
-    def list(self):
-        return self._list('/jobs', 'jobs')
+    def list(self, search_opts=None):
+        query = base.get_query_string(search_opts)
+        return self._list('/jobs%s' % query, 'jobs')
 
     def get(self, job_id):
         return self._get('/jobs/%s' % job_id, 'job')
