@@ -33,7 +33,7 @@ from saharaclient.api import plugins
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, sahara_url=None,
-                 endpoint_type='publicURL', service_type='data_processing',
+                 endpoint_type='publicURL', service_type='data-processing',
                  service_name=None, region_name=None,
                  input_auth_token=None, session=None, auth=None):
 
