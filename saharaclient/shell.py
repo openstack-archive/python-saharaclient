@@ -51,13 +51,13 @@ from keystoneclient.auth.identity.generic import password
 from keystoneclient.auth.identity.generic import token
 from keystoneclient.auth.identity import v3 as identity
 from keystoneclient import session
+from oslo.utils import strutils
 
 from saharaclient.api import client
 from saharaclient.api import shell as shell_api
 from saharaclient.openstack.common.apiclient import auth
 from saharaclient.openstack.common.apiclient import exceptions as exc
 from saharaclient.openstack.common import cliutils
-from saharaclient.openstack.common import strutils
 from saharaclient import version
 
 DEFAULT_API_VERSION = 'api'
