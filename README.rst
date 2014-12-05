@@ -12,7 +12,7 @@ pull requests.
 
 .. _Github: https://github.com/openstack/python-saharaclient
 .. _Launchpad: https://launchpad.net/python-saharaclient
-.. _Gerrit: http://wiki.openstack.org/GerritWorkflow
+.. _Gerrit: http://docs.openstack.org/infra/manual/developers.html#development-workflow
 .. _Docs: http://docs.openstack.org/developer/python-saharaclient/
 
 python-saharaclient is licensed under the Apache License like the rest of
