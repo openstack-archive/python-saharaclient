@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from saharaclient.openstack.common import importutils
+from oslo.utils import importutils
 
 
 class UnsupportedVersion(Exception):
