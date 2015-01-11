@@ -51,7 +51,8 @@ from keystoneclient.auth.identity.generic import password
 from keystoneclient.auth.identity.generic import token
 from keystoneclient.auth.identity import v3 as identity
 from keystoneclient import session
-from oslo.utils import strutils
+from oslo_utils import encodeutils
+from oslo_utils import strutils
 
 from saharaclient.api import client
 from saharaclient.api import shell as shell_api
@@ -702,11 +703,12 @@ class OpenStackHelpFormatter(argparse.HelpFormatter):
 
 def main():
     try:
-        OpenStackSaharaShell().main(map(strutils.safe_decode, sys.argv[1:]))
+        OpenStackSaharaShell().main(map(encodeutils.safe_decode,
+                                        sys.argv[1:]))
 
     except Exception as e:
         logger.debug(e, exc_info=1)
-        print("ERROR: %s" % strutils.safe_encode(six.text_type(e)),
+        print("ERROR: %s" % encodeutils.safe_encode(six.text_type(e)),
               file=sys.stderr)
         sys.exit(1)
 
