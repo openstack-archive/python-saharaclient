@@ -62,7 +62,7 @@ class PluginTest(base.BaseTestCase):
             'description': 'description',
             'plugin_name': 'plugin',
             'hadoop_version': '1',
-            }
+        }
         mpost.return_value = base.FakeResponse(202, response,
                                                'cluster_template')
 
