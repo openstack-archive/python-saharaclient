@@ -17,25 +17,20 @@ import testtools
 
 from saharaclient.api import client
 
+from requests_mock.contrib import fixture
+
 
 class BaseTestCase(testtools.TestCase):
-    client = client.Client(sahara_url='http://localhost:8386',
-                           input_auth_token='token')
+
+    URL = 'http://localhost:8386'
+    TOKEN = 'token'
+
+    def setUp(self):
+        super(BaseTestCase, self).setUp()
+        self.responses = self.useFixture(fixture.Fixture())
+        self.client = client.Client(sahara_url=self.URL,
+                                    input_auth_token=self.TOKEN)
 
     def assertFields(self, body, obj):
         for key, value in six.iteritems(body):
             self.assertEqual(value, getattr(obj, key))
-
-
-class FakeResponse(object):
-    def __init__(self, status_code, content=None, response_key=None):
-        self.status_code = status_code
-        self.content = content or {}
-        self.response_key = response_key
-        self.name = 'name'
-
-    def json(self):
-        if self.response_key:
-            return {self.response_key: self.content}
-        else:
-            return self.content

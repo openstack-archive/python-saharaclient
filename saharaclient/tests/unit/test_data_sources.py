@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import data_sources as ds
 from saharaclient.tests.unit import base
 
@@ -41,48 +39,43 @@ class DataSourceTest(base.BaseTestCase):
         }
     }
 
-    @mock.patch('requests.post')
-    def test_create_data_sources(self, mpost):
-        mpost.return_value = base.FakeResponse(202, self.response,
-                                               'data_source')
+    def test_create_data_sources(self):
+        url = self.URL + '/data-sources'
+        self.responses.post(url, status_code=202,
+                            json={'data_source': self.response})
 
         resp = self.client.data_sources.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/data-sources',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.response, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.response,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, ds.DataSources)
         self.assertFields(self.response, resp)
 
-    @mock.patch('requests.get')
-    def test_data_sources_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.response],
-                                              'data_sources')
+    def test_data_sources_list(self):
+        url = self.URL + '/data-sources'
+        self.responses.get(url, json={'data_sources': [self.response]})
 
         resp = self.client.data_sources.list()
 
-        self.assertEqual('http://localhost:8386/data-sources',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], ds.DataSources)
         self.assertFields(self.response, resp[0])
 
-    @mock.patch('requests.get')
-    def test_data_sources_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.response,
-                                              'data_source')
+    def test_data_sources_get(self):
+        url = self.URL + '/data-sources/id'
+        self.responses.get(url, json={'data_source': self.response})
 
         resp = self.client.data_sources.get('id')
 
-        self.assertEqual('http://localhost:8386/data-sources/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, ds.DataSources)
         self.assertFields(self.response, resp)
 
-    @mock.patch('requests.delete')
-    def test_data_sources_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_data_sources_delete(self):
+        url = self.URL + '/data-sources/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.data_sources.delete('id')
 
-        self.assertEqual('http://localhost:8386/data-sources/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)

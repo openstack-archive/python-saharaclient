@@ -13,3 +13,4 @@ python-swiftclient>=2.2.0
 python-novaclient>=2.18.0
 python-neutronclient>=2.3.6,<3
 oslo.config>=1.6.0  # Apache-2.0
+requests-mock>=0.5.1 # Apache-2.0

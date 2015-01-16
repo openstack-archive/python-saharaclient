@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+from requests_mock.contrib import fixture
 import testtools
 
 from saharaclient.api import httpclient
@@ -21,36 +21,47 @@ from saharaclient.api import httpclient
 
 class ResourceTest(testtools.TestCase):
 
-    @mock.patch('requests.post')
-    def test_post_json_content_type(self, mpost):
-        client = httpclient.HTTPClient("http://localhost", "token")
+    URL = 'http://localhost'
+    TOKEN = 'token'
+
+    def setUp(self):
+        super(ResourceTest, self).setUp()
+        self.responses = self.useFixture(fixture.Fixture())
+
+    def test_post_json_content_type(self):
+        m = self.responses.post(self.URL + '/test')
+
+        client = httpclient.HTTPClient(self.URL, self.TOKEN)
         client.post('/test', '{"json":"True"}')
 
-        self.assertEqual(1, mpost.call_count)
+        self.assertEqual(1, m.call_count)
         self.assertEqual('application/json',
-                         mpost.call_args[1]['headers']["content-type"])
+                         m.last_request.headers['content-type'])
 
-    @mock.patch('requests.put')
-    def test_put_json_content_type(self, mput):
-        client = httpclient.HTTPClient("http://localhost", "token")
+    def test_put_json_content_type(self):
+        m = self.responses.put(self.URL + '/test')
+
+        client = httpclient.HTTPClient(self.URL, self.TOKEN)
         client.put('/test', '{"json":"True"}')
 
-        self.assertEqual(1, mput.call_count)
+        self.assertEqual(1, m.call_count)
         self.assertEqual('application/json',
-                         mput.call_args[1]['headers']["content-type"])
+                         m.last_request.headers['content-type'])
 
-    @mock.patch('requests.post')
-    def test_post_nonjson_content_type(self, mpost):
-        client = httpclient.HTTPClient("http://localhost", "token")
+    def test_post_nonjson_content_type(self):
+        m = self.responses.post(self.URL + '/test')
+
+        client = httpclient.HTTPClient(self.URL, self.TOKEN)
         client.post('/test', 'nonjson', json=False)
 
-        self.assertEqual(1, mpost.call_count)
-        self.assertNotIn("content-type", mpost.call_args[1]['headers'])
+        self.assertEqual(1, m.call_count)
+        self.assertNotIn("content-type", m.last_request.headers)
 
-    @mock.patch('requests.put')
-    def test_put_nonjson_content_type(self, mput):
-        client = httpclient.HTTPClient("http://localhost", "token")
+    def test_put_nonjson_content_type(self):
+        m = self.responses.put(self.URL + '/test')
+
+        client = httpclient.HTTPClient(self.URL, self.TOKEN)
         client.put('/test', 'nonjson', json=False)
 
-        self.assertEqual(1, mput.call_count)
-        self.assertNotIn("content-type", mput.call_args[1]['headers'])
+        self.assertEqual(1, m.call_count)
+        self.assertNotIn("content-type", m.last_request.headers)

@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import jobs
 from saharaclient.tests.unit import base
 
@@ -29,63 +27,58 @@ class JobTest(base.BaseTestCase):
         'description': 'descr'
     }
 
-    @mock.patch('requests.post')
-    def test_create_job(self, mpost):
-        mpost.return_value = base.FakeResponse(202, self.body, 'job')
+    def test_create_job(self):
+        url = self.URL + '/jobs'
+        self.responses.post(url, status_code=202, json={'job': self.body})
 
         resp = self.client.jobs.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/jobs',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.body, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, jobs.Job)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_jobs_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.body], 'jobs')
+    def test_jobs_list(self):
+        url = self.URL + '/jobs'
+        self.responses.get(url, json={'jobs': [self.body]})
 
         resp = self.client.jobs.list()
 
-        self.assertEqual('http://localhost:8386/jobs',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], jobs.Job)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_jobs_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.body, 'job')
+    def test_jobs_get(self):
+        url = self.URL + '/jobs/id'
+        self.responses.get(url, json={'job': self.body})
 
         resp = self.client.jobs.get('id')
 
-        self.assertEqual('http://localhost:8386/jobs/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, jobs.Job)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_jobs_get_configs(self, mget):
+    def test_jobs_get_configs(self):
+        url = self.URL + '/jobs/config-hints/Pig'
         response = {
             "job_config": {
                 "args": [],
                 "configs": []
             }
         }
-
-        mget.return_value = base.FakeResponse(200, response)
+        self.responses.get(url, json=response)
 
         resp = self.client.jobs.get_configs('Pig')
 
-        self.assertEqual('http://localhost:8386/jobs/config-hints/Pig',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, jobs.Job)
         self.assertFields(response, resp)
 
-    @mock.patch('requests.delete')
-    def test_jobs_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_jobs_delete(self):
+        url = self.URL + '/jobs/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.jobs.delete('id')
 
-        self.assertEqual('http://localhost:8386/jobs/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)

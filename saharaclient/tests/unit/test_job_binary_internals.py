@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import job_binary_internals as jbi
 from saharaclient.tests.unit import base
 
@@ -25,48 +23,42 @@ class JobBinaryInternalTest(base.BaseTestCase):
         'id': 'id'
     }
 
-    @mock.patch('requests.put')
-    def test_create_job_binary_internal(self, mput):
-        mput.return_value = base.FakeResponse(202, self.body,
-                                              'job_binary_internal')
+    def test_create_job_binary_internal(self):
+        url = self.URL + '/job-binary-internals/name'
+        self.responses.put(url, status_code=202,
+                           json={'job_binary_internal': self.body})
 
         resp = self.client.job_binary_internals.create('name', 'data')
 
-        self.assertEqual('http://localhost:8386/job-binary-internals/name',
-                         mput.call_args[0][0])
-
-        self.assertEqual('data', mput.call_args[0][1])
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual('data', self.responses.last_request.body)
         self.assertIsInstance(resp, jbi.JobBinaryInternal)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_job_binary_internal_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.body], 'binaries')
+    def test_job_binary_internal_list(self):
+        url = self.URL + '/job-binary-internals'
+        self.responses.get(url, json={'binaries': [self.body]})
 
         resp = self.client.job_binary_internals.list()
 
-        self.assertEqual('http://localhost:8386/job-binary-internals',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], jbi.JobBinaryInternal)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_job_binary_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.body,
-                                              'job_binary_internal')
+    def test_job_binary_get(self):
+        url = self.URL + '/job-binary-internals/id'
+        self.responses.get(url, json={'job_binary_internal': self.body})
 
         resp = self.client.job_binary_internals.get('id')
 
-        self.assertEqual('http://localhost:8386/job-binary-internals/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, jbi.JobBinaryInternal)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.delete')
-    def test_job_binary_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_job_binary_delete(self):
+        url = self.URL + '/job-binary-internals/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.job_binary_internals.delete('id')
 
-        self.assertEqual('http://localhost:8386/job-binary-internals/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)

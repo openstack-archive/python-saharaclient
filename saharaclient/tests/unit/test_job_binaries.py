@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import job_binaries as jb
 from saharaclient.tests.unit import base
 
@@ -31,55 +29,52 @@ class JobBinaryTest(base.BaseTestCase):
         }
     }
 
-    @mock.patch('requests.post')
-    def test_create_job_binary(self, mpost):
-        mpost.return_value = base.FakeResponse(202, self.body, 'job_binary')
+    def test_create_job_binary(self):
+        url = self.URL + '/job-binaries'
+        self.responses.post(url, status_code=202,
+                            json={'job_binary': self.body})
 
         resp = self.client.job_binaries.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/job-binaries',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.body, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, jb.JobBinaries)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_job_binary_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.body], 'binaries')
+    def test_job_binary_list(self):
+        url = self.URL + '/job-binaries'
+        self.responses.get(url, json={'binaries': [self.body]})
 
         resp = self.client.job_binaries.list()
 
-        self.assertEqual('http://localhost:8386/job-binaries',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], jb.JobBinaries)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_job_binary_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.body, 'job_binary')
+    def test_job_binary_get(self):
+        url = self.URL + '/job-binaries/id'
+        self.responses.get(url, json={'job_binary': self.body})
 
         resp = self.client.job_binaries.get('id')
 
-        self.assertEqual('http://localhost:8386/job-binaries/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, jb.JobBinaries)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.delete')
-    def test_job_binary_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_job_binary_delete(self):
+        url = self.URL + '/job-binaries/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.job_binaries.delete('id')
 
-        self.assertEqual('http://localhost:8386/job-binaries/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
 
-    @mock.patch('requests.get')
-    def test_job_binary_get_file(self, mget):
-        mget.return_value = base.FakeResponse(200, 'data')
+    def test_job_binary_get_file(self):
+        url = self.URL + '/job-binaries/id/data'
+        self.responses.get(url, text='data')
 
         resp = self.client.job_binaries.get_file('id')
 
-        self.assertEqual('http://localhost:8386/job-binaries/id/data',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertEqual('data', resp)

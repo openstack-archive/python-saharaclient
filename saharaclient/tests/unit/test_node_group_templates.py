@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import node_group_templates as ng
 from saharaclient.tests.unit import base
 
@@ -32,48 +30,42 @@ class NodeGroupTemplateTest(base.BaseTestCase):
         "node_processes": ["datanode"]
     }
 
-    @mock.patch('requests.post')
-    def test_create_node_group_template(self, mpost):
-        mpost.return_value = base.FakeResponse(202, self.body,
-                                               'node_group_template')
+    def test_create_node_group_template(self):
+        url = self.URL + '/node-group-templates'
+        self.responses.post(url, status_code=202,
+                            json={'node_group_template': self.body})
 
         resp = self.client.node_group_templates.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/node-group-templates',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.body, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, ng.NodeGroupTemplate)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_node_group_template_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.body],
-                                              'node_group_templates')
+    def test_node_group_template_list(self):
+        url = self.URL + '/node-group-templates'
+        self.responses.get(url, json={'node_group_templates': [self.body]})
 
         resp = self.client.node_group_templates.list()
 
-        self.assertEqual('http://localhost:8386/node-group-templates',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], ng.NodeGroupTemplate)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_node_group_template_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.body,
-                                              'node_group_template')
-
+    def test_node_group_template_get(self):
+        url = self.URL + '/node-group-templates/id'
+        self.responses.get(url, json={'node_group_template': self.body})
         resp = self.client.node_group_templates.get('id')
 
-        self.assertEqual('http://localhost:8386/node-group-templates/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, ng.NodeGroupTemplate)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.delete')
-    def test_node_group_template_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_node_group_template_delete(self):
+        url = self.URL + '/node-group-templates/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.node_group_templates.delete('id')
 
-        self.assertEqual('http://localhost:8386/node-group-templates/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)

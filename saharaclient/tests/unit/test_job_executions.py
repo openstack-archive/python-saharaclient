@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import job_executions as je
 from saharaclient.tests.unit import base
 
@@ -33,66 +31,63 @@ class JobExecutionTest(base.BaseTestCase):
         'job_configs': {},
     }
 
-    @mock.patch('requests.post')
-    def test_create_job_execution_with_io(self, mpost):
+    def test_create_job_execution_with_io(self):
+        url = self.URL + '/jobs/job_id/execute'
+
         body = self.body.copy()
         body.update({'input_id': 'input_id', 'output_id': 'output_id'})
         response = self.response.copy()
         response.update({'input_id': 'input_id', 'output_id': 'output_id'})
 
-        mpost.return_value = base.FakeResponse(202, response,
-                                               'job_execution')
+        self.responses.post(url, status_code=202,
+                            json={'job_execution': response})
 
         resp = self.client.job_executions.create(**body)
 
-        self.assertEqual('http://localhost:8386/jobs/job_id/execute',
-                         mpost.call_args[0][0])
-        self.assertEqual(response, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(response,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, je.JobExecution)
         self.assertFields(response, resp)
 
-    @mock.patch('requests.post')
-    def test_create_job_execution_without_io(self, mpost):
-        mpost.return_value = base.FakeResponse(202, self.response,
-                                               'job_execution')
+    def test_create_job_execution_without_io(self):
+        url = self.URL + '/jobs/job_id/execute'
+
+        self.responses.post(url, status_code=202,
+                            json={'job_execution': self.response})
 
         resp = self.client.job_executions.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/jobs/job_id/execute',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.response, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.response,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, je.JobExecution)
         self.assertFields(self.response, resp)
 
-    @mock.patch('requests.get')
-    def test_job_executions_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.response],
-                                              'job_executions')
+    def test_job_executions_list(self):
+        url = self.URL + '/job-executions'
+        self.responses.get(url, json={'job_executions': [self.response]})
 
         resp = self.client.job_executions.list()
 
-        self.assertEqual('http://localhost:8386/job-executions',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], je.JobExecution)
         self.assertFields(self.response, resp[0])
 
-    @mock.patch('requests.get')
-    def test_job_executions_get(self, mget):
-        mget.return_value = base.FakeResponse(200, self.response,
-                                              'job_execution')
+    def test_job_executions_get(self):
+        url = self.URL + '/job-executions/id'
+        self.responses.get(url, json={'job_execution': self.response})
 
         resp = self.client.job_executions.get('id')
 
-        self.assertEqual('http://localhost:8386/job-executions/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, je.JobExecution)
         self.assertFields(self.response, resp)
 
-    @mock.patch('requests.delete')
-    def test_job_executions_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_job_executions_delete(self):
+        url = self.URL + '/job-executions/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.job_executions.delete('id')
 
-        self.assertEqual('http://localhost:8386/job-executions/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)

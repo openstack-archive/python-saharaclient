@@ -26,62 +26,59 @@ class ImageTest(base.BaseTestCase):
         'description': 'descr'
     }
 
-    @mock.patch('requests.get')
-    def test_images_list(self, mget):
-        mget.return_value = base.FakeResponse(200, [self.body], 'images')
+    def test_images_list(self):
+        url = self.URL + '/images'
+        self.responses.get(url, json={'images': [self.body]})
 
         resp = self.client.images.list()
 
-        self.assertEqual('http://localhost:8386/images',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], images.Image)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_images_get(self, mget):
-        mget.return_value = base.FakeResponse(
-            200, self.body, 'image', )
+    def test_images_get(self):
+        url = self.URL + '/images/id'
+        self.responses.get(url, json={'image': self.body})
 
         resp = self.client.images.get('id')
 
-        self.assertEqual('http://localhost:8386/images/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, images.Image)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.delete')
-    def test_unregister_image(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_unregister_image(self):
+        url = self.URL + '/images/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.images.unregister_image('id')
 
-        self.assertEqual('http://localhost:8386/images/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
 
-    @mock.patch('requests.post')
-    def test_update_image(self, mpost):
-        mpost.return_value = base.FakeResponse(
-            202, self.body, 'image')
+    def test_update_image(self):
+        url = self.URL + '/images/id'
+        self.responses.post(url, json={'image': self.body}, status_code=202)
 
         self.client.images.update_image('id', 'name', 'descr')
 
-        self.assertEqual('http://localhost:8386/images/id',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.body, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body,
+                         json.loads(self.responses.last_request.body))
 
     @mock.patch('saharaclient.api.images.ImageManager.get')
-    @mock.patch('requests.post')
-    def test_update_tags(self, mpost, mget):
-        mpost.return_value = base.FakeResponse(202)
+    def test_update_tags(self, mget):
+        tag_url = self.URL + '/images/id/tag'
+        untag_url = self.URL + '/images/id/untag'
+
+        self.responses.post(tag_url, status_code=202)
+        self.responses.post(untag_url, status_code=202)
+
         image = mock.Mock()
         mget.return_value = image
 
         image.tags = []
         self.client.images.update_tags('id', ['username', 'tag'])
-        self.assertEqual('http://localhost:8386/images/id/tag',
-                         mpost.call_args[0][0])
+        self.assertEqual(tag_url, self.responses.last_request.url)
 
         image.tags = ['username', 'tag']
         self.client.images.update_tags('id', ['username'])
-        self.assertEqual('http://localhost:8386/images/id/untag',
-                         mpost.call_args[0][0])
+        self.assertEqual(untag_url, self.responses.last_request.url)

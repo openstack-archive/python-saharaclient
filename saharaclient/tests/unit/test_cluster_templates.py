@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import cluster_templates as ct
 from saharaclient.tests.unit import base
 
@@ -34,48 +32,43 @@ class ClusterTemplateTest(base.BaseTestCase):
         }
     }
 
-    @mock.patch('requests.post')
-    def test_create_cluster_template(self, mpost):
-        mpost.return_value = base.FakeResponse(
-            202, self.body, 'cluster_template')
+    def test_create_cluster_template(self):
+        url = self.URL + '/cluster-templates'
+        self.responses.post(url, status_code=202,
+                            json={'cluster_template': self.body})
 
         resp = self.client.cluster_templates.create(**self.body)
 
-        self.assertEqual('http://localhost:8386/cluster-templates',
-                         mpost.call_args[0][0])
-        self.assertEqual(self.body, json.loads(mpost.call_args[0][1]))
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body,
+                         json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, ct.ClusterTemplate)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.get')
-    def test_cluster_template_list(self, mget):
-        mget.return_value = base.FakeResponse(
-            200, [self.body], 'cluster_templates')
+    def test_cluster_template_list(self):
+        url = self.URL + '/cluster-templates'
+        self.responses.get(url, json={'cluster_templates': [self.body]})
 
         resp = self.client.cluster_templates.list()
 
-        self.assertEqual('http://localhost:8386/cluster-templates',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp[0], ct.ClusterTemplate)
         self.assertFields(self.body, resp[0])
 
-    @mock.patch('requests.get')
-    def test_cluster_template_get(self, mget):
-        mget.return_value = base.FakeResponse(
-            200, self.body, 'cluster_template')
+    def test_cluster_template_get(self):
+        url = self.URL + '/cluster-templates/id'
+        self.responses.get(url, json={'cluster_template': self.body})
 
         resp = self.client.cluster_templates.get('id')
 
-        self.assertEqual('http://localhost:8386/cluster-templates/id',
-                         mget.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, ct.ClusterTemplate)
         self.assertFields(self.body, resp)
 
-    @mock.patch('requests.delete')
-    def test_cluster_template_delete(self, mdelete):
-        mdelete.return_value = base.FakeResponse(204)
+    def test_cluster_template_delete(self):
+        url = self.URL + '/cluster-templates/id'
+        self.responses.delete(url, status_code=204)
 
         self.client.cluster_templates.delete('id')
 
-        self.assertEqual('http://localhost:8386/cluster-templates/id',
-                         mdelete.call_args[0][0])
+        self.assertEqual(url, self.responses.last_request.url)
