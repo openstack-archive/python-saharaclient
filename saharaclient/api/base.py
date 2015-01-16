@@ -86,8 +86,11 @@ class ResourceManager(object):
 
     def _create(self, url, data, response_key=None, dump_json=True):
         if dump_json:
-            data = json.dumps(data)
-        resp = self.api.post(url, data, json=dump_json)
+            kwargs = {'json': data}
+        else:
+            kwargs = {'data': data}
+
+        resp = self.api.post(url, **kwargs)
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)
@@ -100,8 +103,11 @@ class ResourceManager(object):
 
     def _update(self, url, data, response_key=None, dump_json=True):
         if dump_json:
-            data = json.dumps(data)
-        resp = self.api.put(url, data, json=dump_json)
+            kwargs = {'json': data}
+        else:
+            kwargs = {'data': data}
+
+        resp = self.api.put(url, **kwargs)
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)

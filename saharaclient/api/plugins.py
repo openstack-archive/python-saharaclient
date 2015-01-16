@@ -48,7 +48,7 @@ class PluginManager(base.ResourceManager):
                              (plugin_name,
                               hadoop_version,
                               urlparse.quote(template_name)),
-                             filecontent)
+                             data=filecontent)
         if resp.status_code != 202:
             raise RuntimeError('Failed to upload template file for plugin "%s"'
                                ' and version "%s"' %

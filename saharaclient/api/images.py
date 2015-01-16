@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-
 from saharaclient.api import base
 
 
@@ -40,7 +38,7 @@ class ImageManager(base.ResourceManager):
         body = {"username": user_name,
                 "description": desc}
 
-        resp = self.api.post('/images/%s' % image_id, json.dumps(body))
+        resp = self.api.post('/images/%s' % image_id, json=body)
         if resp.status_code != 202:
             raise RuntimeError('Failed to register image %s' % image_id)
 
@@ -55,14 +53,14 @@ class ImageManager(base.ResourceManager):
 
         if len(to_add) != 0:
             resp = self.api.post('/images/%s/tag' % image_id,
-                                 json.dumps({'tags': to_add}))
+                                 json={'tags': to_add})
 
             if resp.status_code != 202:
                 raise RuntimeError('Failed to add tags to image %s' % image_id)
 
         if len(to_remove) != 0:
             resp = self.api.post('/images/%s/untag' % image_id,
-                                 json.dumps({'tags': to_remove}))
+                                 json={'tags': to_remove})
 
             if resp.status_code != 202:
                 raise RuntimeError('Failed to remove tags from image %s' %
