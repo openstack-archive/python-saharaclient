@@ -40,7 +40,7 @@ class ImageManager(base.ResourceManager):
         body = {"username": user_name,
                 "description": desc}
 
-        resp = self.api.client.post('/images/%s' % image_id, json.dumps(body))
+        resp = self.api.post('/images/%s' % image_id, json.dumps(body))
         if resp.status_code != 202:
             raise RuntimeError('Failed to register image %s' % image_id)
 
@@ -54,15 +54,15 @@ class ImageManager(base.ResourceManager):
         to_remove = list(old_tags - new_tags)
 
         if len(to_add) != 0:
-            resp = self.api.client.post('/images/%s/tag' % image_id,
-                                        json.dumps({'tags': to_add}))
+            resp = self.api.post('/images/%s/tag' % image_id,
+                                 json.dumps({'tags': to_add}))
 
             if resp.status_code != 202:
                 raise RuntimeError('Failed to add tags to image %s' % image_id)
 
         if len(to_remove) != 0:
-            resp = self.api.client.post('/images/%s/untag' % image_id,
-                                        json.dumps({'tags': to_remove}))
+            resp = self.api.post('/images/%s/untag' % image_id,
+                                 json.dumps({'tags': to_remove}))
 
             if resp.status_code != 202:
                 raise RuntimeError('Failed to remove tags from image %s' %

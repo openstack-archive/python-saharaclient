@@ -44,7 +44,7 @@ class JobBinariesManager(base.ResourceManager):
         self._delete('/job-binaries/%s' % job_binary_id)
 
     def get_file(self, job_binary_id):
-        resp = self.api.client.get('/job-binaries/%s/data' % job_binary_id)
+        resp = self.api.get('/job-binaries/%s/data' % job_binary_id)
 
         if resp.status_code != 200:
             self._raise_api_exception(resp)

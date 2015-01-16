@@ -77,7 +77,7 @@ class ResourceManager(object):
     def _create(self, url, data, response_key=None, dump_json=True):
         if dump_json:
             data = json.dumps(data)
-        resp = self.api.client.post(url, data, json=dump_json)
+        resp = self.api.post(url, data, json=dump_json)
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)
@@ -91,7 +91,7 @@ class ResourceManager(object):
     def _update(self, url, data, response_key=None, dump_json=True):
         if dump_json:
             data = json.dumps(data)
-        resp = self.api.client.put(url, data, json=dump_json)
+        resp = self.api.put(url, data, json=dump_json)
 
         if resp.status_code != 202:
             self._raise_api_exception(resp)
@@ -102,7 +102,7 @@ class ResourceManager(object):
         return self.resource_class(self, data)
 
     def _list(self, url, response_key):
-        resp = self.api.client.get(url)
+        resp = self.api.get(url)
         if resp.status_code == 200:
             data = get_json(resp)[response_key]
 
@@ -112,7 +112,7 @@ class ResourceManager(object):
             self._raise_api_exception(resp)
 
     def _get(self, url, response_key=None):
-        resp = self.api.client.get(url)
+        resp = self.api.get(url)
 
         if resp.status_code == 200:
             if response_key is not None:
@@ -124,7 +124,7 @@ class ResourceManager(object):
             self._raise_api_exception(resp)
 
     def _delete(self, url):
-        resp = self.api.client.delete(url)
+        resp = self.api.delete(url)
 
         if resp.status_code != 204:
             self._raise_api_exception(resp)

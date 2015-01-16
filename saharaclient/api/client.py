@@ -78,22 +78,24 @@ class Client(object):
         if not sahara_catalog_url:
             raise RuntimeError("Could not find Sahara endpoint in catalog")
 
-        self.client = httpclient.HTTPClient(sahara_catalog_url,
-                                            input_auth_token)
+        client = httpclient.HTTPClient(sahara_catalog_url, input_auth_token)
 
-        self.clusters = clusters.ClusterManager(self)
-        self.cluster_templates = cluster_templates.ClusterTemplateManager(self)
-        self.node_group_templates = (node_group_templates.
-                                     NodeGroupTemplateManager(self))
-        self.plugins = plugins.PluginManager(self)
-        self.images = images.ImageManager(self)
+        self.clusters = clusters.ClusterManager(client)
+        self.cluster_templates = (
+            cluster_templates.ClusterTemplateManager(client)
+        )
+        self.node_group_templates = (
+            node_group_templates.NodeGroupTemplateManager(client)
+        )
+        self.plugins = plugins.PluginManager(client)
+        self.images = images.ImageManager(client)
 
-        self.data_sources = data_sources.DataSourceManager(self)
-        self.jobs = jobs.JobsManager(self)
-        self.job_executions = job_executions.JobExecutionsManager(self)
-        self.job_binaries = job_binaries.JobBinariesManager(self)
+        self.data_sources = data_sources.DataSourceManager(client)
+        self.jobs = jobs.JobsManager(client)
+        self.job_executions = job_executions.JobExecutionsManager(client)
+        self.job_binaries = job_binaries.JobBinariesManager(client)
         self.job_binary_internals = (
-            job_binary_internals.JobBinaryInternalsManager(self)
+            job_binary_internals.JobBinaryInternalsManager(client)
         )
 
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
