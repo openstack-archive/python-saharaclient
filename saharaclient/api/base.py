@@ -19,7 +19,7 @@ import logging
 import six
 from six.moves.urllib import parse
 
-from saharaclient.openstack.common.gettextutils import _
+from saharaclient.openstack.common._i18n import _
 
 LOG = logging.getLogger(__name__)
 
