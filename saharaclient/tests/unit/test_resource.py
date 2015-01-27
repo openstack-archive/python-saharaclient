@@ -15,20 +15,20 @@
 
 import testtools
 
-from saharaclient.api import base
+from saharaclient.tests.unit import base as test_base
 
 
 class ResourceTest(testtools.TestCase):
     def test_create_resource(self):
         dict = {"name": "test"}
-        resource = TestResource(None, dict)
+        resource = test_base.TestResource(None, dict)
         self.assertEqual("test", resource.name)
         self.assertEqual("Test Description", resource.description)
 
     def test_overwrite_default(self):
         dict = {"name": "test",
                 "description": "Changed Description"}
-        resource = TestResource(None, dict)
+        resource = test_base.TestResource(None, dict)
         self.assertEqual("test", resource.name)
         self.assertEqual("Changed Description", resource.description)
         self.assertEqual("extra", resource.extra)
@@ -37,14 +37,14 @@ class ResourceTest(testtools.TestCase):
         dict = {"name": "test",
                 "description": "Changed Description"}
         dict_copy = dict.copy()
-        resource = TestResource(None, dict)
+        resource = test_base.TestResource(None, dict)
         self.assertIsNotNone(resource)
         self.assertEqual(dict_copy, dict)
 
     def test_resource_str(self):
         dict = {"name": "test",
                 "description": "Changed Description"}
-        resource = TestResource(None, dict)
+        resource = test_base.TestResource(None, dict)
         rstr = str(resource)
         self.assertIn(resource.resource_name, rstr)
         self.assertIn("name", rstr)
@@ -53,9 +53,3 @@ class ResourceTest(testtools.TestCase):
         self.assertNotIn("Test Description", rstr)
         self.assertIn("extra", rstr)
         self.assertNotIn("manager", rstr)
-
-
-class TestResource(base.Resource):
-    resource_name = 'Test Resource'
-    defaults = {'description': 'Test Description',
-                'extra': "extra"}

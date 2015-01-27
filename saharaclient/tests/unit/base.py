@@ -15,6 +15,7 @@
 import six
 import testtools
 
+from saharaclient.api import base
 from saharaclient.api import client
 
 from requests_mock.contrib import fixture
@@ -34,3 +35,13 @@ class BaseTestCase(testtools.TestCase):
     def assertFields(self, body, obj):
         for key, value in six.iteritems(body):
             self.assertEqual(value, getattr(obj, key))
+
+
+class TestResource(base.Resource):
+    resource_name = 'Test Resource'
+    defaults = {'description': 'Test Description',
+                'extra': "extra"}
+
+
+class TestManager(base.ResourceManager):
+    resource_class = TestResource
