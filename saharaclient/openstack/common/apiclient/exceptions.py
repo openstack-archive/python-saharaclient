@@ -67,8 +67,13 @@ class AuthorizationFailure(ClientException):
     pass
 
 
-class ConnectionRefused(ClientException):
+class ConnectionError(ClientException):
     """Cannot connect to API service."""
+    pass
+
+
+class ConnectionRefused(ConnectionError):
+    """Connection refused while trying to connect to API service."""
     pass
 
 
@@ -85,7 +90,7 @@ class AuthSystemNotFound(AuthorizationFailure):
     """User has specified an AuthSystem that is not installed."""
     def __init__(self, auth_system):
         super(AuthSystemNotFound, self).__init__(
-            _("AuthSystemNotFound: %s") % repr(auth_system))
+            _("AuthSystemNotFound: %r") % auth_system)
         self.auth_system = auth_system
 
 
@@ -108,7 +113,7 @@ class AmbiguousEndpoints(EndpointException):
     """Found more than one matching endpoint in Service Catalog."""
     def __init__(self, endpoints=None):
         super(AmbiguousEndpoints, self).__init__(
-            _("AmbiguousEndpoints: %s") % repr(endpoints))
+            _("AmbiguousEndpoints: %r") % endpoints)
         self.endpoints = endpoints
 
 
