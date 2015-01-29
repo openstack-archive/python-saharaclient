@@ -17,26 +17,38 @@ import requests
 
 
 class HTTPClient(object):
-    def __init__(self, base_url, token):
+    def __init__(self, base_url, token, insecure=False, cacert=None):
         self.base_url = base_url
         self.token = token
 
+        if insecure:
+            self.verify_cert = False
+        else:
+            if cacert:
+                self.verify_cert = cacert
+            else:
+                self.verify_cert = True
+
     def get(self, url):
         return requests.get(self.base_url + url,
-                            headers={'x-auth-token': self.token})
+                            headers={'x-auth-token': self.token},
+                            verify=self.verify_cert)
 
     def post(self, url, body, json=True):
         headers = {'x-auth-token': self.token}
         if json:
             headers['content-type'] = 'application/json'
-        return requests.post(self.base_url + url, body, headers=headers)
+        return requests.post(self.base_url + url, body, headers=headers,
+                             verify=self.verify_cert)
 
     def put(self, url, body, json=True):
         headers = {'x-auth-token': self.token}
         if json:
             headers['content-type'] = 'application/json'
-        return requests.put(self.base_url + url, body, headers=headers)
+        return requests.put(self.base_url + url, body, headers=headers,
+                            verify=self.verify_cert)
 
     def delete(self, url):
         return requests.delete(self.base_url + url,
-                               headers={'x-auth-token': self.token})
+                               headers={'x-auth-token': self.token},
+                               verify=self.verify_cert)

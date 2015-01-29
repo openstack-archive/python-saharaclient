@@ -486,10 +486,10 @@ class OpenStackSaharaShell(object):
 #                        args.os_cacert, args.timeout)
         (os_username, os_tenant_name, os_tenant_id,
          os_auth_url, os_auth_system, endpoint_type,
-         service_type, bypass_url) = (
+         service_type, bypass_url, os_cacert, insecure) = (
             (args.os_username, args.os_tenant_name, args.os_tenant_id,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
-             args.service_type, args.bypass_url)
+             args.service_type, args.bypass_url, args.os_cacert, args.insecure)
         )
 
         if os_auth_system and os_auth_system != "keystone":
@@ -642,7 +642,9 @@ class OpenStackSaharaShell(object):
                                 auth_url=os_auth_url,
                                 sahara_url=bypass_url,
                                 session=keystone_session,
-                                auth=keystone_auth)
+                                auth=keystone_auth,
+                                cacert=os_cacert,
+                                insecure=insecure)
 
         args.func(self.cs, args)
 

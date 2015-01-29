@@ -36,7 +36,8 @@ class Client(object):
                  project_name=None, auth_url=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data-processing',
                  service_name=None, region_name=None,
-                 input_auth_token=None, session=None, auth=None):
+                 input_auth_token=None, session=None, auth=None,
+                 insecure=False, cacert=None):
 
         keystone = None
         sahara_catalog_url = sahara_url
@@ -79,7 +80,10 @@ class Client(object):
         if not sahara_catalog_url:
             raise RuntimeError("Could not find Sahara endpoint in catalog")
 
-        client = httpclient.HTTPClient(sahara_catalog_url, input_auth_token)
+        client = httpclient.HTTPClient(sahara_catalog_url,
+                                       input_auth_token,
+                                       insecure=insecure,
+                                       cacert=cacert)
 
         self.clusters = clusters.ClusterManager(client)
         self.cluster_templates = (
