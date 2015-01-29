@@ -69,6 +69,16 @@ class ResourceManager(object):
     def find(self, **kwargs):
         return [i for i in self.list() if _check_items(i, kwargs.items())]
 
+    def find_unique(self, **kwargs):
+        found = self.find(**kwargs)
+        if not found:
+            raise APIException(error_code=404,
+                               error_message=_("No matches found."))
+        if len(found) > 1:
+            raise APIException(error_code=409,
+                               error_message=_("Multiple matches found."))
+        return found[0]
+
     def _copy_if_defined(self, data, **kwargs):
         for var_name, var_value in six.iteritems(kwargs):
             if var_value is not None:
