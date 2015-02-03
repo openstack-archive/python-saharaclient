@@ -641,6 +641,7 @@ class OpenStackSaharaShell(object):
                                 project_name=os_tenant_name,
                                 auth_url=os_auth_url,
                                 sahara_url=bypass_url,
+                                endpoint_type=endpoint_type,
                                 session=keystone_session,
                                 auth=keystone_auth,
                                 cacert=os_cacert,
