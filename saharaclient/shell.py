@@ -645,7 +645,8 @@ class OpenStackSaharaShell(object):
                                 session=keystone_session,
                                 auth=keystone_auth,
                                 cacert=os_cacert,
-                                insecure=insecure)
+                                insecure=insecure,
+                                service_type=service_type)
 
         args.func(self.cs, args)
 
