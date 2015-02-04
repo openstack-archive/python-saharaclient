@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from keystoneclient import adapter
+from keystoneclient.openstack.common.apiclient import exceptions as kex
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
@@ -53,8 +54,17 @@ class Client(object):
                     service_name=service_name,
                     region_name=region_name)
                 input_auth_token = keystone.session.get_token(auth)
-                sahara_catalog_url = keystone.session.get_endpoint(
-                    auth, interface=endpoint_type, service_type=service_type)
+                try:
+                    sahara_catalog_url = keystone.session.get_endpoint(
+                        auth, interface=endpoint_type,
+                        service_type=service_type)
+                except kex.EndpointNotFound:
+                    # This is support of 'data_processing' service spelling
+                    # which was used for releases before Kilo
+                    service_type = service_type.replace('-', '_')
+                    sahara_catalog_url = keystone.session.get_endpoint(
+                        auth, interface=endpoint_type,
+                        service_type=service_type)
             else:
                 keystone = self.get_keystone_client(
                     username=username,
@@ -70,7 +80,10 @@ class Client(object):
         if not sahara_catalog_url:
             catalog = keystone.service_catalog.get_endpoints(service_type)
             if service_type not in catalog:
+                # This is support of 'data_processing' service spelling
+                # which was used for releases before Kilo
                 service_type = service_type.replace('-', '_')
+                catalog = keystone.service_catalog.get_endpoints(service_type)
 
             if service_type in catalog:
                 for e_type, endpoint in catalog.get(service_type)[0].items():
