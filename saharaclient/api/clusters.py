@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
-
 from saharaclient.api import base
 
 
@@ -24,12 +22,6 @@ class Cluster(base.Resource):
 
 class ClusterManager(base.ResourceManager):
     resource_class = Cluster
-
-    def _assert_variables(self, **kwargs):
-        for var_name, var_value in six.iteritems(kwargs):
-            if var_value is None:
-                raise base.APIException('Cluster is missing field "%s"' %
-                                        var_name)
 
     def create(self, name, plugin_name, hadoop_version,
                cluster_template_id=None, default_image_id=None,
@@ -42,11 +34,6 @@ class ClusterManager(base.ResourceManager):
             'plugin_name': plugin_name,
             'hadoop_version': hadoop_version,
         }
-
-        if cluster_template_id is None:
-            self._assert_variables(default_image_id=default_image_id,
-                                   cluster_configs=cluster_configs,
-                                   node_groups=node_groups)
 
         self._copy_if_defined(data,
                               cluster_template_id=cluster_template_id,
