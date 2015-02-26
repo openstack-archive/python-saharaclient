@@ -110,12 +110,12 @@ def _show_job(job):
     utils.print_dict(job._info)
 
 
-def _get_by_id_or_name(manager, id=None, name=None):
+def _get_by_id_or_name(manager, id=None, name=None, **kwargs):
     if not (name or id):
         raise exceptions.CommandError("either NAME or ID is required")
     if id:
-        return manager.get(id)
-    ls = manager.find(name=name)
+        return manager.get(id, **kwargs)
+    ls = manager.find(name=name, **kwargs)
     if len(ls) == 0:
         raise exceptions.CommandError("%s '%s' not found" %
                                       (manager.resource_class.resource_name,
@@ -272,7 +272,7 @@ def do_image_remove_tag(cs, args):
 # ~~~~~~~~
 # cluster-list
 #
-# cluster-show --name <cluster>|--id <cluster_id> [--json]
+# cluster-show --name <cluster>|--id <cluster_id> [--json] [--show-progress]
 #
 # cluster-create [--json <file>]
 #
@@ -296,13 +296,16 @@ def do_cluster_list(cs, args):
 @utils.arg('--id',
            metavar='<cluster_id>',
            help='ID of the cluster to show.')
+@utils.arg('--show-progress',
+           help='Show provision progress events of the cluster.')
 @utils.arg('--json',
            action='store_true',
            default=False,
            help='Print JSON representation of the cluster.')
 def do_cluster_show(cs, args):
     """Show details of a cluster."""
-    cluster = _get_by_id_or_name(cs.clusters, args.id, args.name)
+    cluster = _get_by_id_or_name(cs.clusters, args.id, args.name,
+                                 show_progress=args.show_progress)
     if args.json:
         print(json.dumps(cluster._info))
     else:
@@ -796,32 +799,3 @@ def do_job_delete(cs, args):
     """Delete a job."""
     cs.job_executions.delete(args.id)
     # TODO(mattf): No indication of result
-
-#
-# Events
-# ~~~~~~~~
-# events-list --name <cluster>|--id <cluster_id>
-#             [--step <step_id>]
-#
-
-
-@utils.arg('--name',
-           metavar='<cluster_name>',
-           help='Name of the cluster to show events.')
-@utils.arg('--id',
-           metavar='<cluster_id>',
-           help='ID of the cluster to show events.')
-@utils.arg('--step',
-           metavar='<step_id>',
-           default=None,
-           help='ID of provision step to show events.')
-def do_event_list(cs, args):
-    """Show events of a cluster."""
-    cluster = _get_by_id_or_name(cs.clusters, args.id, args.name)
-    if args.step:
-        events = cs.events.list(cluster.id, args.step)
-    else:
-        events = cs.events.list(cluster.id)
-    columns = ('node_group_id', 'instance_name',
-               'event_info', 'successful', 'step_id')
-    utils.print_list(events, columns)

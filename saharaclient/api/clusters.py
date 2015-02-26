@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from six.moves.urllib import parse
+
 from saharaclient.api import base
 
 
@@ -55,8 +57,12 @@ class ClusterManager(base.ResourceManager):
         query = base.get_query_string(search_opts)
         return self._list('/clusters%s' % query, 'clusters')
 
-    def get(self, cluster_id):
-        return self._get('/clusters/%s' % cluster_id, 'cluster')
+    def get(self, cluster_id, show_progress=False):
+        url = ('/clusters/%(cluster_id)s?%(params)s' %
+               {"cluster_id": cluster_id,
+                "params": parse.urlencode({"show_progress": show_progress})})
+
+        return self._get(url, 'cluster')
 
     def delete(self, cluster_id):
         self._delete('/clusters/%s' % cluster_id)

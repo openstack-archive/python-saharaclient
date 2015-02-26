@@ -26,6 +26,14 @@ class ClusterTest(base.BaseTestCase):
         'cluster_template_id': 'id',
     }
 
+    body_with_progress = {
+        'name': 'name',
+        'plugin_name': 'fake',
+        'hadoop_version': '0.1',
+        'cluster_template_id': 'id',
+        "provision_progress": []
+    }
+
     def test_create_cluster_with_template(self,):
         url = self.URL + '/clusters'
         self.responses.post(url, status_code=202, json={'cluster': self.body})
@@ -65,10 +73,20 @@ class ClusterTest(base.BaseTestCase):
         self.assertFields(self.body, resp[0])
 
     def test_clusters_get(self):
-        url = self.URL + '/clusters/id'
+        url = self.URL + '/clusters/id?show_progress=False'
         self.responses.get(url, json={'cluster': self.body})
 
         resp = self.client.clusters.get('id')
+
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertIsInstance(resp, cl.Cluster)
+        self.assertFields(self.body, resp)
+
+    def test_clusters_get_with_progress(self):
+        url = self.URL + '/clusters/id?show_progress=True'
+        self.responses.get(url, json={'cluster': self.body_with_progress})
+
+        resp = self.client.clusters.get('id', show_progress=True)
 
         self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, cl.Cluster)

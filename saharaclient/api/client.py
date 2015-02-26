@@ -21,7 +21,6 @@ from keystoneclient.v3 import client as keystone_client_v3
 from saharaclient.api import cluster_templates
 from saharaclient.api import clusters
 from saharaclient.api import data_sources
-from saharaclient.api import events
 from saharaclient.api import httpclient
 from saharaclient.api import images
 from saharaclient.api import job_binaries
@@ -116,7 +115,6 @@ class Client(object):
         self.job_binary_internals = (
             job_binary_internals.JobBinaryInternalsManager(client)
         )
-        self.events = events.ClusterEventManager(client)
 
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):
