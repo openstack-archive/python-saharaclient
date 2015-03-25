@@ -77,4 +77,4 @@ class JobBinaryTest(base.BaseTestCase):
         resp = self.client.job_binaries.get_file('id')
 
         self.assertEqual(url, self.responses.last_request.url)
-        self.assertEqual('data', resp)
+        self.assertEqual(b'data', resp)
