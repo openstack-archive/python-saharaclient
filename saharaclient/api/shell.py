@@ -799,3 +799,53 @@ def do_job_delete(cs, args):
     """Delete a job."""
     cs.job_executions.delete(args.id)
     # TODO(mattf): No indication of result
+
+
+#
+# Job Types
+# ~~~~~~~~~
+# job-type-list [--type] [--plugin [--plugin-version]]
+#
+
+def _print_plugin_field(job_type):
+
+    def plugin_version_string(plugin):
+        versions = ", ".join(plugin["versions"].keys())
+        if versions:
+            versions = "(" + versions + ")"
+        return plugin["name"] + versions
+
+    return ", ".join(map(lambda x: plugin_version_string(x), job_type.plugins))
+
+
+@utils.arg('--type',
+           metavar='<job_type>',
+           default=None,
+           help='Report only on this job type')
+@utils.arg('--plugin',
+           metavar='<plugin>',
+           default=None,
+           help='Report only job types supported by this plugin.')
+@utils.arg('--plugin-version',
+           metavar='<plugin_version>',
+           default=None,
+           help='Report only on job types supported by this version '
+           'of a specified plugin. Only valid with --plugin.')
+def do_job_type_list(cs, args):
+    """Show supported job types."""
+    search_opts = {}
+    if args.type:
+        search_opts["type"] = args.type
+    if args.plugin:
+        search_opts["plugin"] = args.plugin
+        if args.plugin_version:
+            search_opts["version"] = args.plugin_version
+    elif args.plugin_version:
+        raise exceptions.CommandError(
+            'The --plugin-version option is only valid when '
+            '--plugin is specified')
+
+    job_types = cs.job_types.list(search_opts)
+    columns = ('name', 'plugin(versions)')
+    utils.print_list(job_types, columns,
+                     {'plugin(versions)': _print_plugin_field})

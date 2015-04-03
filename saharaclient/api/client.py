@@ -30,6 +30,7 @@ from saharaclient.api import images
 from saharaclient.api import job_binaries
 from saharaclient.api import job_binary_internals
 from saharaclient.api import job_executions
+from saharaclient.api import job_types
 from saharaclient.api import jobs
 from saharaclient.api import node_group_templates
 from saharaclient.api import plugins
@@ -102,6 +103,7 @@ class Client(object):
         self.job_binary_internals = (
             job_binary_internals.JobBinaryInternalsManager(client)
         )
+        self.job_types = job_types.JobTypesManager(client)
 
     def _get_keystone_auth(self, username=None, api_key=None, auth_url=None,
                            project_id=None, project_name=None):
