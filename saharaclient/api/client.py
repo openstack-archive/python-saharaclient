@@ -48,7 +48,7 @@ class Client(object):
                  project_name=None, auth_url=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data-processing',
                  input_auth_token=None, session=None, auth=None,
-                 insecure=False, cacert=None, **kwargs):
+                 insecure=False, cacert=None, region_name=None, **kwargs):
 
         if not session:
             warnings.warn('Passing authentication parameters to saharaclient '
@@ -84,6 +84,7 @@ class Client(object):
         client = HTTPClient(session=session,
                             auth=auth,
                             service_type=service_type,
+                            region_name=region_name,
                             **kwargs)
 
         self.clusters = clusters.ClusterManager(client)
