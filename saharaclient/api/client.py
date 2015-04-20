@@ -36,6 +36,9 @@ from saharaclient.api import node_group_templates
 from saharaclient.api import plugins
 
 
+USER_AGENT = 'python-saharaclient'
+
+
 class HTTPClient(adapter.Adapter):
 
     def request(self, *args, **kwargs):
@@ -78,6 +81,7 @@ class Client(object):
                                                         service_type,
                                                         endpoint_type)
 
+        kwargs['user_agent'] = USER_AGENT
         kwargs.setdefault('interface', endpoint_type)
         kwargs.setdefault('endpoint_override', sahara_url)
 
