@@ -6,14 +6,13 @@ This is a client for the OpenStack Sahara API. There's a Python API (the
 implements the OpenStack Sahara API. You can find documentation for both
 Python bandings and CLI in `Docs`_.
 
-The project is hosted on `Launchpad`_, where bugs can be filed. The code is
-hosted on `Github`_. Patches must be submitted using `Gerrit`_, *not* Github
-pull requests.
+Development takes place via the usual OpenStack processes as outlined
+in the `developer guide
+<http://docs.openstack.org/infra/manual/developers.html>`_.
 
-.. _Github: https://github.com/openstack/python-saharaclient
-.. _Launchpad: https://launchpad.net/python-saharaclient
-.. _Gerrit: http://docs.openstack.org/infra/manual/developers.html#development-workflow
 .. _Docs: http://docs.openstack.org/developer/python-saharaclient/
 
-python-saharaclient is licensed under the Apache License like the rest of
-OpenStack.
+* License: Apache License, Version 2.0
+* Documentation: http://docs.openstack.org/developer/python-saharaclient
+* Source: http://git.openstack.org/cgit/openstack/python-saharaclient
+* Bugs: http://bugs.launchpad.net/python-saharaclient
