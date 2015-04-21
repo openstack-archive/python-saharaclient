@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from six.moves.urllib import parse as urlparse
+
 from saharaclient.api import base
 
 
@@ -24,7 +26,8 @@ class JobBinaryInternalsManager(base.ResourceManager):
     resource_class = JobBinaryInternal
 
     def create(self, name, data):
-        return self._update('/job-binary-internals/%s' % name, data,
+        return self._update('/job-binary-internals/%s' %
+                            urlparse.quote(name.encode('utf-8')), data,
                             'job_binary_internal', dump_json=False)
 
     def list(self, search_opts=None):

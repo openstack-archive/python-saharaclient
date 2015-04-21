@@ -17,6 +17,7 @@ import argparse
 import datetime
 import inspect
 import json
+import os.path
 import sys
 
 from saharaclient.openstack.common.apiclient import exceptions
@@ -547,7 +548,7 @@ def do_data_source_delete(cs, args):
 # ~~~~~~~~~~~~~~~~~~~~
 # job-binary-data-list
 #
-# job-binary-data-create [--file <file>]
+# job-binary-data-create [--file <file>] [--name <name>]
 #
 # job-binary-data-delete --id <id>
 #
@@ -561,15 +562,23 @@ def do_job_binary_data_list(cs, args):
            default=sys.stdin,
            type=argparse.FileType('r'),
            help='Data to store.')
+@utils.arg('--name',
+           help="Name of the job binary internal.")
 def do_job_binary_data_create(cs, args):
     """Store data in the internal DB.
 
     Use 'swift upload' instead of this command.
     Use this command only if Swift is not available.
     """
+    if args.name:
+        name = args.name
+    elif args.file is not sys.stdin:
+        name = os.path.basename(args.file.name)
+    else:
+        name = datetime.datetime.now().strftime('d%Y%m%d%H%M%S')
     # Should be %F-%T except for type validation errors
     _show_job_binary_data((cs.job_binary_internals.create(
-        datetime.datetime.now().strftime('d%Y%m%d%H%M%S'),
+        name,
         args.file.read()),)
     )
 
