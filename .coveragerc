@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = saharaclient
+omit =
+ */openstack/common/*
+ .tox/*
+ saharaclient/tests/*
+
+[paths]
+source = saharaclient
+
+[report]
+ignore-errors = True
