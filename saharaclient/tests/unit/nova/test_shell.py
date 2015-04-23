@@ -353,15 +353,14 @@ class ShellTestKeystoneV3(ShellTest):
             ''
         ])
 
-        mock_session_class_name = 'keystoneclient.adapter.LegacyJsonAdapter'
+        mock_get_service_type_method_name = (
+            'saharaclient.api.client.Client._determine_service_type')
         mock_job_executions_class_name = (
             'saharaclient.api.job_executions.JobExecutionsManager')
 
-        with mock.patch(mock_session_class_name) as mock_session:
+        with mock.patch(mock_get_service_type_method_name) as mock_st:
             with mock.patch(mock_job_executions_class_name):
-                ms = mock_session.return_value
-                ms.session.get_endpoint.return_value = 'http://no.where'
-
+                mock_st.return_value = 'data-processing'
                 self.make_env()
                 stdout, stderr = self.shell('job-list')
                 self.assertEqual((stdout + stderr), expected)
