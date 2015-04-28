@@ -76,10 +76,14 @@ class Client(object):
                 verify = cacert
 
             session = keystone_session.Session(verify=verify)
-            service_type = self._determine_service_type(session,
-                                                        auth,
-                                                        service_type,
-                                                        endpoint_type)
+
+        if not auth:
+            auth = session.auth
+
+        service_type = self._determine_service_type(session,
+                                                    auth,
+                                                    service_type,
+                                                    endpoint_type)
 
         kwargs['user_agent'] = USER_AGENT
         kwargs.setdefault('interface', endpoint_type)
