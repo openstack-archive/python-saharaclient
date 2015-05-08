@@ -355,6 +355,8 @@ def do_cluster_delete(cs, args):
 #
 # node-group-template-delete --name <template>|--id <template_id>
 #
+# node-group-template-update --name <template>|--id <template_id> --json <file>
+#
 
 def do_node_group_template_list(cs, args):
     """Print a list of available node group templates."""
@@ -407,6 +409,36 @@ def do_node_group_template_delete(cs, args):
         _get_by_id_or_name(cs.node_group_templates, name=args.name).id
     )
     # TODO(mattf): No indication of result
+
+
+@utils.arg('--name',
+           help='Name of the node group template to update.')
+@utils.arg('--id',
+           metavar='<template_id>',
+           help='ID of the node group template to update')
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of the node group template update')
+def do_node_group_template_update(cs, args):
+    """Update a node group template."""
+    template = _get_by_id_or_name(cs.node_group_templates,
+                                  name=args.name,
+                                  id=args.id)
+    update_template = json.loads(args.json.read())
+    _filter_call_args(update_template, cs.node_group_templates.update)
+    for param in ["plugin_name", "hadoop_version", "name", "flavor_id"]:
+        if param not in update_template:
+            update_template[param] = getattr(template, param, None)
+
+    result = cs.node_group_templates.update(
+        args.id or
+        template._get_by_id_or_name(cs.node_group_templates,
+                                    name=args.name).id,
+        **update_template
+    )
+
+    _show_node_group_template(result)
 
 
 #
