@@ -474,6 +474,35 @@ def do_cluster_template_delete(cs, args):
     # TODO(mattf): No indication of result
 
 
+@utils.arg('--name',
+           help='Name of the cluster template to update.')
+@utils.arg('--id',
+           metavar='<template_id>',
+           help='Id of the cluster template to update.')
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of cluster template update.')
+def do_cluster_template_update(cs, args):
+    """Update a cluster template."""
+    template = _get_by_id_or_name(cs.cluster_templates,
+                                  name=args.name,
+                                  id=args.id)
+    update_template = json.loads(args.json.read())
+    _filter_call_args(update_template, cs.cluster_templates.update)
+    for param in ["name", "plugin_name", "hadoop_version"]:
+        if param not in update_template:
+            update_template[param] = getattr(template, param, None)
+
+    result = cs.cluster_templates.update(
+        args.id or
+        _get_by_id_or_name(cs.node_group_templates, name=args.name).id,
+        **update_template
+    )
+
+    _show_cluster_template(result)
+
+
 #
 # Data Sources
 # ~~~~~~~~~~~~
