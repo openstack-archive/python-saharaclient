@@ -32,6 +32,21 @@ class ClusterTemplateTest(base.BaseTestCase):
         }
     }
 
+    update_json = {
+        "cluster_template": {
+            'name': 'UpdatedName',
+            'description': 'Updated description',
+            'plugin_name': 'plugin',
+            'hadoop_version': '1',
+            'node_groups': {
+                'name': 'master-node',
+                'flavor_id': '3',
+                'node_processes': ['namenode', 'datanode'],
+                'count': 1
+            }
+        }
+    }
+
     def test_create_cluster_template(self):
         url = self.URL + '/cluster-templates'
         self.responses.post(url, status_code=202,
@@ -72,3 +87,28 @@ class ClusterTemplateTest(base.BaseTestCase):
         self.client.cluster_templates.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_cluster_template_update(self):
+        url = self.URL + '/cluster-templates'
+        self.responses.post(url, status_code=202,
+                            json={'cluster_template': self.body})
+        resp = self.client.cluster_templates.create(**self.body)
+
+        update_url = self.URL + '/cluster-templates/id'
+        self.responses.put(update_url, status_code=202, json=self.update_json)
+
+        updated = self.client.cluster_templates.update(
+            "id",
+            resp.name,
+            resp.plugin_name,
+            resp.hadoop_version,
+            description=getattr(resp, "description", None),
+            cluster_configs=getattr(resp, "cluster_configs", None),
+            node_groups=getattr(resp, "node_groups", None),
+            anti_affinity=getattr(resp, "anti_affinity", None),
+            net_id=getattr(resp, "neutron_management_network", None),
+            default_image_id=getattr(resp, "default_image_id", None)
+        )
+
+        self.assertIsInstance(updated, ct.ClusterTemplate)
+        self.assertFields(self.update_json["cluster_template"], updated)
