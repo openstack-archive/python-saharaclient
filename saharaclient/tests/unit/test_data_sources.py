@@ -39,6 +39,11 @@ class DataSourceTest(base.BaseTestCase):
         }
     }
 
+    update_json = {
+        'name': 'UpdatedName',
+        'url': 'hdfs://myfakeserver/fakepath'
+    }
+
     def test_create_data_sources(self):
         url = self.URL + '/data-sources'
         self.responses.post(url, status_code=202,
@@ -79,3 +84,11 @@ class DataSourceTest(base.BaseTestCase):
         self.client.data_sources.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_update_data_sources(self):
+        update_url = self.URL + '/data-sources/id'
+        self.responses.put(update_url, status_code=202,
+                           json=self.update_json)
+        updated = self.client.data_sources.update("id", self.update_json)
+        self.assertEqual(self.update_json["name"], updated.name)
+        self.assertEqual(self.update_json["url"], updated.url)
