@@ -723,6 +723,27 @@ def do_job_binary_delete(cs, args):
     # TODO(mattf): No indication of result
 
 
+@utils.arg('--name',
+           help='Name of the job binary to update.')
+@utils.arg('--id',
+           metavar='<job_binary_id>',
+           help='Id of the job binary to update.')
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of job binary update.')
+def do_job_binary_update(cs, args):
+    """Update a job binary."""
+    update_data = json.loads(args.json.read())
+    result = cs.job_binaries.update(
+        args.id or
+        _get_by_id_or_name(cs.job_binaries, name=args.name).id,
+        update_data
+    )
+
+    _show_job_binary(result)
+
+
 #
 # Jobs
 # ~~~~

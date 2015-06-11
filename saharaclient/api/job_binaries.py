@@ -49,3 +49,7 @@ class JobBinariesManager(base.ResourceManager):
         if resp.status_code != 200:
             self._raise_api_exception(resp)
         return resp.content
+
+    def update(self, job_binary_id, data):
+        return self._update(
+            '/job-binaries/%s' % job_binary_id, data, 'job_binary')
