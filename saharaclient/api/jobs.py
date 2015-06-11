@@ -23,15 +23,15 @@ class Job(base.Resource):
 class JobsManager(base.ResourceManager):
     resource_class = Job
 
-    def create(self, name, type, mains, libs, description):
+    def create(self, name, type, mains, libs, description, interface=None):
         data = {
             'name': name,
             'type': type,
             'description': description,
             'mains': mains,
-            'libs': libs
+            'libs': libs,
+            'interface': interface or []
         }
-
         return self._create('/jobs', data, 'job')
 
     def list(self, search_opts=None):

@@ -94,9 +94,12 @@ class EDPTest(base.ITestBase):
         return info
 
     def edp_common(self, job_type, lib=None, main=None, configs=None,
-                   add_data_sources=True, pass_data_sources_as_args=False):
+                   add_data_sources=True, pass_data_sources_as_args=False,
+                   job_interface=None, execution_interface=None):
         # Generate a new marker for this so we can keep containers separate
         # and create some input data
+        job_interface = job_interface or []
+        execution_interface = execution_interface or {}
         marker = "%s-%s" % (job_type.replace(".", ""), os.getpid())
         container = self.swift_utils.create_container(marker)
         self.swift_utils.generate_input(container, 'input')
@@ -127,12 +130,17 @@ class EDPTest(base.ITestBase):
 
         # Create a job template
         job_template_name = marker
-        self.cli.job_template_create(job_template_name,
-                                     job_type,
-                                     main=self.main_binary and (
-                                         self.main_binary.id or ''),
-                                     lib=self.lib_binary and (
-                                         self.lib_binary.id or ''))
+        job_template_dict = {
+            "name": job_template_name,
+            "type": job_type,
+            "mains": [self.main_binary.id] if (self.main_binary and
+                                               self.main_binary.id) else [],
+            "libs": [self.lib_binary.id] if (self.lib_binary and
+                                             self.lib_binary.id) else [],
+            "interface": job_interface
+        }
+        f = self.util.generate_json_file(job_template_dict)
+        self.cli.job_template_create(f.name)
         self.job_template = self.util.find_job_template_by_name(
             job_template_name)
         self.assertIsNotNone(self.job_template)
@@ -152,14 +160,19 @@ class EDPTest(base.ITestBase):
             args = [input_url, output_url]
         else:
             args = None
-        self.cli.job_create(self.job_template.id,
-                            self.cluster.id,
-                            input_id=self.input_source and (
-                                self.input_source.id or ''),
-                            output_id=self.output_source and (
-                                self.output_source.id or ''),
-                            args=args,
-                            configs=configs)
+
+        job_dict = {
+            "cluster_id": self.cluster.id,
+            "input_id": self.input_source and (
+                self.input_source.id or None),
+            "output_id": self.output_source and (
+                self.output_source.id or None),
+            "job_configs": {"configs": configs,
+                            "args": args},
+            "interface": execution_interface
+        }
+        f = self.util.generate_json_file(job_dict)
+        self.cli.job_create(self.job_template.id, f.name)
 
         # Find the job using the job_template_id
         self.job = self.util.find_job_by_job_template_id(self.job_template.id)
@@ -197,16 +210,25 @@ class EDPTest(base.ITestBase):
 
     def java_edp(self):
         configs = {
-            'fs.swift.service.sahara.username': common.OS_USERNAME,
             'fs.swift.service.sahara.password': common.OS_PASSWORD,
             'edp.java.main_class': 'org.openstack.sahara.examples.WordCount'
         }
+        job_interface = [{
+            "name": "Swift Username",
+            "mapping_type": "configs",
+            "location": "fs.swift.service.sahara.username",
+            "value_type": "string",
+            "required": True
+        }]
+        execution_interface = {"Swift Username": common.OS_USERNAME}
         self.edp_common('Java',
                         lib=self._binary_info('edp-java.jar',
                                               relative_path='edp-java/'),
                         configs=configs,
                         add_data_sources=False,
-                        pass_data_sources_as_args=True)
+                        pass_data_sources_as_args=True,
+                        job_interface=job_interface,
+                        execution_interface=execution_interface)
 
     def run_edp_jobs(self, config):
         try:

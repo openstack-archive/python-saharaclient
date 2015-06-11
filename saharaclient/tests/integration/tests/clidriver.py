@@ -17,8 +17,6 @@ import logging
 import shlex
 import subprocess
 
-import six
-
 from saharaclient.tests.integration.configs import config as cfg
 
 cfg = cfg.ITConfig()
@@ -144,34 +142,16 @@ class CLICommands(CommandBase):
         params = '--id %s' % id
         return self.sahara('job-binary-data-delete', params=params)
 
-    def job_template_create(self, name, jobtype, main='', lib=''):
-        params = '--name %s --type %s' % (name, jobtype)
-        if main:
-            params += ' --main %s' % main
-        if lib:
-            params += ' --lib %s' % lib
+    def job_template_create(self, filename):
+        params = '--json %s' % (filename)
         return self.sahara('job-template-create', params=params)
 
     def job_template_delete(self, id):
         params = '--id %s' % id
         return self.sahara('job-template-delete', params=params)
 
-    def job_create(self, job_id, cluster_id, input_id='', output_id='',
-                   job_params=None, args=None, configs=None):
-        params = '--job-template %s --cluster %s' % (job_id, cluster_id)
-        if input_id:
-            params += ' --input-data %s' % input_id
-        if output_id:
-            params += ' --output-data %s' % output_id
-        if job_params:
-            for k, v in six.iteritems(params):
-                params += ' --param %s=%s' % (k, v)
-        if args:
-            for arg in args:
-                params += ' --arg %s' % arg
-        if configs:
-            for k, v in six.iteritems(configs):
-                params += ' --config %s=%s' % (k, v)
+    def job_create(self, job_template_id, filename):
+        params = '--job-template %s --json %s' % (job_template_id, filename)
         return self.sahara('job-create', params=params)
 
     def job_delete(self, id):

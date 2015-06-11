@@ -756,10 +756,8 @@ def do_job_template_show(cs, args):
 
 
 @utils.arg('--name',
-           required=True,
            help='Name of the job template.')
 @utils.arg('--type',
-           required=True,
            help='Type of the job template.')
 @utils.arg('--main',
            action='append',
@@ -772,11 +770,28 @@ def do_job_template_show(cs, args):
 @utils.arg('--description',
            default='',
            help='Description of the job template.')
+@utils.arg('--json',
+           default=None,
+           type=argparse.FileType('r'),
+           help='JSON representation of job template.')
 def do_job_template_create(cs, args):
     """Create a job template."""
-    _show_job_template(cs.jobs.create(args.name, args.type,
-                                      args.main, args.lib,
-                                      args.description))
+    template = json.loads(args.json.read()) if args.json else {}
+    _filter_call_args(template, cs.jobs.create)
+    template = {
+        "name": args.name or template.get("name") or None,
+        "type": args.type or template.get("type") or None,
+        "mains": args.main or template.get("mains") or [],
+        "libs": args.lib or template.get("libs") or [],
+        "description": args.description or template.get("description") or '',
+        "interface": template.get("interface") or []
+    }
+    if not template["name"]:
+        raise Exception("name is required")
+    if not template["type"]:
+        raise Exception("type is required")
+
+    _show_job_template(cs.jobs.create(**template))
 
 
 @utils.arg('--name',
@@ -830,7 +845,7 @@ def do_job_show(cs, args):
            required=True,
            help='ID of the job template to run.')
 @utils.arg('--cluster',
-           required=True,
+           required=False,
            help='ID of the cluster to run the job in.')
 @utils.arg('--input-data',
            default=None,
@@ -852,14 +867,30 @@ def do_job_show(cs, args):
            action='append',
            default=[],
            help='Config parameters to add to the job, repeatable.')
+@utils.arg('--json',
+           default=None,
+           type=argparse.FileType('r'),
+           help='JSON representation of the job.')
 def do_job_create(cs, args):
     """Create a job."""
+    job = json.loads(args.json.read()) if args.json else {}
+    remap = {"job_configs": "configs"}
+    _filter_call_args(job, cs.job_executions.create, remap)
     _convert = lambda ls: dict(map(lambda i: i.split('=', 1), ls))
-    _show_job(cs.job_executions.create(args.job_template, args.cluster,
-                                       args.input_data, args.output_data,
-                                       {'params': _convert(args.param),
-                                        'args': args.arg,
-                                        'configs': _convert(args.config)}))
+    job = {
+        "cluster_id": args.cluster or job.get("cluster_id") or None,
+        "input_id": args.input_data or job.get("input_id") or None,
+        "output_id": args.output_data or job.get("output_id") or None,
+        "interface": job.get("interface") or [],
+        "configs": job.get("configs") or {}
+    }
+    if any((args.config, args.param, args.arg)):
+        job["configs"] = {"configs": _convert(args.config),
+                          "args": args.arg,
+                          "params": _convert(args.param)}
+    if not job["cluster_id"]:
+        raise Exception("cluster is required")
+    _show_job(cs.job_executions.create(args.job_template, **job))
 
 
 @utils.arg('--id',

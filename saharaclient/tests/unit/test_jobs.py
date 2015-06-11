@@ -24,7 +24,8 @@ class JobTest(base.BaseTestCase):
         'type': 'pig',
         'mains': ['job_binary_id'],
         'libs': [],
-        'description': 'descr'
+        'description': 'descr',
+        'interface': []
     }
 
     def test_create_job(self):
@@ -65,7 +66,8 @@ class JobTest(base.BaseTestCase):
             "job_config": {
                 "args": [],
                 "configs": []
-            }
+            },
+            "interface": []
         }
         self.responses.get(url, json=response)
 
