@@ -28,6 +28,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
         "volumes_per_node": "3",
         "volumes_size": "4",
         "node_processes": ["datanode"],
+        "use_autoconfig": True,
     }
 
     update_json = {
@@ -40,6 +41,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
             "volumes_per_node": "3",
             "volumes_size": "4",
             "node_processes": ["datanode", "namenode"],
+            "use_autoconfig": False,
         }
     }
 
@@ -113,6 +115,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
             is_proxy_gateway=getattr(resp, "is_proxy_gateway", None),
             volume_local_to_instance=getattr(resp,
                                              "volume_local_to_instance",
-                                             None))
+                                             None),
+            use_autoconfig=False)
         self.assertIsInstance(updated, ng.NodeGroupTemplate)
         self.assertFields(self.update_json["node_group_template"], updated)

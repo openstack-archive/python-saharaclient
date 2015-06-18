@@ -29,7 +29,8 @@ class ClusterManager(base.ResourceManager):
                cluster_template_id=None, default_image_id=None,
                is_transient=None, description=None, cluster_configs=None,
                node_groups=None, user_keypair_id=None,
-               anti_affinity=None, net_id=None, count=None):
+               anti_affinity=None, net_id=None, count=None,
+               use_autoconfig=None):
 
         data = {
             'name': name,
@@ -53,7 +54,7 @@ class ClusterManager(base.ResourceManager):
                               user_keypair_id=user_keypair_id,
                               anti_affinity=anti_affinity,
                               neutron_management_network=net_id,
-                              count=count)
+                              count=count, use_autoconfig=use_autoconfig)
 
         if count:
             return self._create('/clusters/multiple', data)

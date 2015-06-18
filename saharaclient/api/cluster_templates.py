@@ -25,7 +25,8 @@ class ClusterTemplateManager(base.ResourceManager):
 
     def _assign_field(self, name, plugin_name, hadoop_version,
                       description=None, cluster_configs=None, node_groups=None,
-                      anti_affinity=None, net_id=None, default_image_id=None):
+                      anti_affinity=None, net_id=None, default_image_id=None,
+                      use_autoconfig=None):
         data = {
             'name': name,
             'plugin_name': plugin_name,
@@ -38,24 +39,28 @@ class ClusterTemplateManager(base.ResourceManager):
                               node_groups=node_groups,
                               anti_affinity=anti_affinity,
                               neutron_management_network=net_id,
-                              default_image_id=default_image_id)
+                              default_image_id=default_image_id,
+                              use_autoconfig=use_autoconfig)
         return data
 
     def create(self, name, plugin_name, hadoop_version, description=None,
                cluster_configs=None, node_groups=None, anti_affinity=None,
-               net_id=None, default_image_id=None):
+               net_id=None, default_image_id=None, use_autoconfig=None):
         data = self._assign_field(name, plugin_name, hadoop_version,
                                   description, cluster_configs, node_groups,
-                                  anti_affinity, net_id, default_image_id)
+                                  anti_affinity, net_id, default_image_id,
+                                  use_autoconfig)
 
         return self._create('/cluster-templates', data, 'cluster_template')
 
     def update(self, cluster_template_id, name, plugin_name, hadoop_version,
                description=None, cluster_configs=None, node_groups=None,
-               anti_affinity=None, net_id=None, default_image_id=None):
+               anti_affinity=None, net_id=None, default_image_id=None,
+               use_autoconfig=None):
         data = self._assign_field(name, plugin_name, hadoop_version,
                                   description, cluster_configs, node_groups,
-                                  anti_affinity, net_id, default_image_id)
+                                  anti_affinity, net_id, default_image_id,
+                                  use_autoconfig)
 
         return self._update('/cluster-templates/%s' % cluster_template_id,
                             data, 'cluster_template')
