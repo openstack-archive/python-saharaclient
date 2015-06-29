@@ -26,6 +26,14 @@ class ClusterTest(base.BaseTestCase):
         'cluster_template_id': 'id',
     }
 
+    body_with_count = {
+        'name': 'name',
+        'plugin_name': 'fake',
+        'hadoop_version': '0.1',
+        'cluster_template_id': 'id',
+        'count': 2
+    }
+
     body_with_progress = {
         'name': 'name',
         'plugin_name': 'fake',
@@ -61,6 +69,19 @@ class ClusterTest(base.BaseTestCase):
         self.assertEqual(body, json.loads(self.responses.last_request.body))
         self.assertIsInstance(resp, cl.Cluster)
         self.assertFields(body, resp)
+
+    def test_create_multiple_clusters(self):
+        url = self.URL + '/clusters/multiple'
+        self.responses.post(url, status_code=202,
+                            json={'clusters': ['id1', 'id2']})
+
+        resp = self.client.clusters.create(**self.body_with_count)
+
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(self.body_with_count,
+                         json.loads(self.responses.last_request.body))
+        self.assertIsInstance(resp, cl.Cluster)
+        self.assertFields({'clusters': ['id1', 'id2']}, resp)
 
     def test_clusters_list(self):
         url = self.URL + '/clusters'
