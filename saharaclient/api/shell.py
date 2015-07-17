@@ -604,6 +604,24 @@ def do_data_source_delete(cs, args):
     # TODO(mattf): No indication of result
 
 
+@utils.arg('--name',
+           help="Name of the data source to update.")
+@utils.arg('--id',
+           help="ID of the data source to update.")
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON containing the data source fields to update.')
+def do_data_source_update(cs, args):
+    """Update a data source."""
+    update_data = json.loads(args.json.read())
+    result = cs.data_sources.update(
+        args.id or _get_by_id_or_name(cs.data_sources, name=args.name).id,
+        update_data
+    )
+    _show_data_source(result)
+
+
 #
 # Job Binary Internals
 # ~~~~~~~~~~~~~~~~~~~~

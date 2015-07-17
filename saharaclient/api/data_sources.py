@@ -46,3 +46,7 @@ class DataSourceManager(base.ResourceManager):
 
     def delete(self, data_source_id):
         self._delete('/data-sources/%s' % data_source_id)
+
+    def update(self, data_source_id, update_data):
+        return self._update('/data-sources/%s' % data_source_id,
+                            update_data)
