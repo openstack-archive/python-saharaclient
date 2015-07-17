@@ -814,7 +814,7 @@ def do_job_list(cs, args):
         # why is status in info.status?
         job.status = job.info['status']
     # TODO(mattf): why can cluster_id be None?
-    columns = ('id', 'cluster_id', 'status')
+    columns = ('id', 'cluster_id', 'start_time', 'status')
     utils.print_list(jobs, columns)
 
 
