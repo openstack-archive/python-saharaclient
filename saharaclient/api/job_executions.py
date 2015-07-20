@@ -33,11 +33,13 @@ class JobExecutionsManager(base.ResourceManager):
     def delete(self, obj_id):
         self._delete('/job-executions/%s' % obj_id)
 
-    def create(self, job_id, cluster_id, input_id, output_id, configs):
+    def create(self, job_id, cluster_id, input_id,
+               output_id, configs, interface=None):
         url = "/jobs/%s/execute" % job_id
         data = {
             "cluster_id": cluster_id,
-            "job_configs": configs
+            "job_configs": configs,
+            "interface": interface or {}
         }
 
         # Leave these out if they are null.  For Java job types they
