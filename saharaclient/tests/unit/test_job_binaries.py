@@ -29,6 +29,16 @@ class JobBinaryTest(base.BaseTestCase):
         }
     }
 
+    update_body = {
+        'name': 'Updatedname',
+        'url': 'Updatedurl',
+        'description': 'Updateddescr',
+        'extra': {
+            'user': 'user',
+            'password': 'Updated123'
+        }
+    }
+
     def test_create_job_binary(self):
         url = self.URL + '/job-binaries'
         self.responses.post(url, status_code=202,
@@ -78,3 +88,12 @@ class JobBinaryTest(base.BaseTestCase):
 
         self.assertEqual(url, self.responses.last_request.url)
         self.assertEqual(b'data', resp)
+
+    def test_job_binary_update(self):
+        url = self.URL + '/job-binaries/id'
+        self.responses.put(url,
+                           status_code=202,
+                           json={'job_binary': self.update_body})
+
+        resp = self.client.job_binaries.update("id", self.update_body)
+        self.assertEqual(self.update_body["name"], resp.name)
