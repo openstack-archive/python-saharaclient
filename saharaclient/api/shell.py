@@ -116,7 +116,7 @@ def _get_by_id_or_name(manager, id=None, name=None, **kwargs):
         raise exceptions.CommandError("either NAME or ID is required")
     if id:
         return manager.get(id, **kwargs)
-    ls = manager.find(name=name, **kwargs)
+    ls = manager.find(name=name)
     if len(ls) == 0:
         raise exceptions.CommandError("%s '%s' not found" %
                                       (manager.resource_class.resource_name,
@@ -125,7 +125,7 @@ def _get_by_id_or_name(manager, id=None, name=None, **kwargs):
         raise exceptions.CommandError("%s '%s' not unique, try by ID" %
                                       (manager.resource_class.resource_name,
                                        name))
-    return ls[0]
+    return manager.get(ls[0].id, **kwargs)
 
 
 #
