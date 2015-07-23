@@ -277,7 +277,7 @@ def do_image_remove_tag(cs, args):
 #
 # cluster-create [--json <file>]
 #
-# TODO(mattf): cluster-scale
+# cluster-scale --name <cluster>|--id <cluster_id> [--json <file>]
 #
 # cluster-delete --name <cluster>|--id <cluster_id>
 #
@@ -329,6 +329,22 @@ def do_cluster_create(cs, args):
     _filter_call_args(template, cs.clusters.create, remap)
 
     _show_cluster(cs.clusters.create(**template))
+
+
+@utils.arg('--name',
+           help='Name of the cluster.')
+@utils.arg('--id',
+           metavar='<cluster_id>',
+           help='ID of the cluster.')
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of cluster scale.')
+def do_cluster_scale(cs, args):
+    """Scale a cluster """
+    cluster_id = args.id or _get_by_id_or_name(cs.clusters, name=args.name).id
+    scale_template = json.loads(args.json.read())
+    _show_cluster(cs.clusters.scale(cluster_id, **scale_template))
 
 
 @utils.arg('--name',
