@@ -29,13 +29,19 @@ class ClusterManager(base.ResourceManager):
                cluster_template_id=None, default_image_id=None,
                is_transient=None, description=None, cluster_configs=None,
                node_groups=None, user_keypair_id=None,
-               anti_affinity=None, net_id=None):
+               anti_affinity=None, net_id=None, count=None):
 
         data = {
             'name': name,
             'plugin_name': plugin_name,
             'hadoop_version': hadoop_version,
         }
+
+        # Checking if count is greater than 1, otherwise we set it to None
+        # so the created dict in the _copy_if_defined method does not contain
+        # the count parameter.
+        if count and count <= 1:
+            count = None
 
         self._copy_if_defined(data,
                               cluster_template_id=cluster_template_id,
@@ -46,7 +52,11 @@ class ClusterManager(base.ResourceManager):
                               node_groups=node_groups,
                               user_keypair_id=user_keypair_id,
                               anti_affinity=anti_affinity,
-                              neutron_management_network=net_id)
+                              neutron_management_network=net_id,
+                              count=count)
+
+        if count:
+            return self._create('/clusters/multiple', data)
 
         return self._create('/clusters', data, 'cluster')
 

@@ -317,6 +317,10 @@ def do_cluster_show(cs, args):
            default=sys.stdin,
            type=argparse.FileType('r'),
            help='JSON representation of cluster.')
+@utils.arg('--count',
+           default=1,
+           type=int,
+           help='Number of clusters to be created.')
 def do_cluster_create(cs, args):
     """Create a cluster."""
     # TODO(mattf): improve template validation, e.g. template w/o name key
@@ -326,6 +330,7 @@ def do_cluster_create(cs, args):
     # create w/ **template. It may be desirable to simple change
     # clusters.create in the future.
     remap = {'neutron_management_network': 'net_id'}
+    template['count'] = args.count
     _filter_call_args(template, cs.clusters.create, remap)
 
     _show_cluster(cs.clusters.create(**template))
