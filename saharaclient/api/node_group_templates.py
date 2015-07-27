@@ -30,7 +30,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                       security_groups=None, auto_security_group=None,
                       availability_zone=None, volumes_availability_zone=None,
                       volume_type=None, image_id=None, is_proxy_gateway=None,
-                      volume_local_to_instance=None, use_autoconfig=None):
+                      volume_local_to_instance=None, use_autoconfig=None,
+                      shares=None):
 
         data = {
             'name': name,
@@ -49,8 +50,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                               availability_zone=availability_zone,
                               image_id=image_id,
                               is_proxy_gateway=is_proxy_gateway,
-                              use_autoconfig=use_autoconfig
-                              )
+                              use_autoconfig=use_autoconfig,
+                              shares=shares)
 
         if volumes_per_node:
             data.update({"volumes_per_node": volumes_per_node,
@@ -72,7 +73,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                security_groups=None, auto_security_group=None,
                availability_zone=None, volumes_availability_zone=None,
                volume_type=None, image_id=None, is_proxy_gateway=None,
-               volume_local_to_instance=None, use_autoconfig=None):
+               volume_local_to_instance=None, use_autoconfig=None,
+               shares=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node, volumes_size,
@@ -81,7 +83,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                                   auto_security_group, availability_zone,
                                   volumes_availability_zone, volume_type,
                                   image_id, is_proxy_gateway,
-                                  volume_local_to_instance, use_autoconfig)
+                                  volume_local_to_instance, use_autoconfig,
+                                  shares)
 
         return self._create('/node-group-templates', data,
                             'node_group_template')
@@ -93,7 +96,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                auto_security_group=None, availability_zone=None,
                volumes_availability_zone=None, volume_type=None,
                image_id=None, is_proxy_gateway=None,
-               volume_local_to_instance=None, use_autoconfig=None):
+               volume_local_to_instance=None, use_autoconfig=None,
+               shares=None):
 
         data = self._assign_field(name, plugin_name, hadoop_version, flavor_id,
                                   description, volumes_per_node, volumes_size,
@@ -102,7 +106,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                                   auto_security_group, availability_zone,
                                   volumes_availability_zone, volume_type,
                                   image_id, is_proxy_gateway,
-                                  volume_local_to_instance, use_autoconfig)
+                                  volume_local_to_instance, use_autoconfig,
+                                  shares)
 
         return self._update('/node-group-templates/%s' % ng_template_id, data,
                             'node_group_template')
