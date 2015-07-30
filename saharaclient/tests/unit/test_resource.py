@@ -41,6 +41,14 @@ class ResourceTest(testtools.TestCase):
         self.assertIsNotNone(resource)
         self.assertEqual(dict_copy, dict)
 
+    def test_to_dict(self):
+        dict = {"name": "test"}
+        resource = test_base.TestResource(None, dict)
+        self.assertEqual({'description': 'Test Description',
+                          'extra': 'extra',
+                          'name': 'test'},
+                         resource.to_dict())
+
     def test_resource_str(self):
         dict = {"name": "test",
                 "description": "Changed Description"}
