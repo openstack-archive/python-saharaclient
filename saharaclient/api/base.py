@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import json
 import logging
 
@@ -48,6 +49,9 @@ class Resource(object):
             except AttributeError:
                 # In this case we already defined the attribute on the class
                 pass
+
+    def to_dict(self):
+        return copy.deepcopy(self._info)
 
     def __str__(self):
         return '%s %s' % (self.resource_name, str(self._info))
