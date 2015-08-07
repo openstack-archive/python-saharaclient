@@ -29,7 +29,8 @@ class ClusterTemplateTest(base.BaseTestCase):
             'flavor_id': '2',
             'node_processes': ['namenode'],
             'count': 1
-        }
+        },
+        "use_autoconfig": False,
     }
 
     update_json = {
@@ -43,7 +44,8 @@ class ClusterTemplateTest(base.BaseTestCase):
                 'flavor_id': '3',
                 'node_processes': ['namenode', 'datanode'],
                 'count': 1
-            }
+            },
+            "use_autoconfig": True,
         }
     }
 
@@ -107,7 +109,8 @@ class ClusterTemplateTest(base.BaseTestCase):
             node_groups=getattr(resp, "node_groups", None),
             anti_affinity=getattr(resp, "anti_affinity", None),
             net_id=getattr(resp, "neutron_management_network", None),
-            default_image_id=getattr(resp, "default_image_id", None)
+            default_image_id=getattr(resp, "default_image_id", None),
+            use_autoconfig=True,
         )
 
         self.assertIsInstance(updated, ct.ClusterTemplate)
