@@ -39,8 +39,10 @@ class JobExecutionsManager(base.ResourceManager):
         data = {
             "cluster_id": cluster_id,
             "job_configs": configs,
-            "interface": interface or {}
         }
+
+        if interface:
+            data['interface'] = interface
 
         # Leave these out if they are null.  For Java job types they
         # are not part of the schema

@@ -29,8 +29,7 @@ class JobExecutionTest(base.BaseTestCase):
     }
     response = {
         'cluster_id': 'cluster_id',
-        'job_configs': {},
-        'interface': {}
+        'job_configs': {}
     }
 
     def test_create_job_execution_with_io(self):

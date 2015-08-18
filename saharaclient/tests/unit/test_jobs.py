@@ -24,8 +24,7 @@ class JobTest(base.BaseTestCase):
         'type': 'pig',
         'mains': ['job_binary_id'],
         'libs': [],
-        'description': 'descr',
-        'interface': []
+        'description': 'descr'
     }
 
     def test_create_job(self):

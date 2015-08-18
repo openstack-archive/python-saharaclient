@@ -30,8 +30,11 @@ class JobsManager(base.ResourceManager):
             'description': description,
             'mains': mains,
             'libs': libs,
-            'interface': interface or []
         }
+
+        if interface:
+            data['interface'] = interface
+
         return self._create('/jobs', data, 'job')
 
     def list(self, search_opts=None):
