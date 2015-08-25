@@ -320,7 +320,7 @@ def do_cluster_show(cs, args):
 @utils.arg('--count',
            default=1,
            type=int,
-           help='Number of clusters to be created.')
+           help='Number of clusters to create.')
 def do_cluster_create(cs, args):
     """Create a cluster."""
     # TODO(mattf): improve template validation, e.g. template w/o name key
@@ -346,7 +346,7 @@ def do_cluster_create(cs, args):
            type=argparse.FileType('r'),
            help='JSON representation of cluster scale.')
 def do_cluster_scale(cs, args):
-    """Scale a cluster """
+    """Scale a cluster."""
     cluster_id = args.id or _get_by_id_or_name(cs.clusters, name=args.name).id
     scale_template = json.loads(args.json.read())
     _show_cluster(cs.clusters.scale(cluster_id, **scale_template))
@@ -436,11 +436,11 @@ def do_node_group_template_delete(cs, args):
            help='Name of the node group template to update.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='ID of the node group template to update')
+           help='ID of the node group template to update.')
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
-           help='JSON representation of the node group template update')
+           help='JSON representation of the node group template update.')
 def do_node_group_template_update(cs, args):
     """Update a node group template."""
     template = _get_by_id_or_name(cs.node_group_templates,
@@ -531,7 +531,7 @@ def do_cluster_template_delete(cs, args):
            help='Name of the cluster template to update.')
 @utils.arg('--id',
            metavar='<template_id>',
-           help='Id of the cluster template to update.')
+           help='ID of the cluster template to update.')
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
@@ -766,7 +766,7 @@ def do_job_binary_delete(cs, args):
            help='Name of the job binary to update.')
 @utils.arg('--id',
            metavar='<job_binary_id>',
-           help='Id of the job binary to update.')
+           help='ID of the job binary to update.')
 @utils.arg('--json',
            default=sys.stdin,
            type=argparse.FileType('r'),
@@ -982,7 +982,7 @@ def _print_plugin_field(job_type):
 @utils.arg('--type',
            metavar='<job_type>',
            default=None,
-           help='Report only on this job type')
+           help='Report only on this job type.')
 @utils.arg('--plugin',
            metavar='<plugin>',
            default=None,
