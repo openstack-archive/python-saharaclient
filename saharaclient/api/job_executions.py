@@ -34,7 +34,9 @@ class JobExecutionsManager(base.ResourceManager):
         self._delete('/job-executions/%s' % obj_id)
 
     def create(self, job_id, cluster_id, input_id,
-               output_id, configs, interface=None):
+               output_id, configs, interface=None, is_public=None,
+               is_protected=None):
+
         url = "/jobs/%s/execute" % job_id
         data = {
             "cluster_id": cluster_id,
@@ -52,4 +54,14 @@ class JobExecutionsManager(base.ResourceManager):
             if value is not None:
                 data.update({key: value})
 
+        self._copy_if_defined(data, is_public=is_public,
+                              is_protected=is_protected)
+
         return self._create(url, data, 'job_execution')
+
+    def update(self, obj_id, is_public=None, is_protected=None):
+
+        data = {}
+        self._copy_if_defined(data, is_public=is_public,
+                              is_protected=is_protected)
+        return self._patch('/job-executions/%s' % obj_id, data)

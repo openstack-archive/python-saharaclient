@@ -49,3 +49,12 @@ class JobsManager(base.ResourceManager):
 
     def delete(self, job_id):
         self._delete('/jobs/%s' % job_id)
+
+    def update(self, job_id, name=None, description=None, is_public=None,
+               is_protected=None):
+
+        data = {}
+        self._copy_if_defined(data, name=name, description=description,
+                              is_public=is_public, is_protected=is_protected)
+
+        return self._patch('/jobs/%s' % job_id, data)

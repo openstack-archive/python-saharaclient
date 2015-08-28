@@ -148,3 +148,21 @@ class ClusterTest(base.BaseTestCase):
         self.client.clusters.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_clusters_update(self):
+        url = self.URL + '/clusters/id'
+
+        update_body = {
+            'name': 'new_name',
+            'description': 'descr'
+        }
+
+        self.responses.patch(url, status_code=202, json=update_body)
+
+        resp = self.client.clusters.update('id', name='new_name',
+                                           description='descr')
+
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertIsInstance(resp, cl.Cluster)
+        self.assertEqual(update_body,
+                         json.loads(self.responses.last_request.body))

@@ -23,13 +23,17 @@ class JobBinaries(base.Resource):
 class JobBinariesManager(base.ResourceManager):
     resource_class = JobBinaries
 
-    def create(self, name, url, description, extra):
+    def create(self, name, url, description, extra, is_public=None,
+               is_protected=None):
         data = {
             "name": name,
             "url": url,
             "description": description,
             "extra": extra
         }
+
+        self._copy_if_defined(data, is_public=is_public,
+                              is_protected=is_protected)
 
         return self._create('/job-binaries', data, 'job_binary')
 

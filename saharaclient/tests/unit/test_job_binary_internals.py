@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import json
+
 from saharaclient.api import job_binary_internals as jbi
 from saharaclient.tests.unit import base
 
@@ -62,3 +64,19 @@ class JobBinaryInternalTest(base.BaseTestCase):
         self.client.job_binary_internals.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_job_binary_update(self):
+        url = self.URL + '/job-binary-internals/id'
+
+        update_body = {
+            'name': 'new_name'
+        }
+
+        self.responses.patch(url, status_code=202, json=update_body)
+
+        resp = self.client.job_binary_internals.update('id', name='new_name')
+
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertIsInstance(resp, jbi.JobBinaryInternal)
+        self.assertEqual(update_body,
+                         json.loads(self.responses.last_request.body))

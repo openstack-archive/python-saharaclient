@@ -24,7 +24,8 @@ class DataSourceManager(base.ResourceManager):
     resource_class = DataSources
 
     def create(self, name, description, data_source_type,
-               url, credential_user=None, credential_pass=None):
+               url, credential_user=None, credential_pass=None,
+               is_public=None, is_protected=None):
         data = {
             'name': name,
             'description': description,
@@ -35,6 +36,10 @@ class DataSourceManager(base.ResourceManager):
         self._copy_if_defined(data['credentials'],
                               user=credential_user,
                               password=credential_pass)
+
+        self._copy_if_defined(data, is_public=is_public,
+                              is_protected=is_protected)
+
         return self._create('/data-sources', data, 'data_source')
 
     def list(self, search_opts=None):

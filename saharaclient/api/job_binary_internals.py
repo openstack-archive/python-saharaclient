@@ -40,3 +40,12 @@ class JobBinaryInternalsManager(base.ResourceManager):
 
     def delete(self, job_binary_id):
         self._delete('/job-binary-internals/%s' % job_binary_id)
+
+    def update(self, job_binary_id, name=None, is_public=None,
+               is_protected=None):
+
+        data = {}
+        self._copy_if_defined(data, name=name, is_public=is_public,
+                              is_protected=is_protected)
+
+        return self._patch('/job-binary-internals/%s' % job_binary_id, data)

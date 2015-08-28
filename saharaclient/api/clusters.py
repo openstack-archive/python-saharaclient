@@ -30,7 +30,8 @@ class ClusterManager(base.ResourceManager):
                is_transient=None, description=None, cluster_configs=None,
                node_groups=None, user_keypair_id=None,
                anti_affinity=None, net_id=None, count=None,
-               use_autoconfig=None, shares=None):
+               use_autoconfig=None, shares=None,
+               is_public=None, is_protected=None):
 
         data = {
             'name': name,
@@ -56,7 +57,9 @@ class ClusterManager(base.ResourceManager):
                               neutron_management_network=net_id,
                               count=count,
                               use_autoconfig=use_autoconfig,
-                              shares=shares)
+                              shares=shares,
+                              is_public=is_public,
+                              is_protected=is_protected)
 
         if count:
             return self._create('/clusters/multiple', data)
@@ -79,3 +82,12 @@ class ClusterManager(base.ResourceManager):
 
     def delete(self, cluster_id):
         self._delete('/clusters/%s' % cluster_id)
+
+    def update(self, cluster_id, name=None, description=None, is_public=None,
+               is_protected=None):
+
+        data = {}
+        self._copy_if_defined(data, name=name, description=description,
+                              is_public=is_public, is_protected=is_protected)
+
+        return self._patch('/clusters/%s' % cluster_id, data)

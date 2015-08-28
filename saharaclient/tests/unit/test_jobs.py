@@ -83,3 +83,21 @@ class JobTest(base.BaseTestCase):
         self.client.jobs.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_jobs_update(self):
+        url = self.URL + '/jobs/id'
+
+        update_body = {
+            'name': 'new_name',
+            'description': 'description'
+        }
+
+        self.responses.patch(url, status_code=202, json=update_body)
+
+        resp = self.client.jobs.update('id', name='new_name',
+                                       description='description')
+
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertIsInstance(resp, jobs.Job)
+        self.assertEqual(update_body,
+                         json.loads(self.responses.last_request.body))

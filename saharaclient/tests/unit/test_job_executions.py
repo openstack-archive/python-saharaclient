@@ -32,6 +32,11 @@ class JobExecutionTest(base.BaseTestCase):
         'job_configs': {}
     }
 
+    update_json = {
+        'is_public': True,
+        'is_protected': True,
+    }
+
     def test_create_job_execution_with_io(self):
         url = self.URL + '/jobs/job_id/execute'
 
@@ -92,3 +97,13 @@ class JobExecutionTest(base.BaseTestCase):
         self.client.job_executions.delete('id')
 
         self.assertEqual(url, self.responses.last_request.url)
+
+    def test_job_executions_update(self):
+        url = self.URL + '/job-executions/id'
+        self.responses.patch(url, status_code=202, json=self.update_json)
+
+        resp = self.client.job_executions.update("id", **self.update_json)
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertIsInstance(resp, je.JobExecution)
+        self.assertEqual(self.update_json,
+                         json.loads(self.responses.last_request.body))
