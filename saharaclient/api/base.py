@@ -187,7 +187,7 @@ class APIException(Exception):
 def get_query_string(search_opts):
     if search_opts:
         qparams = sorted(search_opts.items(), key=lambda x: x[0])
-        query_string = "?%s" % parse.urlencode(qparams)
+        query_string = "?%s" % parse.urlencode(qparams, doseq=True)
     else:
         query_string = ""
     return query_string
