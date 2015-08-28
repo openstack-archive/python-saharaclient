@@ -306,8 +306,10 @@ class OpenStackSaharaShell(object):
                             metavar='<endpoint-type>',
                             default=cliutils.env(
                                 'SAHARA_ENDPOINT_TYPE',
+                                'OS_ENDPOINT_TYPE',
                                 default=DEFAULT_ENDPOINT_TYPE),
-                            help='Defaults to env[SAHARA_ENDPOINT_TYPE] or '
+                            help=('Defaults to env[SAHARA_ENDPOINT_TYPE] or'
+                                  ' env[OS_ENDPOINT_TYPE] or ')
                             + DEFAULT_ENDPOINT_TYPE + '.')
         # NOTE(dtroyer): We can't add --endpoint_type here due to argparse
         #                thinking usage-list --end is ambiguous; but it
