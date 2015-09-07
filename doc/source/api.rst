@@ -24,6 +24,9 @@ The client constructor has a list of parameters to authenticate and locate Sahar
  * project_name - Keystone Tenant name.
  * project_id - Keystone Tenant id.
  * input_auth_token - Keystone authorization token.
+ * insecure - Allow insecure.
+ * auth - Keystone Authentication Plugin object.
+ * session - Keystone Session object.
 
 **Important!**
  It is not a mandatory rule to provide all of the parameters above. The minimum number should be enough
@@ -32,36 +35,28 @@ The client constructor has a list of parameters to authenticate and locate Sahar
 Authentication check
 ~~~~~~~~~~~~~~~~~~~~
 
-If a user already has a Keystone authentication token, it may be used in `input_auth_token` parameter.
+Passing authentication parameters to Sahara Client is deprecated. Keystone
+Session object should be used for this purpose. For example:
 
 .. sourcecode:: python
 
-    from saharaclient.api.client import Client as saharaclient
+    from keystoneclient.auth.identity import v2
+    from keystoneclient import session
+    from saharaclient import client
 
-    sahara = saharaclient(sahara_url="http://sahara:8386/v1.1",
-                          project_id="11111111-2222-3333-4444-555555555555",
-                          input_auth_token="66666666-7777-8888-9999-000000000000")
+    auth = v2.Password(auth_url=AUTH_URL,
+                       username=USERNAME,
+                       password=PASSWORD,
+                       tenant_name=PROJECT_ID)
+
+    ses = session.Session(auth=auth)
+
+    sahara = client.Client('1.1', session=ses)
 ..
 
-In this case no other authentication parameters are required and `input_auth_token` has a higher
-priority than other parameters. Otherwise user has to provide:
+For more information about Keystone Sessions, see `Using Sessions`_.
 
- * auth_url
- * username
- * api_key
- * any of project_name or project_id
-
-.. sourcecode:: python
-
-    from saharaclient.api.client import Client as saharaclient
-
-    sahara = saharaclient(auth_url="http://keystone:5000/v2.0",
-                          sahara_url="http://sahara:8386/v1.1",
-                          username="user",
-                          api_key="PaSsWoRd",
-                          project_name="demo-project")
-..
-
+.. _Using Sessions: http://docs.openstack.org/developer/python-keystoneclient/using-sessions.html
 
 Sahara endpoint discovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,23 +68,21 @@ default values.
 
 .. sourcecode:: python
 
-    from saharaclient.api.client import Client as saharaclient
+        from keystoneclient.auth.identity import v2
+        from keystoneclient import session
+        from saharaclient import client
 
-    sahara = saharaclient(auth_url="http://keystone:5000/v2.0",
-                          username="user",
-                          api_key="PaSsWoRd",
-                          project_name="demo-project",
-                          service_type="non-default-service-type",
-                          endpoint_type="internalURL")
+        auth = v2.Password(auth_url=AUTH_URL,
+                           username=USERNAME,
+                           password=PASSWORD,
+                           tenant_name=PROJECT_ID)
+
+        ses = session.Session(auth=auth)
+
+        sahara = client.Client('1.1', session=ses,
+                               service_type="non-default-service-type",
+                               endpoint_type="internalURL")
 ..
-
-
-Tenant specification
-~~~~~~~~~~~~~~~~~~~~
-
-All Sahara operations should be performed in one of OpenStack tenants.
-There are two parameters: `project_name` and `project_id` which allow to specify a tenant.
-`project_id` parameter has a higher priority.
 
 Object managers
 ---------------
@@ -104,6 +97,7 @@ Sahara Client has a list of fields to operate with:
  * job_binaries
  * job_binary_internals
  * job_executions
+ * job_types
 
 Each of this fields is a reference to a Manager for a corresponding group of REST calls.
 
@@ -133,42 +127,50 @@ Image Registry ops
 Node Group Template ops
 ~~~~~~~~~~~~~~~~~~~~~~~
 
- * create(name, plugin_name, hadoop_version, flavor_id, description, volumes_per_node, volumes_size, node_processes, node_configs, floating_ip_pool, availability_zone, volumes_availability_zone) - Create a Node Group Template with specified parameters.
+ * create(name, plugin_name, hadoop_version, flavor_id, description, volumes_per_node, volumes_size, node_processes, node_configs, floating_ip_pool, security_groups, auto_security_group, availability_zone, volumes_availability_zone, volume_type, image_id, is_proxy_gateway, volume_local_to_instance, use_autoconfig, shares, is_public, is_protected) - Create a Node Group Template with specified parameters.
+ * update(ng_template_id, name, plugin_name, hadoop_version, flavor_id, description, volumes_per_node, volumes_size, node_processes, node_configs, floating_ip_pool, security_groups, auto_security_group, availability_zone, volumes_availability_zone, volume_type, image_id, is_proxy_gateway, volume_local_to_instance, use_autoconfig, shares, is_public, is_protected) - Update a Node Group Template with specified parameters.
 
 Cluster Template ops
 ~~~~~~~~~~~~~~~~~~~~
 
- * create(name, plugin_name, hadoop_version, description, cluster_configs, node_groups, anti_affinity, net_id) - Create a Cluster Template with specified parameters.
+ * create(name, plugin_name, hadoop_version, description, cluster_configs, node_groups, anti_affinity, net_id, default_image_id, use_autoconfig, shares, is_public, is_protected) - Create a Cluster Template with specified parameters.
+ * update(cluster_template_id, name, plugin_name, hadoop_version, description, cluster_configs, node_groups, anti_affinity, net_id, default_image_id, use_autoconfig, shares, is_public, is_protected) - Update a Cluster Template with specified parameters.
 
 Cluster ops
 ~~~~~~~~~~~
 
- * create(name, plugin_name, hadoop_version, cluster_template_id, default_image_id, is_transient, description, cluster_configs, node_groups, user_keypair_id, anti_affinity, net_id) - Launch a Cluster with specified parameters.
+ * create(name, plugin_name, hadoop_version, cluster_template_id, default_image_id, is_transient, description, cluster_configs, node_groups, user_keypair_id, anti_affinity, net_id, count, use_autoconfig, shares, is_public, is_protected) - Launch a Cluster with specified parameters.
  * scale(cluster_id, scale_object) - Scale an existing Cluster. `scale_object` format is described in REST API doc.
+ * update(cluster_id, name, description, is_public, is_protected) - Update a Cluster with specified parameters.
 
 Data Source ops
 ~~~~~~~~~~~~~~~
 
- * create(name, description, data_source_type, url, credential_user, credential_pass) - Create a Data Source with specified parameters.
+ * create(name, description, data_source_type, url, credential_user, credential_pass, is_public, is_protected) - Create a Data Source with specified parameters.
+ * update(data_source_id, update_data) - Update a Data Source with provided `data`.
 
 Job Binary Internal ops
 ~~~~~~~~~~~~~~~~~~~~~~~
 
  * create(name, data) - Create a Job Binary Internal from provided `data`.
+ * update(job_binary_id, name, is_public, is_protected) - Update a Job Binary Internal with specified parameters
 
 Job Binary ops
 ~~~~~~~~~~~~~~
 
- * create(name, url, description, extra) - Create a Job Binary with specified parameters.
- * get_file(job_binary_id) - Download a Job Binary
+ * create(name, url, description, extra, is_public, is_protected) - Create a Job Binary with specified parameters.
+ * get_file(job_binary_id) - Download a Job Binary.
+ * update(job_binary_id, data) - Update Job Binary with provided `data`.
 
 Job ops
 ~~~~~~~
 
- * create(name, type, mains, libs, description) - Create a Job with specified parameters.
+ * create(name, type, mains, libs, description, interface, is_public, is_protected) - Create a Job with specified parameters.
  * get_configs(job_type) - Get config hints for a specified Job type.
+ * update(job_id, name, description, is_public, is_protected) - Update a Job with specified parameters.
 
 Job Execution ops
 ~~~~~~~~~~~~~~~~~
 
- * create(job_id, cluster_id, input_id, output_id, configs) - Launch a Job with specified parameters.
+ * create(job_id, cluster_id, input_id, output_id, configs, interface, is_public, is_protected) - Launch a Job with specified parameters.
+ * update(obj_id, is_public, is_protected) - Update a Job Execution with specified parameters.
