@@ -30,9 +30,13 @@ class TestDataProcessingPlugin(base.BaseTestCase):
         instance._region_name = 'region_name'
         instance._cacert = 'cacert'
         instance._insecure = 'insecure'
+        instance._cli_options.data_processing_url = 'url'
+        instance._interface = 'public'
 
         plugin.make_client(instance)
         p_client.assert_called_with(session='session',
                                     region_name='region_name',
                                     cacert='cacert',
-                                    insecure='insecure')
+                                    insecure='insecure',
+                                    sahara_url='url',
+                                    endpoint_type='public')

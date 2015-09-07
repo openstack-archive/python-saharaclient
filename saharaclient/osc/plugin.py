@@ -34,11 +34,15 @@ def make_client(instance):
     LOG.debug('Instantiating data-processing client: %s',
               data_processing_client)
 
+    kwargs = utils.build_kwargs_dict('endpoint_type', instance._interface)
+
     client = data_processing_client(
         session=instance.session,
         region_name=instance._region_name,
         cacert=instance._cacert,
-        insecure=instance._insecure
+        insecure=instance._insecure,
+        sahara_url=instance._cli_options.data_processing_url,
+        **kwargs
         )
     return client
 
@@ -54,4 +58,10 @@ def build_option_parser(parser):
         help=("Data processing API version, default=" +
               DEFAULT_DATA_PROCESSING_API_VERSION +
               ' (Env: OS_DATA_PROCESSING_API_VERSION)'))
+    parser.add_argument(
+        "--os-data-processing-url",
+        default=utils.env(
+            "OS_DATA_PROCESSING_URL"),
+        help=("Data processing API URL, "
+              "(Env: OS_DATA_PROCESSING_API_URL)"))
     return parser
