@@ -23,7 +23,8 @@ class Job(base.Resource):
 class JobsManager(base.ResourceManager):
     resource_class = Job
 
-    def create(self, name, type, mains, libs, description, interface=None):
+    def create(self, name, type, mains, libs, description, interface=None,
+               is_public=None, is_protected=None):
         data = {
             'name': name,
             'type': type,
@@ -32,8 +33,8 @@ class JobsManager(base.ResourceManager):
             'libs': libs,
         }
 
-        if interface:
-            data['interface'] = interface
+        self._copy_if_defined(data, interface=interface, is_public=is_public,
+                              is_protected=is_protected)
 
         return self._create('/jobs', data, 'job')
 
