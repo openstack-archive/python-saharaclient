@@ -139,6 +139,24 @@ class ResourceManager(object):
 
         return self.resource_class(self, data)
 
+    def _post(self, url, data, response_key=None, dump_json=True):
+        if dump_json:
+            kwargs = {'json': data}
+        else:
+            kwargs = {'data': data}
+
+        resp = self.api.post(url, **kwargs)
+
+        if resp.status_code != 202:
+            self._raise_api_exception(resp)
+
+        if response_key is not None:
+            data = get_json(resp)[response_key]
+        else:
+            data = get_json(resp)
+
+        return self.resource_class(self, data)
+
     def _list(self, url, response_key):
         resp = self.api.get(url)
         if resp.status_code == 200:
