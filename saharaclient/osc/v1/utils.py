@@ -13,25 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstackclient.common import exceptions
-from openstackclient.common import utils
+import six
+
+from oslo_utils import uuidutils
 
 
 def get_resource(manager, name_or_id):
-    resource = utils.find_resource(manager, name_or_id)
-    if isinstance(resource, list):
-        if not resource:
-            msg = "No %s with a name or ID of '%s' exists." % \
-                (manager.resource_class.__name__.lower(), name_or_id)
-            raise exceptions.CommandError(msg)
-        if len(resource) > 1:
-            msg = "More than one %s exists with the name '%s'." % \
-                (manager.resource_class.__name__.lower(), name_or_id)
-            raise exceptions.CommandError(msg)
-        return resource[0]
-
+    if uuidutils.is_uuid_like(name_or_id):
+        return manager.get(name_or_id)
     else:
-        return resource
+        return manager.find_unique(name=name_or_id)
+
+
+def create_dict_from_kwargs(**kwargs):
+    return dict((k, v) for (k, v) in six.iteritems(kwargs) if v is not None)
 
 
 def prepare_data(data, fields):
@@ -41,3 +36,7 @@ def prepare_data(data, fields):
             new_data[f.replace('_', ' ').capitalize()] = data[f]
 
     return new_data
+
+
+def prepare_column_headers(columns):
+    return [c.replace('_', ' ').capitalize() for c in columns]
