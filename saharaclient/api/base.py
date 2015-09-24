@@ -174,10 +174,10 @@ class ResourceManager(object):
         try:
             error_data = get_json(resp)
         except Exception:
+            msg = _("Failed to parse response from Sahara: %s") % resp.reason
             raise APIException(
                 error_code=resp.status_code,
-                error_message=_("Failed to parse response from Sahara. Check "
-                                "if service catalog configured properly."))
+                error_message=msg)
 
         raise APIException(error_code=error_data.get("error_code"),
                            error_name=error_data.get("error_name"),
