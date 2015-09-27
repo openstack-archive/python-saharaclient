@@ -711,8 +711,8 @@ class OpenStackHelpFormatter(argparse.HelpFormatter):
 
 def main():
     try:
-        OpenStackSaharaShell().main(map(encodeutils.safe_decode,
-                                        sys.argv[1:]))
+        argv = [encodeutils.safe_decode(a) for a in sys.argv[1:]]
+        OpenStackSaharaShell().main(argv)
 
     except Exception as e:
         logger.debug(e, exc_info=1)
