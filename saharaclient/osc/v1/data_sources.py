@@ -21,6 +21,10 @@ from oslo_log import log as logging
 
 from saharaclient.osc.v1 import utils
 
+DATA_SOURCE_FIELDS = ['name', 'id', 'type', 'url', 'description', 'is_public',
+                      'is_protected']
+DATA_SOURCE_CHOICES = ["swift", "hdfs", "maprfs", "manila"]
+
 
 class CreateDataSource(show.ShowOne):
     """Creates data source"""
@@ -38,8 +42,9 @@ class CreateDataSource(show.ShowOne):
         parser.add_argument(
             '--type',
             metavar="<type>",
-            choices=["swift", "hdfs", "maprfs"],
-            help="Type of the data source (swift, hdfs or maprfs) [REQUIRED]",
+            choices=DATA_SOURCE_CHOICES,
+            help="Type of the data source (%s) "
+                 "[REQUIRED]" % ', '.join(DATA_SOURCE_CHOICES),
             required=True
         )
         parser.add_argument(
@@ -63,6 +68,18 @@ class CreateDataSource(show.ShowOne):
             metavar="<description>",
             help="Description of the data source"
         )
+        parser.add_argument(
+            '--public',
+            action='store_true',
+            default=False,
+            help='Make the data source public',
+        )
+        parser.add_argument(
+            '--protected',
+            action='store_true',
+            default=False,
+            help='Make the data source protected',
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -74,10 +91,11 @@ class CreateDataSource(show.ShowOne):
             name=parsed_args.name, description=description,
             data_source_type=parsed_args.type, url=parsed_args.url,
             credential_user=parsed_args.username,
-            credential_pass=parsed_args.password).to_dict()
+            credential_pass=parsed_args.password,
+            is_public=parsed_args.public,
+            is_protected=parsed_args.protected).to_dict()
 
-        fields = ['name', 'id', 'type', 'url', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, DATA_SOURCE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -98,8 +116,9 @@ class ListDataSources(lister.Lister):
         parser.add_argument(
             '--type',
             metavar="<type>",
-            choices=["swift", "hdfs", "maprfs"],
-            help="List data sources of specific type (swift, hdfs or maprfs)"
+            choices=DATA_SOURCE_CHOICES,
+            help="List data sources of specific type "
+                 "(%s)" % ', '.join(DATA_SOURCE_CHOICES)
         )
 
         return parser
@@ -112,12 +131,12 @@ class ListDataSources(lister.Lister):
         data = client.data_sources.list(search_opts=search_opts)
 
         if parsed_args.long:
-            columns = ('name', 'id', 'type', 'url', 'description')
-            column_headers = [c.capitalize() for c in columns]
+            columns = DATA_SOURCE_FIELDS
+            column_headers = utils.prepare_column_headers(columns)
 
         else:
             columns = ('name', 'id', 'type')
-            column_headers = [c.capitalize() for c in columns]
+            column_headers = utils.prepare_column_headers(columns)
 
         return (
             column_headers,
@@ -149,9 +168,7 @@ class ShowDataSource(show.ShowOne):
 
         data = utils.get_resource(
             client.data_sources, parsed_args.data_source).to_dict()
-
-        fields = ['name', 'id', 'type', 'url', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, DATA_SOURCE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -166,7 +183,8 @@ class DeleteDataSource(command.Command):
         parser.add_argument(
             "data_source",
             metavar="<data-source>",
-            help="Name or id of the data source to delete",
+            nargs="+",
+            help="Name(s) or id(s) of the data source(s) to delete",
         )
 
         return parser
@@ -174,6 +192,113 @@ class DeleteDataSource(command.Command):
     def take_action(self, parsed_args):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
-        data_source_id = utils.get_resource(
+        for ds in parsed_args.data_source:
+            data_source_id = utils.get_resource(
+                client.data_sources, ds).id
+            client.data_sources.delete(data_source_id)
+
+
+class UpdateDataSource(show.ShowOne):
+    """Update data source"""
+
+    log = logging.getLogger(__name__ + ".UpdateDataSource")
+
+    def get_parser(self, prog_name):
+        parser = super(UpdateDataSource, self).get_parser(prog_name)
+        parser.add_argument(
+            'data_source',
+            metavar="<data-source>",
+            help="Name or id of the data source",
+        )
+        parser.add_argument(
+            '--name',
+            metavar="<name>",
+            help="New name of the data source",
+        )
+        parser.add_argument(
+            '--type',
+            metavar="<type>",
+            choices=DATA_SOURCE_CHOICES,
+            help="Type of the data source "
+                 "(%s)" % ', '.join(DATA_SOURCE_CHOICES)
+        )
+        parser.add_argument(
+            '--url',
+            metavar="<url>",
+            help="Url for the data source"
+        )
+        parser.add_argument(
+            '--username',
+            metavar="<username>",
+            help="Username for accessing the data source url"
+        )
+        parser.add_argument(
+            '--password',
+            metavar="<password>",
+            help="Password for accessing the data source url"
+        )
+        parser.add_argument(
+            '--description',
+            metavar="<description>",
+            help="Description of the data source"
+        )
+        public = parser.add_mutually_exclusive_group()
+        public.add_argument(
+            '--public',
+            action='store_true',
+            default=None,
+            help='Make the data source public (Visible from other tenants)',
+        )
+        public.add_argument(
+            '--private',
+            action='store_true',
+            default=None,
+            help='Make the data source private (Visible only from this '
+                 'tenant)',
+        )
+        protected = parser.add_mutually_exclusive_group()
+        protected.add_argument(
+            '--protected',
+            action='store_true',
+            default=None,
+            help='Make the data source protected',
+        )
+        protected.add_argument(
+            '--unprotected',
+            action='store_true',
+            default=None,
+            help='Make the data source unprotected',
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)" % parsed_args)
+        client = self.app.client_manager.data_processing
+
+        is_public = None
+        if parsed_args.public:
+            is_public = True
+        elif parsed_args.private:
+            is_public = False
+
+        is_protected = None
+        if parsed_args.protected:
+            is_protected = True
+        elif parsed_args.unprotected:
+            is_protected = False
+
+        update_fields = utils.create_dict_from_kwargs(
+            name=parsed_args.name,
+            description=parsed_args.description,
+            data_source_type=parsed_args.type, url=parsed_args.url,
+            credential_user=parsed_args.username,
+            credential_pass=parsed_args.password,
+            is_public=is_public,
+            is_protected=is_protected)
+
+        ds_id = utils.get_resource(
             client.data_sources, parsed_args.data_source).id
-        client.data_sources.delete(data_source_id)
+        data = client.data_sources.update(ds_id, update_fields).data_source
+        data = utils.prepare_data(data, DATA_SOURCE_FIELDS)
+
+        return self.dict2columns(data)

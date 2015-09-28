@@ -18,9 +18,11 @@ from os import path
 from cliff import command
 from cliff import lister
 from cliff import show
-from openstackclient.common import utils
+from openstackclient.common import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
+
+from saharaclient.osc.v1 import utils
 
 
 class ListPlugins(lister.Lister):
@@ -46,19 +48,19 @@ class ListPlugins(lister.Lister):
 
         if parsed_args.long:
             columns = ('name', 'title', 'versions', 'description')
-            column_headers = [c.capitalize() for c in columns]
+            column_headers = utils.prepare_column_headers(columns)
 
         else:
             columns = ('name', 'versions')
-            column_headers = [c.capitalize() for c in columns]
+            column_headers = utils.prepare_column_headers(columns)
 
         return (
             column_headers,
-            (utils.get_item_properties(
+            (osc_utils.get_item_properties(
                 s,
                 columns,
                 formatters={
-                    'versions': utils.format_list
+                    'versions': osc_utils.format_list
                 },
             ) for s in data)
         )
@@ -84,7 +86,7 @@ class ShowPlugin(show.ShowOne):
         client = self.app.client_manager.data_processing
 
         data = client.plugins.get(parsed_args.plugin).to_dict()
-        data['versions'] = utils.format_list(data['versions'])
+        data['versions'] = osc_utils.format_list(data['versions'])
 
         return self.dict2columns(data)
 
