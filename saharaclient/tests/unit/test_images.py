@@ -69,16 +69,22 @@ class ImageTest(base.BaseTestCase):
         tag_url = self.URL + '/images/id/tag'
         untag_url = self.URL + '/images/id/untag'
 
-        self.responses.post(tag_url, status_code=202)
-        self.responses.post(untag_url, status_code=202)
+        self.responses.post(tag_url, json={'image': self.body},
+                            status_code=202)
+        self.responses.post(untag_url, json={'image': self.body},
+                            status_code=202)
 
         image = mock.Mock()
         mget.return_value = image
 
         image.tags = []
-        self.client.images.update_tags('id', ['username', 'tag'])
+        resp = self.client.images.update_tags('id', ['username', 'tag'])
         self.assertEqual(tag_url, self.responses.last_request.url)
+        self.assertIsInstance(resp, images.Image)
+        self.assertFields(self.body, resp)
 
         image.tags = ['username', 'tag']
-        self.client.images.update_tags('id', ['username'])
+        resp = self.client.images.update_tags('id', ['username'])
         self.assertEqual(untag_url, self.responses.last_request.url)
+        self.assertIsInstance(resp, images.Image)
+        self.assertFields(self.body, resp)
