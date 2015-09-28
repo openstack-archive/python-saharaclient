@@ -29,6 +29,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
         "volumes_size": "4",
         "node_processes": ["datanode"],
         "use_autoconfig": True,
+        "volume_mount_prefix": '/volumes/disk',
     }
 
     update_json = {
@@ -42,6 +43,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
             "volumes_size": "4",
             "node_processes": ["datanode", "namenode"],
             "use_autoconfig": False,
+            "volume_mount_prefix": '/volumes/newdisk',
         }
     }
 
