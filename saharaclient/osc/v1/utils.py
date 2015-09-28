@@ -40,3 +40,7 @@ def prepare_data(data, fields):
 
 def prepare_column_headers(columns):
     return [c.replace('_', ' ').capitalize() for c in columns]
+
+
+def get_by_name_substring(data, name):
+    return [obj for obj in data if name in obj.name]
