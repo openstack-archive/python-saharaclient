@@ -9,10 +9,10 @@ discover
 mock>=1.2
 oslo.config>=2.3.0 # Apache-2.0
 oslosphinx>=2.5.0 # Apache-2.0
-python-neutronclient<3,>=2.6.0
-python-novaclient>=2.26.0
+python-neutronclient>=2.6.0
+python-novaclient>=2.28.1
 python-swiftclient>=2.2.0
 requests-mock>=0.6.0 # Apache-2.0
 sphinx!=1.2.0,!=1.3b1,<1.3,>=1.1.2
-tempest-lib>=0.6.1
+tempest-lib>=0.8.0
 testrepository>=0.0.18
