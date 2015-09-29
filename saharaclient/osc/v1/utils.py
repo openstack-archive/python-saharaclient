@@ -38,8 +38,15 @@ def prepare_data(data, fields):
     return new_data
 
 
-def prepare_column_headers(columns):
-    return [c.replace('_', ' ').capitalize() for c in columns]
+def prepare_column_headers(columns, remap=None):
+    remap = remap if remap else {}
+    new_columns = []
+    for c in columns:
+        for old, new in remap.items():
+            c = c.replace(old, new)
+        new_columns.append(c.replace('_', ' ').capitalize())
+
+    return new_columns
 
 
 def get_by_name_substring(data, name):

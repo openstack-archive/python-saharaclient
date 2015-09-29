@@ -66,3 +66,8 @@ class TestUtils(base.BaseTestCase):
         columns2 = ['First', 'Second column']
         self.assertEqual(
             ['First', 'Second column'], utils.prepare_column_headers(columns2))
+
+        columns3 = ['first', 'second_column']
+        self.assertEqual(
+            ['First', 'Second'], utils.prepare_column_headers(
+                columns3, remap={'second_column': 'second'}))
