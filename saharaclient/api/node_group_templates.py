@@ -30,7 +30,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                availability_zone=None, volumes_availability_zone=None,
                volume_type=None, image_id=None, is_proxy_gateway=None,
                volume_local_to_instance=None, use_autoconfig=None,
-               shares=None, is_public=None, is_protected=None):
+               shares=None, is_public=None, is_protected=None,
+               volume_mount_prefix=None):
 
         data = {
             'name': name,
@@ -66,6 +67,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
             if volume_local_to_instance:
                 data.update(
                     {"volume_local_to_instance": volume_local_to_instance})
+            if volume_mount_prefix:
+                data.update({"volume_mount_prefix": volume_mount_prefix})
 
         return self._create('/node-group-templates', data,
                             'node_group_template')
@@ -78,7 +81,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
                volumes_availability_zone=None, volume_type=None,
                image_id=None, is_proxy_gateway=None,
                volume_local_to_instance=None, use_autoconfig=None,
-               shares=None, is_public=None, is_protected=None):
+               shares=None, is_public=None, is_protected=None,
+               volume_mount_prefix=None):
 
         data = {}
         self._copy_if_defined(
@@ -95,7 +99,8 @@ class NodeGroupTemplateManager(base.ResourceManager):
             is_proxy_gateway=is_proxy_gateway,
             volume_local_to_instance=volume_local_to_instance,
             use_autoconfig=use_autoconfig, shares=shares,
-            is_public=is_public, is_protected=is_protected
+            is_public=is_public, is_protected=is_protected,
+            volume_mount_prefix=volume_mount_prefix
         )
 
         return self._update('/node-group-templates/%s' % ng_template_id, data,
