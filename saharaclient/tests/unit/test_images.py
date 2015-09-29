@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
-
 from saharaclient.api import images
 from saharaclient.tests.unit import base
 
@@ -64,27 +62,24 @@ class ImageTest(base.BaseTestCase):
         self.assertEqual(self.body,
                          json.loads(self.responses.last_request.body))
 
-    @mock.patch('saharaclient.api.images.ImageManager.get')
-    def test_update_tags(self, mget):
+    def test_update_tags(self):
+        url = self.URL + '/images/id'
         tag_url = self.URL + '/images/id/tag'
         untag_url = self.URL + '/images/id/untag'
 
-        self.responses.post(tag_url, json={'image': self.body},
-                            status_code=202)
-        self.responses.post(untag_url, json={'image': self.body},
-                            status_code=202)
+        body = self.body.copy()
+        body['tags'] = ['fake', '0.1']
 
-        image = mock.Mock()
-        mget.return_value = image
+        self.responses.post(tag_url, json={'image': body},
+                            status_code=202)
+        self.responses.post(untag_url, json={'image': body},
+                            status_code=202)
+        self.responses.get(url, json={'image': body})
 
-        image.tags = []
         resp = self.client.images.update_tags('id', ['username', 'tag'])
-        self.assertEqual(tag_url, self.responses.last_request.url)
         self.assertIsInstance(resp, images.Image)
         self.assertFields(self.body, resp)
 
-        image.tags = ['username', 'tag']
         resp = self.client.images.update_tags('id', ['username'])
-        self.assertEqual(untag_url, self.responses.last_request.url)
         self.assertIsInstance(resp, images.Image)
         self.assertFields(self.body, resp)

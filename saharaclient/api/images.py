@@ -49,12 +49,14 @@ class ImageManager(base.ResourceManager):
         to_add = list(new_tags - old_tags)
         to_remove = list(old_tags - new_tags)
 
-        if len(to_add) != 0:
-            return self._post('/images/%s/tag' % image_id,
-                              {'tags': to_add}, 'image')
+        add_response, remove_response = None, None
 
-        if len(to_remove) != 0:
-            return self._post('/images/%s/untag' % image_id,
-                              {'tags': to_remove}, 'image')
+        if to_add:
+            add_response = self._post('/images/%s/tag' % image_id,
+                                      {'tags': to_add}, 'image')
 
-        return self._get('/images/%s' % image_id, 'image')
+        if to_remove:
+            remove_response = self._post('/images/%s/untag' % image_id,
+                                         {'tags': to_remove}, 'image')
+
+        return remove_response or add_response or self.get(image_id)
