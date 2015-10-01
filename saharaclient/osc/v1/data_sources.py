@@ -246,13 +246,13 @@ class UpdateDataSource(show.ShowOne):
         public.add_argument(
             '--public',
             action='store_true',
-            default=None,
+            dest='is_public',
             help='Make the data source public (Visible from other tenants)',
         )
         public.add_argument(
             '--private',
-            action='store_true',
-            default=None,
+            action='store_false',
+            dest='is_public',
             help='Make the data source private (Visible only from this '
                  'tenant)',
         )
@@ -260,32 +260,21 @@ class UpdateDataSource(show.ShowOne):
         protected.add_argument(
             '--protected',
             action='store_true',
-            default=None,
+            dest='is_protected',
             help='Make the data source protected',
         )
         protected.add_argument(
             '--unprotected',
-            action='store_true',
-            default=None,
+            action='store_false',
+            dest='is_protected',
             help='Make the data source unprotected',
         )
+        parser.set_defaults(is_public=None, is_protected=None)
         return parser
 
     def take_action(self, parsed_args):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
-
-        is_public = None
-        if parsed_args.public:
-            is_public = True
-        elif parsed_args.private:
-            is_public = False
-
-        is_protected = None
-        if parsed_args.protected:
-            is_protected = True
-        elif parsed_args.unprotected:
-            is_protected = False
 
         update_fields = utils.create_dict_from_kwargs(
             name=parsed_args.name,
@@ -293,8 +282,8 @@ class UpdateDataSource(show.ShowOne):
             data_source_type=parsed_args.type, url=parsed_args.url,
             credential_user=parsed_args.username,
             credential_pass=parsed_args.password,
-            is_public=is_public,
-            is_protected=is_protected)
+            is_public=parsed_args.is_public,
+            is_protected=parsed_args.is_protected)
 
         ds_id = utils.get_resource(
             client.data_sources, parsed_args.data_source).id
