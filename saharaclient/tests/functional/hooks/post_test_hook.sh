@@ -14,18 +14,6 @@
 
 # This script is executed inside post_test_hook function in devstack gate.
 
-function generate_testr_results {
-    if [ -f .testrepository/0 ]; then
-        sudo .tox/functional/bin/testr last --subunit > $WORKSPACE/testrepository.subunit
-        sudo mv $WORKSPACE/testrepository.subunit $BASE/logs/testrepository.subunit
-        sudo /usr/os-testr-env/bin/subunit2html $BASE/logs/testrepository.subunit $BASE/logs/testr_results.html
-        sudo gzip -9 $BASE/logs/testrepository.subunit
-        sudo gzip -9 $BASE/logs/testr_results.html
-        sudo chown jenkins:jenkins $BASE/logs/testrepository.subunit.gz $BASE/logs/testr_results.html.gz
-        sudo chmod a+r $BASE/logs/testrepository.subunit.gz $BASE/logs/testr_results.html.gz
-    fi
-}
-
 export SAHARACLIENT_DIR="$BASE/new/python-saharaclient"
 
 # Get admin credentials
@@ -39,12 +27,5 @@ sudo chown -R jenkins:stack $SAHARACLIENT_DIR
 
 # Run tests
 echo "Running saharaclient functional test suite"
-set +e
 # Preserve env for OS_ credentials
-sudo -E -H -u jenkins tox -efunctional
-EXIT_CODE=$?
-set -e
-
-# Collect and parse result
-generate_testr_results
-exit $EXIT_CODE
+sudo -E -H -u jenkins /usr/local/jenkins/slave_scripts/run-tox.sh functional
