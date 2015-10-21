@@ -33,29 +33,18 @@ class JobExecutionsManager(base.ResourceManager):
     def delete(self, obj_id):
         self._delete('/job-executions/%s' % obj_id)
 
-    def create(self, job_id, cluster_id, input_id,
-               output_id, configs, interface=None, is_public=None,
+    def create(self, job_id, cluster_id, input_id=None,
+               output_id=None, configs=None, interface=None, is_public=None,
                is_protected=None):
 
         url = "/jobs/%s/execute" % job_id
         data = {
             "cluster_id": cluster_id,
-            "job_configs": configs,
         }
 
-        if interface:
-            data['interface'] = interface
-
-        # Leave these out if they are null.  For Java job types they
-        # are not part of the schema
-        io_ids = (("input_id", input_id),
-                  ("output_id", output_id))
-        for key, value in io_ids:
-            if value is not None:
-                data.update({key: value})
-
-        self._copy_if_defined(data, is_public=is_public,
-                              is_protected=is_protected)
+        self._copy_if_defined(data, input_id=input_id, output_id=output_id,
+                              job_configs=configs, interface=interface,
+                              is_public=is_public, is_protected=is_protected)
 
         return self._create(url, data, 'job_execution')
 

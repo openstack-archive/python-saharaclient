@@ -29,6 +29,7 @@ class JobExecutionTest(base.BaseTestCase):
     }
     response = {
         'cluster_id': 'cluster_id',
+        'interface': {},
         'job_configs': {}
     }
 
