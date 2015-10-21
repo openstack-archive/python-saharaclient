@@ -14,8 +14,12 @@
 # limitations under the License.
 
 import six
+import time
 
+from oslo_utils import timeutils
 from oslo_utils import uuidutils
+
+from saharaclient.api import base
 
 
 def get_resource(manager, name_or_id):
@@ -51,3 +55,17 @@ def prepare_column_headers(columns, remap=None):
 
 def get_by_name_substring(data, name):
     return [obj for obj in data if name in obj.name]
+
+
+def wait_for_delete(manager, obj_id, sleep_time=5, timeout=3000):
+    s_time = timeutils.utcnow()
+    while timeutils.delta_seconds(s_time, timeutils.utcnow()) < timeout:
+        try:
+            manager.get(obj_id)
+        except base.APIException as ex:
+            if ex.error_code == 404:
+                return True
+            raise
+        time.sleep(sleep_time)
+
+    return False
