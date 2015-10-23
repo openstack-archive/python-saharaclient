@@ -399,6 +399,7 @@ class UpdateCluster(show.ShowOne):
             help='Make the cluster unprotected',
             dest='is_protected'
         )
+        parser.set_defaults(is_public=None, is_protected=None)
 
         return parser
 

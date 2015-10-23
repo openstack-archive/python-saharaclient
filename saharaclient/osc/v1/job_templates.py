@@ -299,6 +299,7 @@ class UpdateJobTemplate(show.ShowOne):
             help='Make the job template unprotected',
             dest='is_protected'
         )
+        parser.set_defaults(is_public=None, is_protected=None)
 
         return parser
 

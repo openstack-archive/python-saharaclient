@@ -264,6 +264,20 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         self.assertRaises(osc_utils.ParserException, self.check_parser,
                           self.cmd, arglist, verifylist)
 
+    def test_ct_update_nothing_updated(self):
+        arglist = ['template']
+        verifylist = [('cluster_template', 'template')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.ct_mock.update.assert_called_once_with(
+            '0647061f-ab98-4c89-84e0-30738ea55750', cluster_configs=None,
+            description=None, hadoop_version=None, is_protected=None,
+            is_public=None, name=None, node_groups=None, plugin_name=None,
+            shares=None, use_autoconfig=None)
+
     def test_ct_update_all_options(self):
         arglist = ['template', '--name', 'template', '--node-groups',
                    'fakeng:2', '--anti-affinity', 'datanode',
@@ -302,3 +316,18 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
                          '0647061f-ab98-4c89-84e0-30738ea55750', False, False,
                          False, 'template', 'fakeng:2', 'fake', True, '0.1')
         self.assertEqual(expected_data, data)
+
+    def test_ct_update_private_unprotected(self):
+        arglist = ['template', '--private', '--unprotected']
+        verifylist = [('cluster_template', 'template'),
+                      ('is_protected', False), ('is_public', False)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.ct_mock.update.assert_called_once_with(
+            '0647061f-ab98-4c89-84e0-30738ea55750', cluster_configs=None,
+            description=None, hadoop_version=None, is_protected=False,
+            is_public=False, name=None, node_groups=None, plugin_name=None,
+            shares=None, use_autoconfig=None)

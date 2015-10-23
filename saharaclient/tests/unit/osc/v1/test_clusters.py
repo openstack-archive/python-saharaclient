@@ -321,6 +321,20 @@ class TestUpdateCluster(TestClusters):
         self.assertRaises(osc_utils.ParserException, self.check_parser,
                           self.cmd, arglist, verifylist)
 
+    def test_cluster_update_nothing_updated(self):
+        arglist = ['fake']
+
+        verifylist = [('cluster', 'fake')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.cl_mock.update.assert_called_once_with(
+            'cluster_id', description=None, is_protected=None, is_public=None,
+            name=None)
+
     def test_cluster_update_all_options(self):
         arglist = ['fake', '--name', 'fake', '--description', 'descr',
                    '--public', '--protected']
