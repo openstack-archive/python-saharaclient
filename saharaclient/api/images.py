@@ -34,11 +34,12 @@ class ImageManager(base.ResourceManager):
     def unregister_image(self, image_id):
         self._delete('/images/%s' % image_id)
 
-    def update_image(self, image_id, user_name, desc):
-        body = {"username": user_name,
+    def update_image(self, image_id, user_name, desc=None):
+        desc = desc if desc else ''
+        data = {"username": user_name,
                 "description": desc}
 
-        return self._post('/images/%s' % image_id, body)
+        return self._post('/images/%s' % image_id, data)
 
     def update_tags(self, image_id, new_tags):
         old_image = self.get(image_id)

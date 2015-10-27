@@ -138,7 +138,8 @@ class RegisterImage(show.ShowOne):
         parser.add_argument(
             "--description",
             metavar="<description>",
-            help="Description of the image",
+            help="Description of the image. If not provided, description of "
+                 "the image will be reset to empty",
         )
 
         return parser
