@@ -21,6 +21,8 @@ from oslo_log import log as logging
 
 from saharaclient.osc.v1 import utils
 
+IMAGE_FIELDS = ['name', 'id', 'username', 'tags', 'status', 'description']
+
 
 class ListImages(lister.Lister):
     """Lists registered images"""
@@ -68,8 +70,7 @@ class ListImages(lister.Lister):
             data = [i for i in data if parsed_args.username in i.username]
 
         if parsed_args.long:
-            columns = ('name', 'id', 'username', 'tags', 'status',
-                       'description')
+            columns = IMAGE_FIELDS
             column_headers = [c.capitalize() for c in columns]
 
         else:
@@ -111,8 +112,7 @@ class ShowImage(show.ShowOne):
             client.images, parsed_args.image).to_dict()
         data['tags'] = osc_utils.format_list(data['tags'])
 
-        fields = ['name', 'id', 'username', 'tags', 'status', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, IMAGE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -126,8 +126,8 @@ class RegisterImage(show.ShowOne):
         parser = super(RegisterImage, self).get_parser(prog_name)
         parser.add_argument(
             "image",
-            metavar="<image-id>",
-            help="Id of the image to register",
+            metavar="<image>",
+            help="Name or ID of the image to register",
         )
         parser.add_argument(
             "--username",
@@ -147,16 +147,18 @@ class RegisterImage(show.ShowOne):
     def take_action(self, parsed_args):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
+        image_client = self.app.client_manager.image
 
-        description = parsed_args.description or ''
+        image_id = osc_utils.find_resource(
+            image_client.images, parsed_args.image).id
+
         data = client.images.update_image(
-            parsed_args.image, user_name=parsed_args.username,
-            desc=description).to_dict()
+            image_id, user_name=parsed_args.username,
+            desc=parsed_args.description).image
 
         data['tags'] = osc_utils.format_list(data['tags'])
 
-        fields = ['name', 'id', 'username', 'tags', 'status', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, IMAGE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -215,8 +217,7 @@ class SetImageTags(show.ShowOne):
 
         data['tags'] = osc_utils.format_list(data['tags'])
 
-        fields = ['name', 'id', 'username', 'tags', 'status', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, IMAGE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -253,8 +254,7 @@ class AddImageTags(show.ShowOne):
 
         data['tags'] = osc_utils.format_list(data['tags'])
 
-        fields = ['name', 'id', 'username', 'tags', 'status', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, IMAGE_FIELDS)
 
         return self.dict2columns(data)
 
@@ -301,7 +301,6 @@ class RemoveImageTags(show.ShowOne):
 
         data['tags'] = osc_utils.format_list(data['tags'])
 
-        fields = ['name', 'id', 'username', 'tags', 'status', 'description']
-        data = utils.prepare_data(data, fields)
+        data = utils.prepare_data(data, IMAGE_FIELDS)
 
         return self.dict2columns(data)

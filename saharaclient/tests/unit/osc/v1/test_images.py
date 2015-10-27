@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import mock
+
 from openstackclient.tests import utils as osc_utils
 
 from saharaclient.api import images as api_images
@@ -171,8 +173,11 @@ class TestShowImage(TestImages):
 class TestRegisterImage(TestImages):
     def setUp(self):
         super(TestRegisterImage, self).setUp()
-        self.image_mock.update_image.return_value = api_images.Image(
-            None, IMAGE_INFO)
+        self.image_mock.update_image.return_value = mock.Mock(
+            image=IMAGE_INFO.copy())
+        self.app.client_manager.image = mock.Mock()
+        self.image_client = self.app.client_manager.image.images
+        self.image_client.get.return_value = mock.Mock(id='id')
 
         # Command to test
         self.cmd = osc_images.RegisterImage(self.app, None)
@@ -184,7 +189,7 @@ class TestRegisterImage(TestImages):
         self.assertRaises(osc_utils.ParserException, self.check_parser,
                           self.cmd, arglist, verifylist)
 
-    def test_image_register(self):
+    def test_image_register_required_options(self):
         arglist = ['id', '--username', 'ubuntu']
         verifylist = [('image', 'id'), ('username', 'ubuntu')]
 
@@ -194,7 +199,7 @@ class TestRegisterImage(TestImages):
 
         # Check that correct arguments were passed
         self.image_mock.update_image.assert_called_once_with(
-            'id', desc='', user_name='ubuntu')
+            'id', desc=None, user_name='ubuntu')
 
         # Check that columns are correct
         expected_columns = ('Description', 'Id', 'Name', 'Status', 'Tags',
@@ -205,6 +210,19 @@ class TestRegisterImage(TestImages):
         expected_data = ['Image for tests', 'id', 'image', 'Active',
                          '0.1, fake', 'ubuntu']
         self.assertEqual(expected_data, list(data))
+
+    def test_image_register_all_options(self):
+        arglist = ['id', '--username', 'ubuntu', '--description', 'descr']
+        verifylist = [('image', 'id'), ('username', 'ubuntu'),
+                      ('description', 'descr')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.image_mock.update_image.assert_called_once_with(
+            'id', desc='descr', user_name='ubuntu')
 
 
 class TestUnregisterImage(TestImages):
