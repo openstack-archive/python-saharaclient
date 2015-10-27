@@ -193,8 +193,8 @@ class DeleteDataSource(command.Command):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
         for ds in parsed_args.data_source:
-            data_source_id = utils.get_resource(
-                client.data_sources, ds).id
+            data_source_id = utils.get_resource_id(
+                client.data_sources, ds)
             client.data_sources.delete(data_source_id)
 
 
@@ -285,8 +285,8 @@ class UpdateDataSource(show.ShowOne):
             is_public=parsed_args.is_public,
             is_protected=parsed_args.is_protected)
 
-        ds_id = utils.get_resource(
-            client.data_sources, parsed_args.data_source).id
+        ds_id = utils.get_resource_id(
+            client.data_sources, parsed_args.data_source)
         data = client.data_sources.update(ds_id, update_fields).data_source
         data = utils.prepare_data(data, DATA_SOURCE_FIELDS)
 

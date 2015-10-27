@@ -180,7 +180,7 @@ class UnregisterImage(command.Command):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
         for image in parsed_args.image:
-            image_id = utils.get_resource(client.images, image).id
+            image_id = utils.get_resource_id(client.images, image)
             client.images.unregister_image(image_id)
 
 
@@ -209,7 +209,7 @@ class SetImageTags(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        image_id = utils.get_resource(client.images, parsed_args.image).id
+        image_id = utils.get_resource_id(client.images, parsed_args.image)
         data = client.images.update_tags(image_id, parsed_args.tags).to_dict()
 
         data['tags'] = osc_utils.format_list(data['tags'])

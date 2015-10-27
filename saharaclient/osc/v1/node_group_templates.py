@@ -393,8 +393,8 @@ class DeleteNodeGroupTemplate(command.Command):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
         for ngt in parsed_args.node_group_template:
-            ngt_id = utils.get_resource(
-                client.node_group_templates, ngt).id
+            ngt_id = utils.get_resource_id(
+                client.node_group_templates, ngt)
             client.node_group_templates.delete(ngt_id)
 
 
@@ -612,8 +612,8 @@ class UpdateNodeGroupTemplate(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        ngt_id = utils.get_resource(
-            client.node_group_templates, parsed_args.node_group_template).id
+        ngt_id = utils.get_resource_id(
+            client.node_group_templates, parsed_args.node_group_template)
 
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)

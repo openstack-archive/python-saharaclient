@@ -321,8 +321,7 @@ class DeleteClusterTemplate(command.Command):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
         for ct in parsed_args.cluster_template:
-            ct_id = utils.get_resource(
-                client.cluster_templates, ct).id
+            ct_id = utils.get_resource_id(client.cluster_templates, ct)
             client.cluster_templates.delete(ct_id)
 
 
@@ -431,8 +430,8 @@ class UpdateClusterTemplate(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        ct_id = utils.get_resource(
-            client.cluster_templates, parsed_args.cluster_template).id
+        ct_id = utils.get_resource_id(
+            client.cluster_templates, parsed_args.cluster_template)
 
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)

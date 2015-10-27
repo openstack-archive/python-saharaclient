@@ -29,6 +29,13 @@ def get_resource(manager, name_or_id):
         return manager.find_unique(name=name_or_id)
 
 
+def get_resource_id(manager, name_or_id):
+    if uuidutils.is_uuid_like(name_or_id):
+        return name_or_id
+    else:
+        return manager.find_unique(name=name_or_id).id
+
+
 def create_dict_from_kwargs(**kwargs):
     return dict((k, v) for (k, v) in six.iteritems(kwargs) if v is not None)
 

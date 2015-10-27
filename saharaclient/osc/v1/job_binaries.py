@@ -346,7 +346,8 @@ class UpdateJobBinary(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        jb = utils.get_resource(client.job_binaries, parsed_args.job_binary)
+        jb_id = utils.get_resource_id(
+            client.job_binaries, parsed_args.job_binary)
 
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
@@ -356,7 +357,7 @@ class UpdateJobBinary(show.ShowOne):
                 raise exceptions.CommandError(
                     'An error occurred when reading '
                     'template from file %s: %s' % (parsed_args.json, e))
-            data = client.job_binaries.update(jb.id, template).to_dict()
+            data = client.job_binaries.update(jb_id, template).to_dict()
         else:
             if parsed_args.password_prompt:
                 parsed_args.password = osc_utils.get_password(
@@ -378,7 +379,7 @@ class UpdateJobBinary(show.ShowOne):
             )
 
             data = client.job_binaries.update(
-                jb.id, update_fields).to_dict()
+                jb_id, update_fields).to_dict()
 
         data = utils.prepare_data(data, JOB_BINARY_FIELDS)
 
@@ -411,8 +412,8 @@ class DownloadJobBinary(command.Command):
         if not parsed_args.file:
             parsed_args.file = parsed_args.job_binary
 
-        jb_id = utils.get_resource(
-            client.job_binaries, parsed_args.job_binary).id
+        jb_id = utils.get_resource_id(
+            client.job_binaries, parsed_args.job_binary)
         data = client.job_binaries.get_file(jb_id)
 
         if path.exists(parsed_args.file):

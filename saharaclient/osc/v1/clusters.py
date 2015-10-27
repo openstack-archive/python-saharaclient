@@ -161,7 +161,7 @@ class CreateCluster(show.ShowOne):
             plugin, version, template_id = _get_plugin_version(
                 parsed_args.cluster_template, client)
 
-            image_id = utils.get_resource(client.images, parsed_args.image).id
+            image_id = utils.get_resource_id(client.images, parsed_args.image)
 
             net_id = (network_client.api.find_attr(
                 'networks', parsed_args.neutron_network)['id'] if
@@ -336,8 +336,8 @@ class DeleteCluster(command.Command):
         client = self.app.client_manager.data_processing
         clusters = []
         for cluster in parsed_args.cluster:
-            cluster_id = utils.get_resource(
-                client.clusters, cluster).id
+            cluster_id = utils.get_resource_id(
+                client.clusters, cluster)
             client.clusters.delete(cluster_id)
             clusters.append(cluster_id)
         if parsed_args.wait:
@@ -406,8 +406,8 @@ class UpdateCluster(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        cluster_id = utils.get_resource(
-            client.clusters, parsed_args.cluster).id
+        cluster_id = utils.get_resource_id(
+            client.clusters, parsed_args.cluster)
 
         data = client.clusters.update(
             cluster_id,

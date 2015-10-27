@@ -122,9 +122,9 @@ class CreateJobTemplate(show.ShowOne):
                         'An error occurred when reading '
                         'interface from file %s: %s' % (parsed_args.json, e))
 
-            mains_ids = [utils.get_resource(client.job_binaries, m).id for m
+            mains_ids = [utils.get_resource_id(client.job_binaries, m) for m
                          in parsed_args.mains] if parsed_args.mains else None
-            libs_ids = [utils.get_resource(client.job_binaries, m).id for m
+            libs_ids = [utils.get_resource_id(client.job_binaries, m) for m
                         in parsed_args.libs] if parsed_args.libs else None
 
             data = client.jobs.create(
@@ -243,8 +243,7 @@ class DeleteJobTemplate(command.Command):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
         for jt in parsed_args.job_template:
-            jt_id = utils.get_resource(
-                client.jobs, jt).id
+            jt_id = utils.get_resource_id(client.jobs, jt)
             client.jobs.delete(jt_id)
 
 
@@ -306,8 +305,8 @@ class UpdateJobTemplate(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        jt_id = utils.get_resource(
-            client.jobs, parsed_args.job_template).id
+        jt_id = utils.get_resource_id(
+            client.jobs, parsed_args.job_template)
 
         data = client.jobs.update(
             jt_id,

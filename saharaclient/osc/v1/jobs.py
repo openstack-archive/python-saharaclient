@@ -170,15 +170,15 @@ class ExecuteJob(show.ShowOne):
                 job_configs['params'] = dict(
                     map(lambda x: x.split(':', 1), parsed_args.params))
 
-            jt_id = utils.get_resource(
-                client.jobs, parsed_args.job_template).id
-            cluster_id = utils.get_resource(
-                client.clusters, parsed_args.cluster).id
+            jt_id = utils.get_resource_id(
+                client.jobs, parsed_args.job_template)
+            cluster_id = utils.get_resource_id(
+                client.clusters, parsed_args.cluster)
 
-            input_id = utils.get_resource(
-                client.data_sources, parsed_args.input).id
-            output_id = utils.get_resource(
-                client.data_sources, parsed_args.output).id
+            input_id = utils.get_resource_id(
+                client.data_sources, parsed_args.input)
+            output_id = utils.get_resource_id(
+                client.data_sources, parsed_args.output)
 
             data = client.job_executions.create(
                 job_id=jt_id, cluster_id=cluster_id, input_id=input_id,

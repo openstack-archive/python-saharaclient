@@ -48,6 +48,23 @@ class TestUtils(base.BaseTestCase):
         utils.get_resource(manager, 'name')
         manager.find_unique.assert_called_once_with(name='name')
 
+    def test_get_resource_id(self):
+        manager = mock.Mock()
+
+        uuid = '82065b4d-2c79-420d-adc3-310de275e922'
+        manager.find_unique.return_value = mock.Mock(id=uuid)
+
+        # check case when resource id is passed
+        res = utils.get_resource_id(manager, uuid)
+        self.assertEqual(uuid, res)
+        manager.get.assert_not_called()
+        manager.find_unique.assert_not_called()
+
+        # check case when resource name is passed
+        res = utils.get_resource_id(manager, 'name')
+        manager.find_unique.assert_called_once_with(name='name')
+        self.assertEqual(uuid, res)
+
     def test_create_dict_from_kwargs(self):
         dict1 = utils.create_dict_from_kwargs(first='1', second=2)
         self.assertEqual({'first': '1', 'second': 2}, dict1)
