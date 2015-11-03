@@ -59,8 +59,7 @@ How to send your first patch on review?
 
 * Apply and commit your changes
 
-* Make sure that your code passes ``PEP8`` checks and unit-tests.
-  See :doc:`development.guidelines`
+* Make sure that your code passes ``PEP8`` checks and unit-tests
 
 * Send your patch on review
 
