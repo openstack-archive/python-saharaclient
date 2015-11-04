@@ -15,6 +15,8 @@
 
 import mock
 
+from openstackclient.tests import utils as osc_utils
+
 from saharaclient.api import jobs as api_j
 from saharaclient.osc.v1 import job_templates as osc_j
 from saharaclient.tests.unit.osc.v1 import fakes
@@ -227,6 +229,27 @@ class TestUpdateJobTemplate(TestJobTemplates):
         # Command to test
         self.cmd = osc_j.UpdateJobTemplate(self.app, None)
 
+    def test_job_template_update_no_options(self):
+        arglist = []
+        verifylist = []
+
+        self.assertRaises(osc_utils.ParserException, self.check_parser,
+                          self.cmd, arglist, verifylist)
+
+    def test_job_template_update_nothing_updated(self):
+        arglist = ['pig-job']
+
+        verifylist = [('job_template', 'pig-job')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.job_mock.update.assert_called_once_with(
+            'job_id', description=None, is_protected=None, is_public=None,
+            name=None)
+
     def test_job_template_update_all_options(self):
         arglist = ['pig-job', '--name', 'pig-job', '--description', 'descr',
                    '--public', '--protected']
@@ -262,7 +285,7 @@ class TestUpdateJobTemplate(TestJobTemplates):
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
-        columns, data = self.cmd.take_action(parsed_args)
+        self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
         self.job_mock.update.assert_called_once_with(

@@ -229,6 +229,16 @@ class TestUpdateDataSource(TestDataSources):
         self.assertRaises(osc_utils.ParserException, self.check_parser,
                           self.cmd, arglist, verifylist)
 
+    def test_data_sources_update_nothing_updated(self):
+        arglist = ['source']
+        verifylist = [('data_source', 'source')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.ds_mock.update.assert_called_once_with('id', {})
+
     def test_data_sources_update_required_options(self):
         arglist = ['source']
         verifylist = [('data_source', 'source')]
@@ -284,7 +294,7 @@ class TestUpdateDataSource(TestDataSources):
                          'swift', 'swift://container.sahara/object')
         self.assertEqual(expected_data, data)
 
-    def test_data_sources_update_privat_unprotected(self):
+    def test_data_sources_update_private_unprotected(self):
         arglist = ['source', '--private', '--unprotected']
         verifylist = [('data_source', 'source'), ('is_public', False),
                       ('is_protected', False)]

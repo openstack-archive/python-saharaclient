@@ -72,9 +72,10 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
 
     def test_ngt_create_minimum_options(self):
         arglist = ['--name', 'template', '--plugin', 'fake', '--version',
-                   '0.1', '--processes', 'namenode', 'tasktracker']
+                   '0.1', '--processes', 'namenode', 'tasktracker',
+                   '--flavor', 'flavor']
         verifylist = [('name', 'template'), ('plugin', 'fake'),
-                      ('version', '0.1'),
+                      ('version', '0.1'), ('flavor', 'flavor'),
                       ('processes', ['namenode', 'tasktracker'])]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -84,7 +85,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         # Check that correct arguments were passed
         self.ngt_mock.create.assert_called_once_with(
             auto_security_group=False, availability_zone=None,
-            description=None, flavor_id=None, floating_ip_pool=None,
+            description=None, flavor_id='flavor', floating_ip_pool=None,
             hadoop_version='0.1', is_protected=False, is_proxy_gateway=False,
             is_public=False, name='template',
             node_processes=['namenode', 'tasktracker'], plugin_name='fake',
@@ -303,6 +304,26 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
         self.assertRaises(osc_utils.ParserException, self.check_parser,
                           self.cmd, arglist, verifylist)
 
+    def test_ngt_update_nothing_updated(self):
+        arglist = ['template']
+        verifylist = [('node_group_template', 'template')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.ngt_mock.update.assert_called_once_with(
+            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', auto_security_group=None,
+            availability_zone=None, description=None, flavor_id=None,
+            floating_ip_pool=None, hadoop_version=None, is_protected=None,
+            is_proxy_gateway=None, is_public=None, name=None,
+            node_configs=None, node_processes=None, plugin_name=None,
+            security_groups=None, shares=None, use_autoconfig=None,
+            volume_local_to_instance=None, volume_type=None,
+            volumes_availability_zone=None, volumes_per_node=None,
+            volumes_size=None)
+
     def test_ngt_update_all_options(self):
         arglist = ['template', '--name', 'template', '--plugin', 'fake',
                    '--version', '0.1', '--processes', 'namenode',
@@ -369,3 +390,24 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             True, 'template', 'namenode, tasktracker', 'fake', None, True,
             '0.1', False, '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
+
+    def test_ngt_update_private_unprotected(self):
+        arglist = ['template', '--private', '--unprotected']
+        verifylist = [('node_group_template', 'template'),
+                      ('is_public', False), ('is_protected', False)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.ngt_mock.update.assert_called_once_with(
+            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', auto_security_group=None,
+            availability_zone=None, description=None, flavor_id=None,
+            floating_ip_pool=None, hadoop_version=None, is_protected=False,
+            is_proxy_gateway=None, is_public=False, name=None,
+            node_configs=None, node_processes=None, plugin_name=None,
+            security_groups=None, shares=None, use_autoconfig=None,
+            volume_local_to_instance=None, volume_type=None,
+            volumes_availability_zone=None, volumes_per_node=None,
+            volumes_size=None)

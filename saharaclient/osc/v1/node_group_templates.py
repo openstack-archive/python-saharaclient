@@ -76,6 +76,11 @@ class CreateNodeGroupTemplate(show.ShowOne):
                  "instance [REQUIRED if JSON is not provided]"
         )
         parser.add_argument(
+            '--flavor',
+            metavar="<flavor-id>",
+            help="ID of the flavor [REQUIRED if JSON is not provided]"
+        )
+        parser.add_argument(
             '--security-groups',
             metavar="<security-groups>",
             nargs="+",
@@ -94,11 +99,6 @@ class CreateNodeGroupTemplate(show.ShowOne):
             metavar="<availability-zone>",
             help="Name of the availability zone where instances "
                  "will be created"
-        )
-        parser.add_argument(
-            '--flavor',
-            metavar="<flavor-id>",
-            help="ID of the flavor"
         )
         parser.add_argument(
             '--floating-ip-pool',
@@ -214,12 +214,12 @@ class CreateNodeGroupTemplate(show.ShowOne):
             data = client.node_group_templates.create(**template).to_dict()
         else:
             if (not parsed_args.name or not parsed_args.plugin or
-                    not parsed_args.version or not parsed_args or
+                    not parsed_args.version or not parsed_args.flavor or
                     not parsed_args.processes):
                 raise exceptions.CommandError(
-                    'At least --name, --plugin, --version, --processes '
-                    'arguments should be specified or json template should '
-                    'be provided with --json argument')
+                    'At least --name, --plugin, --version, --processes, '
+                    '--flavor arguments should be specified or json template '
+                    'should be provided with --json argument')
 
             configs = None
             if parsed_args.configs:
