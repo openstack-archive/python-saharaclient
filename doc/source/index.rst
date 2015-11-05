@@ -22,6 +22,7 @@ Contents:
 
    api
    shell
+   cli
    how_to_participate
 
 Contributing
