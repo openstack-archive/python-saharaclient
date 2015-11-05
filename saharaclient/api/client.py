@@ -80,10 +80,15 @@ class Client(object):
         if not auth:
             auth = session.auth
 
-        service_type = self._determine_service_type(session,
-                                                    auth,
-                                                    service_type,
-                                                    endpoint_type)
+        # NOTE(Toan): bug #1512801. If sahara_url is provided, it does not
+        # matter if service_type is orthographically correct or not.
+        # Only find Sahara service_type and endpoint in Keystone catalog
+        # if sahara_url is not provided.
+        if not sahara_url:
+            service_type = self._determine_service_type(session,
+                                                        auth,
+                                                        service_type,
+                                                        endpoint_type)
 
         kwargs['user_agent'] = USER_AGENT
         kwargs.setdefault('interface', endpoint_type)
