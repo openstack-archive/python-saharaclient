@@ -84,10 +84,11 @@ class ClusterManager(base.ResourceManager):
         self._delete('/clusters/%s' % cluster_id)
 
     def update(self, cluster_id, name=None, description=None, is_public=None,
-               is_protected=None):
+               is_protected=None, shares=None):
 
         data = {}
         self._copy_if_defined(data, name=name, description=description,
-                              is_public=is_public, is_protected=is_protected)
+                              is_public=is_public, is_protected=is_protected,
+                              shares=shares)
 
         return self._patch('/clusters/%s' % cluster_id, data)

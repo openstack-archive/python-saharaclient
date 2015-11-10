@@ -371,6 +371,11 @@ class UpdateCluster(show.ShowOne):
             metavar="<description>",
             help='Description of the cluster'
         )
+        parser.add_argument(
+            '--shares',
+            metavar="<filename>",
+            help='JSON representation of the manila shares'
+        )
         public = parser.add_mutually_exclusive_group()
         public.add_argument(
             '--public',
@@ -410,12 +415,23 @@ class UpdateCluster(show.ShowOne):
         cluster_id = utils.get_resource_id(
             client.clusters, parsed_args.cluster)
 
+        shares = None
+        if parsed_args.shares:
+            blob = osc_utils.read_blob_file_contents(parsed_args.shares)
+            try:
+                shares = json.loads(blob)
+            except ValueError as e:
+                raise exceptions.CommandError(
+                    'An error occurred when reading '
+                    'shares from file %s: %s' % (parsed_args.shares, e))
+
         data = client.clusters.update(
             cluster_id,
             name=parsed_args.name,
             description=parsed_args.description,
             is_public=parsed_args.is_public,
-            is_protected=parsed_args.is_protected
+            is_protected=parsed_args.is_protected,
+            shares=shares
         ).cluster
 
         _format_cluster_output(data)
