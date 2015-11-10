@@ -135,7 +135,7 @@ class SimpleReadOnlySaharaClientTest(base.ClientTestBase):
     def test_sahara_help(self):
         help_text = self.sahara('help')
         lines = help_text.split('\n')
-        self.assertFirstLineStartsWith(lines, 'usage: sahara')
+        self.assertIn('DeprecationWarning', lines[0])
 
         commands = []
         cmds_start = lines.index('Positional arguments:')

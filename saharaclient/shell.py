@@ -27,6 +27,7 @@ import argparse
 import getpass
 import logging
 import sys
+import warnings
 
 import six
 
@@ -710,6 +711,12 @@ class OpenStackHelpFormatter(argparse.HelpFormatter):
 
 
 def main():
+    warnings.simplefilter('once', category=DeprecationWarning)
+    warnings.warn('The sahara CLI is deprecated in favor of OpenStackClient '
+                  'plugin and will not be maintained anymore. '
+                  'For a Python library, continue using python-saharaclient.',
+                  DeprecationWarning)
+    warnings.resetwarnings()
     try:
         argv = [encodeutils.safe_decode(a) for a in sys.argv[1:]]
         OpenStackSaharaShell().main(argv)
