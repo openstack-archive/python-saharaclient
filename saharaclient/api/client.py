@@ -47,6 +47,26 @@ class HTTPClient(adapter.Adapter):
 
 
 class Client(object):
+    """Client for the OpenStack Data Processing v1 API.
+
+        :param str username: Username for Keystone authentication.
+        :param str api_key: Password for Keystone authentication.
+        :param str project_id: Keystone Tenant id.
+        :param str project_name: Keystone Tenant name.
+        :param str auth_url: Keystone URL that will be used for authentication.
+        :param str sahara_url: Sahara REST API URL to communicate with.
+        :param str endpoint_type: Desired Sahara endpoint type.
+        :param str service_type: Sahara service name in Keystone catalog.
+        :param str input_auth_token: Keystone authorization token.
+        :param session: Keystone Session object.
+        :param auth: Keystone Authentication Plugin object.
+        :param boolean insecure: Allow insecure.
+        :param string cacert: Path to the Privacy Enhanced Mail (PEM) file
+                              which contains certificates needed to establish
+                              SSL connection with the identity service.
+        :param string region_name: Name of a region to select when choosing an
+                                   endpoint from the service catalog.
+    """
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data-processing',

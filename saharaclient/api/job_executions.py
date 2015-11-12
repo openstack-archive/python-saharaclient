@@ -24,18 +24,22 @@ class JobExecutionsManager(base.ResourceManager):
     resource_class = JobExecution
 
     def list(self, search_opts=None):
+        """Get a list of Job Executions."""
         query = base.get_query_string(search_opts)
         return self._list('/job-executions%s' % query, 'job_executions')
 
     def get(self, obj_id):
+        """Get information about a Job Execution."""
         return self._get('/job-executions/%s' % obj_id, 'job_execution')
 
     def delete(self, obj_id):
+        """Delete a Job Execution."""
         self._delete('/job-executions/%s' % obj_id)
 
     def create(self, job_id, cluster_id, input_id=None,
                output_id=None, configs=None, interface=None, is_public=None,
                is_protected=None):
+        """Launch a Job."""
 
         url = "/jobs/%s/execute" % job_id
         data = {
@@ -49,6 +53,7 @@ class JobExecutionsManager(base.ResourceManager):
         return self._create(url, data, 'job_execution')
 
     def update(self, obj_id, is_public=None, is_protected=None):
+        """Update a Job Execution."""
 
         data = {}
         self._copy_if_defined(data, is_public=is_public,

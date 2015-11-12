@@ -32,6 +32,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
                volume_local_to_instance=None, use_autoconfig=None,
                shares=None, is_public=None, is_protected=None,
                volume_mount_prefix=None):
+        """Create a Node Group Template."""
 
         data = {
             'name': name,
@@ -83,6 +84,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
                volume_local_to_instance=None, use_autoconfig=None,
                shares=None, is_public=None, is_protected=None,
                volume_mount_prefix=None):
+        """Update a Node Group Template."""
 
         data = {}
         self._copy_if_defined(
@@ -107,13 +109,16 @@ class NodeGroupTemplateManager(base.ResourceManager):
                             'node_group_template')
 
     def list(self, search_opts=None):
+        """Get a list of Node Group Templates."""
         query = base.get_query_string(search_opts)
         return self._list('/node-group-templates%s' % query,
                           'node_group_templates')
 
     def get(self, ng_template_id):
+        """Get information about a Node Group Template."""
         return self._get('/node-group-templates/%s' % ng_template_id,
                          'node_group_template')
 
     def delete(self, ng_template_id):
+        """Delete a Node Group Template."""
         self._delete('/node-group-templates/%s' % ng_template_id)
