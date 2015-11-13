@@ -21,7 +21,6 @@ from saharaclient.api import data_sources as api_ds
 from saharaclient.osc.v1 import data_sources as osc_ds
 from saharaclient.tests.unit.osc.v1 import fakes
 
-
 DS_INFO = {'id': 'id', 'name': 'source', 'type': 'swift',
            'url': 'swift://container.sahara/object',
            'description': 'Data Source for tests',
@@ -277,12 +276,12 @@ class TestUpdateDataSource(TestDataSources):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that data source was created with correct arguments
-        called_args = {'credential_pass': 'pass', 'credential_user': 'user',
-                       'data_source_type': 'swift', 'name': 'source',
-                       'description': 'Data Source for tests',
-                       'url': 'swift://container.sahara/object',
-                       'is_protected': True, 'is_public': True}
-        self.ds_mock.update.assert_called_once_with('id', called_args)
+        self.ds_mock.update.assert_called_once_with(
+            'id', {'name': 'source', 'url': 'swift://container.sahara/object',
+                   'is_protected': True,
+                   'credentials': {'password': 'pass', 'user': 'user'},
+                   'is_public': True, 'type': 'swift',
+                   'description': 'Data Source for tests'})
 
         # Check that columns are correct
         expected_columns = ('Description', 'Id', 'Is protected', 'Is public',

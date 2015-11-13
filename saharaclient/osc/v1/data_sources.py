@@ -276,12 +276,19 @@ class UpdateDataSource(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
+        credentials = {}
+        if parsed_args.username:
+            credentials['user'] = parsed_args.username
+        if parsed_args.password:
+            credentials['password'] = parsed_args.password
+        if not credentials:
+            credentials = None
+
         update_fields = utils.create_dict_from_kwargs(
             name=parsed_args.name,
             description=parsed_args.description,
-            data_source_type=parsed_args.type, url=parsed_args.url,
-            credential_user=parsed_args.username,
-            credential_pass=parsed_args.password,
+            type=parsed_args.type, url=parsed_args.url,
+            credentials=credentials,
             is_public=parsed_args.is_public,
             is_protected=parsed_args.is_protected)
 
