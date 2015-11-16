@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import mock
+
 from openstackclient.tests import utils as osc_utils
 
 from saharaclient.api import node_group_templates as api_ngt
@@ -44,8 +46,8 @@ NGT_INFO = {
     "security_groups": None,
     "floating_ip_pool": "floating_pool",
     "is_public": True,
-    "id": "ea3c8624-a1f0-49cf-83c4-f5a6634699ca",
-    "flavor_id": "2",
+    "id": "ng_id",
+    "flavor_id": "flavor_id",
     "volumes_availability_zone": None,
     "volumes_per_node": 2,
     "volume_local_to_instance": False
@@ -67,15 +69,19 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         self.ngt_mock.create.return_value = api_ngt.NodeGroupTemplate(
             None, NGT_INFO)
 
+        self.fl_mock = self.app.client_manager.compute.flavors
+        self.fl_mock.get.return_value = mock.Mock(id='flavor_id')
+        self.fl_mock.reset_mock()
+
         # Command to test
         self.cmd = osc_ngt.CreateNodeGroupTemplate(self.app, None)
 
     def test_ngt_create_minimum_options(self):
         arglist = ['--name', 'template', '--plugin', 'fake', '--version',
                    '0.1', '--processes', 'namenode', 'tasktracker',
-                   '--flavor', 'flavor']
+                   '--flavor', 'flavor_id']
         verifylist = [('name', 'template'), ('plugin', 'fake'),
-                      ('version', '0.1'), ('flavor', 'flavor'),
+                      ('version', '0.1'), ('flavor', 'flavor_id'),
                       ('processes', ['namenode', 'tasktracker'])]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -85,7 +91,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         # Check that correct arguments were passed
         self.ngt_mock.create.assert_called_once_with(
             auto_security_group=False, availability_zone=None,
-            description=None, flavor_id='flavor', floating_ip_pool=None,
+            description=None, flavor_id='flavor_id', floating_ip_pool=None,
             hadoop_version='0.1', is_protected=False, is_proxy_gateway=False,
             is_public=False, name='template',
             node_processes=['namenode', 'tasktracker'], plugin_name='fake',
@@ -99,7 +105,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         arglist = ['--name', 'template', '--plugin', 'fake', '--version',
                    '0.1', '--processes', 'namenode', 'tasktracker',
                    '--security-groups', 'secgr', '--auto-security-group',
-                   '--availability-zone', 'av_zone', '--flavor', '2',
+                   '--availability-zone', 'av_zone', '--flavor', 'flavor_id',
                    '--floating-ip-pool', 'floating_pool', '--volumes-per-node',
                    '2', '--volumes-size', '2', '--volumes-type', 'type',
                    '--volumes-availability-zone', 'vavzone',
@@ -113,7 +119,8 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
                       ('processes', ['namenode', 'tasktracker']),
                       ('security_groups', ['secgr']),
                       ('auto_security_group', True),
-                      ('availability_zone', 'av_zone'), ('flavor', '2'),
+                      ('availability_zone', 'av_zone'),
+                      ('flavor', 'flavor_id'),
                       ('floating_ip_pool', 'floating_pool'),
                       ('volumes_per_node', 2), ('volumes_size', 2),
                       ('volumes_type', 'type'),
@@ -130,7 +137,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         # Check that correct arguments were passed
         self.ngt_mock.create.assert_called_once_with(
             auto_security_group=True, availability_zone='av_zone',
-            description='descr', flavor_id='2',
+            description='descr', flavor_id='flavor_id',
             floating_ip_pool='floating_pool', hadoop_version='0.1',
             is_protected=True, is_proxy_gateway=True, is_public=True,
             name='template', node_processes=['namenode', 'tasktracker'],
@@ -152,8 +159,8 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that data is correct
         expected_data = (
-            True, 'av_zone', 'description', '2', 'floating_pool',
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', False, False, False,
+            True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
+            'ng_id', False, False, False,
             True, 'template', 'namenode, tasktracker', 'fake', None, True,
             '0.1', False, '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
@@ -181,8 +188,7 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('template', 'ea3c8624-a1f0-49cf-83c4-f5a6634699ca',
-                          'fake', '0.1')]
+        expected_data = [('template', 'ng_id', 'fake', '0.1')]
         self.assertEqual(expected_data, list(data))
 
     def test_ngt_list_long(self):
@@ -199,9 +205,8 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('template', 'ea3c8624-a1f0-49cf-83c4-f5a6634699ca',
-                          'fake', '0.1', 'namenode, tasktracker',
-                          'description')]
+        expected_data = [('template', 'ng_id', 'fake', '0.1',
+                          'namenode, tasktracker', 'description')]
         self.assertEqual(expected_data, list(data))
 
     def test_ngt_list_extra_search_opts(self):
@@ -218,8 +223,7 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('template', 'ea3c8624-a1f0-49cf-83c4-f5a6634699ca',
-                          'fake', '0.1')]
+        expected_data = [('template', 'ng_id', 'fake', '0.1')]
         self.assertEqual(expected_data, list(data))
 
 
@@ -256,10 +260,10 @@ class TestShowNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that data is correct
         expected_data = (
-            True, 'av_zone', 'description', '2', 'floating_pool',
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', False, False, False,
-            True, 'template', 'namenode, tasktracker', 'fake', None, True,
-            '0.1', False, '/volumes/disk', None, None, 2, 2)
+            True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
+            'ng_id', False, False, False, True, 'template',
+            'namenode, tasktracker', 'fake', None, True, '0.1', False,
+            '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
 
 
@@ -281,8 +285,7 @@ class TestDeleteNodeGroupTemplate(TestNodeGroupTemplates):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.ngt_mock.delete.assert_called_once_with(
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca')
+        self.ngt_mock.delete.assert_called_once_with('ng_id')
 
 
 class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
@@ -293,6 +296,10 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             None, NGT_INFO)
         self.ngt_mock.update.return_value = api_ngt.NodeGroupTemplate(
             None, NGT_INFO)
+
+        self.fl_mock = self.app.client_manager.compute.flavors
+        self.fl_mock.get.return_value = mock.Mock(id='flavor_id')
+        self.fl_mock.reset_mock()
 
         # Command to test
         self.cmd = osc_ngt.UpdateNodeGroupTemplate(self.app, None)
@@ -314,7 +321,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that correct arguments were passed
         self.ngt_mock.update.assert_called_once_with(
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', auto_security_group=None,
+            'ng_id', auto_security_group=None,
             availability_zone=None, description=None, flavor_id=None,
             floating_ip_pool=None, hadoop_version=None, is_protected=None,
             is_proxy_gateway=None, is_public=None, name=None,
@@ -329,7 +336,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
                    '--version', '0.1', '--processes', 'namenode',
                    'tasktracker', '--security-groups', 'secgr',
                    '--auto-security-group-enable',
-                   '--availability-zone', 'av_zone', '--flavor', '2',
+                   '--availability-zone', 'av_zone', '--flavor', 'flavor_id',
                    '--floating-ip-pool', 'floating_pool', '--volumes-per-node',
                    '2', '--volumes-size', '2', '--volumes-type', 'type',
                    '--volumes-availability-zone', 'vavzone',
@@ -344,7 +351,8 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
                       ('processes', ['namenode', 'tasktracker']),
                       ('security_groups', ['secgr']),
                       ('use_auto_security_group', True),
-                      ('availability_zone', 'av_zone'), ('flavor', '2'),
+                      ('availability_zone', 'av_zone'),
+                      ('flavor', 'flavor_id'),
                       ('floating_ip_pool', 'floating_pool'),
                       ('volumes_per_node', 2), ('volumes_size', 2),
                       ('volumes_type', 'type'),
@@ -361,9 +369,9 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that correct arguments were passed
         self.ngt_mock.update.assert_called_once_with(
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca',
+            'ng_id',
             auto_security_group=True, availability_zone='av_zone',
-            description='descr', flavor_id='2',
+            description='descr', flavor_id='flavor_id',
             floating_ip_pool='floating_pool', hadoop_version='0.1',
             is_protected=True, is_proxy_gateway=True, is_public=True,
             name='template', node_processes=['namenode', 'tasktracker'],
@@ -385,9 +393,9 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that data is correct
         expected_data = (
-            True, 'av_zone', 'description', '2', 'floating_pool',
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', False, False, False,
-            True, 'template', 'namenode, tasktracker', 'fake', None, True,
+            True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
+            'ng_id', False, False, False, True, 'template',
+            'namenode, tasktracker', 'fake', None, True,
             '0.1', False, '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
 
@@ -402,7 +410,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that correct arguments were passed
         self.ngt_mock.update.assert_called_once_with(
-            'ea3c8624-a1f0-49cf-83c4-f5a6634699ca', auto_security_group=None,
+            'ng_id', auto_security_group=None,
             availability_zone=None, description=None, flavor_id=None,
             floating_ip_pool=None, hadoop_version=None, is_protected=False,
             is_proxy_gateway=None, is_public=False, name=None,
