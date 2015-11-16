@@ -23,7 +23,12 @@ from saharaclient.tests.unit.osc.v1 import fakes
 PLUGIN_INFO = {'name': 'fake',
                'title': 'Fake Plugin',
                'versions': ['0.1', '0.2'],
-               'description': 'Plugin for tests'}
+               'description': 'Plugin for tests',
+               'required_image_tags': ['fake', '0.1'],
+               'node_processes': {
+                   'HDFS': ['datanode', 'namenode'],
+                   'MapReduce': ['jobtracker', 'tasktracker']
+               }}
 
 
 class TestPlugins(fakes.TestDataProcessing):
@@ -81,27 +86,52 @@ class TestShowPlugin(TestPlugins):
         super(TestShowPlugin, self).setUp()
         self.plugins_mock.get.return_value = api_plugins.Plugin(
             None, PLUGIN_INFO)
+        self.plugins_mock.get_version_details.return_value = (
+            api_plugins.Plugin(None, PLUGIN_INFO))
 
         # Command to test
         self.cmd = osc_plugins.ShowPlugin(self.app, None)
 
     def test_plugin_show(self):
         arglist = ['fake']
-        verifylist = []
+        verifylist = [('plugin', 'fake')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
         columns, data = self.cmd.take_action(parsed_args)
 
-        # Check that correct arguments was passed
+        # Check that correct arguments were passed
         self.plugins_mock.get.assert_called_once_with('fake')
 
         # Check that columns are correct
-        expected_columns = ('description', 'name', 'title', 'versions')
+        expected_columns = ('Description', 'Name', 'Title', 'Versions')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('Plugin for tests', 'fake', 'Fake Plugin', '0.1, 0.2')
+        self.assertEqual(expected_data, data)
+
+    def test_plugin_version_show(self):
+        arglist = ['fake', '--version', '0.1']
+        verifylist = [('plugin', 'fake'), ('version', '0.1')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.plugins_mock.get_version_details.assert_called_once_with(
+            'fake', '0.1')
+
+        # Check that columns are correct
+        expected_columns = ('Description', 'Name', 'Required image tags',
+                            'Title', '', 'Service:', '', 'HDFS', 'MapReduce')
+        self.assertEqual(expected_columns, columns)
+
+        # Check that data is correct
+        expected_data = ('Plugin for tests', 'fake', '0.1, fake',
+                         'Fake Plugin', '', 'Available processes:', '',
+                         'datanode, namenode', 'jobtracker, tasktracker')
         self.assertEqual(expected_data, data)
 
 
@@ -125,7 +155,7 @@ class TestGetPluginConfigs(TestPlugins):
 
             self.cmd.take_action(parsed_args)
 
-            # Check that correct arguments was passed
+            # Check that correct arguments were passed
             self.plugins_mock.get_version_details.assert_called_once_with(
                 'fake', '0.1')
 
@@ -148,7 +178,7 @@ class TestGetPluginConfigs(TestPlugins):
 
             self.cmd.take_action(parsed_args)
 
-            # Check that correct arguments was passed
+            # Check that correct arguments were passed
             self.plugins_mock.get_version_details.assert_called_once_with(
                 'fake', '0.1')
 
