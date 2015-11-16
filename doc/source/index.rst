@@ -2,8 +2,8 @@ Python bindings to the OpenStack Sahara API
 ===========================================
 
 This is a client for OpenStack Sahara API. There's :doc:`a Python API
-<api>` (the :mod:`saharaclient` module), and a :doc:`command-line script
-<shell>` (installed as :program:`sahara`). Each implements the entire
+<api>` (the :mod:`saharaclient` module), and a :doc:`command-line utility
+<shell>` (installed as an OpenStackClient plugin). Each implements the entire
 OpenStack Sahara API.
 
 You'll need credentials for an OpenStack cloud that implements the
@@ -21,6 +21,7 @@ Contents:
    :maxdepth: 2
 
    api
+   shell
    how_to_participate
 
 Contributing
