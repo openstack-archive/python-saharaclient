@@ -32,18 +32,30 @@ class PluginManager(base.ResourceManager):
     resource_class = Plugin
 
     def list(self, search_opts=None):
+        """Get a list of Plugins."""
         query = base.get_query_string(search_opts)
         return self._list('/plugins%s' % query, 'plugins')
 
     def get(self, plugin_name):
+        """Get information about a Plugin."""
         return self._get('/plugins/%s' % plugin_name, 'plugin')
 
     def get_version_details(self, plugin_name, hadoop_version):
+        """Get version details
+
+        Get the list of Services and Service Parameters for a specified
+        Plugin and Plugin Version.
+        """
         return self._get('/plugins/%s/%s' % (plugin_name, hadoop_version),
                          'plugin')
 
     def convert_to_cluster_template(self, plugin_name, hadoop_version,
                                     template_name, filecontent):
+        """Convert to cluster template
+
+        Create Cluster Template directly, avoiding Cluster Template
+        mechanism.
+        """
         resp = self.api.post('/plugins/%s/%s/convert-config/%s' %
                              (plugin_name,
                               hadoop_version,

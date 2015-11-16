@@ -26,6 +26,8 @@ class DataSourceManager(base.ResourceManager):
     def create(self, name, description, data_source_type,
                url, credential_user=None, credential_pass=None,
                is_public=None, is_protected=None):
+        """Create a Data Source."""
+
         data = {
             'name': name,
             'description': description,
@@ -43,15 +45,33 @@ class DataSourceManager(base.ResourceManager):
         return self._create('/data-sources', data, 'data_source')
 
     def list(self, search_opts=None):
+        """Get a list of Data Sources."""
         query = base.get_query_string(search_opts)
         return self._list('/data-sources%s' % query, 'data_sources')
 
     def get(self, data_source_id):
+        """Get information about a Data Source."""
         return self._get('/data-sources/%s' % data_source_id, 'data_source')
 
     def delete(self, data_source_id):
+        """Delete a Data Source."""
         self._delete('/data-sources/%s' % data_source_id)
 
     def update(self, data_source_id, update_data):
+        """Update a Data Source.
+
+        :param dict update_data: dict that contains fields that should be
+                                 updated with new values.
+
+        Fields that can be updated:
+
+        * name
+        * description
+        * type
+        * url
+        * is_public
+        * is_protected
+        * credentials - dict with `user` and `password` keyword arguments
+        """
         return self._update('/data-sources/%s' % data_source_id,
                             update_data)

@@ -25,6 +25,7 @@ class JobsManager(base.ResourceManager):
 
     def create(self, name, type, mains=None, libs=None, description=None,
                interface=None, is_public=None, is_protected=None):
+        """Create a Job."""
         data = {
             'name': name,
             'type': type
@@ -37,20 +38,25 @@ class JobsManager(base.ResourceManager):
         return self._create('/jobs', data, 'job')
 
     def list(self, search_opts=None):
+        """Get a list of Jobs."""
         query = base.get_query_string(search_opts)
         return self._list('/jobs%s' % query, 'jobs')
 
     def get(self, job_id):
+        """Get information about a Job"""
         return self._get('/jobs/%s' % job_id, 'job')
 
     def get_configs(self, job_type):
+        """Get config hints for a specified Job type."""
         return self._get('/jobs/config-hints/%s' % job_type)
 
     def delete(self, job_id):
+        """Delete a Job"""
         self._delete('/jobs/%s' % job_id)
 
     def update(self, job_id, name=None, description=None, is_public=None,
                is_protected=None):
+        """Update a Job."""
 
         data = {}
         self._copy_if_defined(data, name=name, description=description,

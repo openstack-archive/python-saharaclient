@@ -26,23 +26,31 @@ class JobBinaryInternalsManager(base.ResourceManager):
     resource_class = JobBinaryInternal
 
     def create(self, name, data):
+        """Create a Job Binary Internal.
+
+        :param str data: raw data ot script text
+        """
         return self._update('/job-binary-internals/%s' %
                             urlparse.quote(name.encode('utf-8')), data,
                             'job_binary_internal', dump_json=False)
 
     def list(self, search_opts=None):
+        """Get a list of Job Binary Internals."""
         query = base.get_query_string(search_opts)
         return self._list('/job-binary-internals%s' % query, 'binaries')
 
     def get(self, job_binary_id):
+        """Get information about a Job Binary Internal."""
         return self._get('/job-binary-internals/%s' % job_binary_id,
                          'job_binary_internal')
 
     def delete(self, job_binary_id):
+        """Delete a Job Binary Internal."""
         self._delete('/job-binary-internals/%s' % job_binary_id)
 
     def update(self, job_binary_id, name=None, is_public=None,
                is_protected=None):
+        """Update a Job Binary Internal."""
 
         data = {}
         self._copy_if_defined(data, name=name, is_public=is_public,
