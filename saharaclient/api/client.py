@@ -74,10 +74,12 @@ class Client(object):
                  insecure=False, cacert=None, region_name=None, **kwargs):
 
         if not session:
+            warnings.simplefilter('once', category=DeprecationWarning)
             warnings.warn('Passing authentication parameters to saharaclient '
                           'is deprecated. Please construct and pass an '
                           'authenticated session object directly.',
                           DeprecationWarning)
+            warnings.resetwarnings()
 
             if input_auth_token:
                 auth = token_endpoint.Token(sahara_url, input_auth_token)
