@@ -19,6 +19,7 @@ import time
 import saharaclient.api.base as api_base
 from saharaclient.tests.integration.configs import config as cfg
 import saharaclient.tests.integration.tests.base as base
+import saharaclient.tests.integration.tests.utils as ut
 
 from neutronclient.v2_0 import client as neutron_client
 import novaclient.exceptions
@@ -264,12 +265,12 @@ class ClusterTest(base.ITestBase):
             # Always skip teardown if we used an existing cluster
             skip_teardown = True
             status = self.util.poll_cluster_state(self.cluster.id)
-            self.assertEqual('Active', status)
+            self.assertEqual(ut.CLUSTER_STATUS_ACTIVE, status)
         else:
             try:
                 self.build_cluster(config, ng_templates)
                 status = self.util.poll_cluster_state(self.cluster.id)
-                self.assertEqual('Active', status)
+                self.assertEqual(ut.CLUSTER_STATUS_ACTIVE, status)
             except Exception as e:
                 if not skip_teardown:
                     self.teardown_via_client()
