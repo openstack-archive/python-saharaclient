@@ -24,11 +24,14 @@ import six
 
 import saharaclient.api.client as client
 from saharaclient.tests.integration.configs import config as cfg
-
 from swiftclient import client as swift_client
 
 cfg = cfg.ITConfig()
 common = cfg.common_config
+
+# cluster status
+CLUSTER_STATUS_ACTIVE = "Active"
+CLUSTER_STATUS_ERROR = "Error"
 
 
 class Utils(object):
@@ -120,8 +123,8 @@ class Utils(object):
         # TODO(tmckay): this should use timeutils but we need
         # to add it to openstack/common
         timeout = common['CLUSTER_CREATION_TIMEOUT'] * 60
-        while str(cluster.status) != 'Active':
-            if str(cluster.status) == 'Error' or timeout <= 0:
+        while str(cluster.status) != CLUSTER_STATUS_ACTIVE:
+            if str(cluster.status) == CLUSTER_STATUS_ERROR or timeout <= 0:
                 break
             time.sleep(10)
             timeout -= 10
