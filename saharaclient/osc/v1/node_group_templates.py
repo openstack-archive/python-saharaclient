@@ -77,8 +77,8 @@ class CreateNodeGroupTemplate(show.ShowOne):
         )
         parser.add_argument(
             '--flavor',
-            metavar="<flavor-id>",
-            help="ID of the flavor [REQUIRED if JSON is not provided]"
+            metavar="<flavor>",
+            help="Name or ID of the flavor [REQUIRED if JSON is not provided]"
         )
         parser.add_argument(
             '--security-groups',
@@ -241,11 +241,15 @@ class CreateNodeGroupTemplate(show.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
+            compute_client = self.app.client_manager.compute
+            flavor_id = osc_utils.find_resource(
+                compute_client.flavors, parsed_args.flavor).id
+
             data = client.node_group_templates.create(
                 name=parsed_args.name,
                 plugin_name=parsed_args.plugin,
                 hadoop_version=parsed_args.version,
-                flavor_id=parsed_args.flavor,
+                flavor_id=flavor_id,
                 description=parsed_args.description,
                 volumes_per_node=parsed_args.volumes_per_node,
                 volumes_size=parsed_args.volumes_size,
@@ -463,8 +467,8 @@ class UpdateNodeGroupTemplate(show.ShowOne):
         )
         parser.add_argument(
             '--flavor',
-            metavar="<flavor-id>",
-            help="ID of the flavor"
+            metavar="<flavor>",
+            help="Name or ID of the flavor"
         )
         parser.add_argument(
             '--floating-ip-pool',
@@ -646,12 +650,18 @@ class UpdateNodeGroupTemplate(show.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
+            flavor_id = None
+            if parsed_args.flavor:
+                compute_client = self.app.client_manager.compute
+                flavor_id = osc_utils.find_resource(
+                    compute_client.flavors, parsed_args.flavor).id
+
             data = client.node_group_templates.update(
                 ngt_id,
                 name=parsed_args.name,
                 plugin_name=parsed_args.plugin,
                 hadoop_version=parsed_args.version,
-                flavor_id=parsed_args.flavor,
+                flavor_id=flavor_id,
                 description=parsed_args.description,
                 volumes_per_node=parsed_args.volumes_per_node,
                 volumes_size=parsed_args.volumes_size,

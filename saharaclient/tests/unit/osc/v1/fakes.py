@@ -25,3 +25,4 @@ class TestDataProcessing(utils.TestCommand):
 
         self.app.client_manager.data_processing = mock.Mock()
         self.app.client_manager.network = mock.Mock()
+        self.app.client_manager.compute = mock.Mock()
