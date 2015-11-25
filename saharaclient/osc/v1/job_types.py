@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from os import path
+import sys
 
 from cliff import command
 from cliff import lister
@@ -127,7 +128,7 @@ class GetJobTypeConfigs(command.Command):
         else:
             with open(parsed_args.file, 'w') as f:
                 jsonutils.dump(data, f, indent=4)
-                self.log.info(
-                    '"%(type)s" job configs were saved in "%(file)s"'
-                    'file' % {'type': parsed_args.job_type,
-                              'file': parsed_args.file})
+            sys.stdout.write(
+                '"%(type)s" job configs were saved in "%(file)s"'
+                'file' % {'type': parsed_args.job_type,
+                          'file': parsed_args.file})

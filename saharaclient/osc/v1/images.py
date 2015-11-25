@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from cliff import command
 from cliff import lister
 from cliff import show
@@ -185,6 +187,9 @@ class UnregisterImage(command.Command):
         for image in parsed_args.image:
             image_id = utils.get_resource_id(client.images, image)
             client.images.unregister_image(image_id)
+            sys.stdout.write(
+                'Image "{image}" has been unregistered '
+                'successfully.\n'.format(image=image))
 
 
 class SetImageTags(show.ShowOne):

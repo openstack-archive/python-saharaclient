@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from os import path
+import sys
 
 from cliff import command
 from cliff import lister
@@ -258,6 +259,9 @@ class DeleteJobBinary(command.Command):
                     if not ex.error_code == '404':
                         raise
             client.job_binaries.delete(jb.id)
+            sys.stdout.write(
+                'Job binary "{jb}" has been removed '
+                'successfully.\n'.format(jb=jb))
 
 
 class UpdateJobBinary(show.ShowOne):
@@ -422,3 +426,6 @@ class DownloadJobBinary(command.Command):
         else:
             with open(parsed_args.file, 'w') as f:
                 f.write(data)
+            sys.stdout.write(
+                'Job binary "{jb}" has been downloaded '
+                'successfully.\n'.format(jb=parsed_args.job_binary))

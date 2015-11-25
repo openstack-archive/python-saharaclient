@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import json
+import sys
 
 from cliff import command
 from cliff import lister
@@ -191,7 +192,7 @@ class CreateCluster(show.ShowOne):
                     if not osc_utils.wait_for_status(
                             client.clusters.get, cluster.id):
                         self.log.error(
-                            'Error occurred during cluster creation: %s',
+                            'Error occurred during cluster creation: %s' %
                             data['id'])
 
             data = {}
@@ -203,7 +204,7 @@ class CreateCluster(show.ShowOne):
                 if not osc_utils.wait_for_status(
                         client.clusters.get, data['id']):
                     self.log.error(
-                        'Error occurred during cluster creation: %s',
+                        'Error occurred during cluster creation: %s' %
                         data['id'])
                 data = client.clusters.get(data['id']).to_dict()
             _format_cluster_output(data)
@@ -339,13 +340,20 @@ class DeleteCluster(command.Command):
             cluster_id = utils.get_resource_id(
                 client.clusters, cluster)
             client.clusters.delete(cluster_id)
-            clusters.append(cluster_id)
+            clusters.append((cluster_id, cluster))
+            sys.stdout.write(
+                'Cluster "{cluster}" deletion has been started.\n'.format(
+                    cluster=cluster))
         if parsed_args.wait:
-            for cluster_id in clusters:
+            for cluster_id, cluster_arg in clusters:
                 if not utils.wait_for_delete(client.clusters, cluster_id):
                     self.log.error(
-                        'Error occurred during cluster deleting: %s',
+                        'Error occurred during cluster deleting: %s' %
                         cluster_id)
+                else:
+                    sys.stdout.write(
+                        'Cluster "{cluster}" has been removed '
+                        'successfully.\n'.format(cluster=cluster_arg))
 
 
 class UpdateCluster(show.ShowOne):
@@ -521,11 +529,14 @@ class ScaleCluster(show.ShowOne):
 
             data = client.clusters.scale(cluster.id, scale_object).cluster
 
+        sys.stdout.write(
+            'Cluster "{cluster}" scaling has been started.\n'.format(
+                cluster=parsed_args.cluster))
         if parsed_args.wait:
             if not osc_utils.wait_for_status(
                     client.clusters.get, data['id']):
                 self.log.error(
-                    'Error occurred during cluster scaling: %s',
+                    'Error occurred during cluster scaling: %s' %
                     cluster.id)
             data = client.clusters.get(cluster.id).to_dict()
 

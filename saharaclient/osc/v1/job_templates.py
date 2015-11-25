@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from cliff import command
 from cliff import lister
 from cliff import show
@@ -245,6 +247,9 @@ class DeleteJobTemplate(command.Command):
         for jt in parsed_args.job_template:
             jt_id = utils.get_resource_id(client.jobs, jt)
             client.jobs.delete(jt_id)
+            sys.stdout.write(
+                'Job template "{jt}" has been removed '
+                'successfully.\n'.format(jt=jt))
 
 
 class UpdateJobTemplate(show.ShowOne):
