@@ -20,6 +20,9 @@ To get detailed help for the command you can run:
 
     $ openstack help dataprocessing <command>
 
+For more information about commands and their parameters you can refer to
+:doc:`the Sahara CLI commands <cli>`.
+
 For more information about abilities and features of OpenStackClient CLI you
 can refer to `OpenStackClient documentation <http://docs.openstack.org/developer/python-openstackclient/>`_
 
