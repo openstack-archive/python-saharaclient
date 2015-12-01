@@ -12,7 +12,7 @@ oslosphinx!=3.4.0,>=2.5.0 # Apache-2.0
 python-neutronclient>=2.6.0
 python-novaclient!=2.33.0,>=2.29.0
 python-swiftclient>=2.2.0
-requests-mock>=0.6.0 # Apache-2.0
+requests-mock>=0.7.0 # Apache-2.0
 sphinx!=1.2.0,!=1.3b1,<1.3,>=1.1.2
 tempest-lib>=0.10.0
 testrepository>=0.0.18
