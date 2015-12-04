@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from os import path
+import sys
 
 from cliff import command
 from cliff import lister
@@ -155,7 +156,7 @@ class GetPluginConfigs(command.Command):
         else:
             with open(parsed_args.file, 'w') as f:
                 jsonutils.dump(data, f, indent=4)
-                self.log.info(
-                    '"%(plugin)s" plugin configs was saved in "%(file)s"'
-                    'file' % {'plugin': parsed_args.plugin,
-                              'file': parsed_args.file})
+            sys.stdout.write(
+                '"%(plugin)s" plugin configs was saved in "%(file)s"'
+                'file' % {'plugin': parsed_args.plugin,
+                          'file': parsed_args.file})

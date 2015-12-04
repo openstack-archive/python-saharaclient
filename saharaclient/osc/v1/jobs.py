@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from cliff import command
 from cliff import lister
 from cliff import show
@@ -186,6 +188,10 @@ class ExecuteJob(show.ShowOne):
                 configs=job_configs, is_public=parsed_args.public,
                 is_protected=parsed_args.protected).to_dict()
 
+        sys.stdout.write(
+            'Job "{job}" has been started successfully.\n'.format(
+                job=data['id']))
+
         _format_job_output(data)
         data = utils.prepare_data(data, JOB_FIELDS)
 
@@ -299,13 +305,19 @@ class DeleteJob(command.Command):
         client = self.app.client_manager.data_processing
         for job_id in parsed_args.job:
             client.job_executions.delete(job_id)
+            sys.stdout.write(
+                'Job "{job}" deletion has been started.\n'.format(job=job_id))
 
         if parsed_args.wait:
             for job_id in parsed_args.job:
                 if not utils.wait_for_delete(client.job_executions, job_id):
                     self.log.error(
-                        'Error occurred during job deleting: %s',
+                        'Error occurred during job deleting: %s' %
                         job_id)
+                else:
+                    sys.stdout.write(
+                        'Job "{job}" has been removed successfully.\n'.format(
+                            job=job_id))
 
 
 class UpdateJob(show.ShowOne):

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import json
+import sys
 
 from cliff import command
 from cliff import lister
@@ -400,6 +401,9 @@ class DeleteNodeGroupTemplate(command.Command):
             ngt_id = utils.get_resource_id(
                 client.node_group_templates, ngt)
             client.node_group_templates.delete(ngt_id)
+            sys.stdout.write(
+                'Node group template "{ngt}" has been removed '
+                'successfully.\n'.format(ngt=ngt))
 
 
 class UpdateNodeGroupTemplate(show.ShowOne):

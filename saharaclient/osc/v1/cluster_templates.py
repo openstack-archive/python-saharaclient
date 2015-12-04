@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import json
+import sys
 
 from cliff import command
 from cliff import lister
@@ -323,6 +324,9 @@ class DeleteClusterTemplate(command.Command):
         for ct in parsed_args.cluster_template:
             ct_id = utils.get_resource_id(client.cluster_templates, ct)
             client.cluster_templates.delete(ct_id)
+            sys.stdout.write(
+                'Cluster template "{ct}" has been removed '
+                'successfully.\n'.format(ct=ct))
 
 
 class UpdateClusterTemplate(show.ShowOne):

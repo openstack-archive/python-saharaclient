@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from cliff import command
 from cliff import lister
 from cliff import show
@@ -196,6 +198,9 @@ class DeleteDataSource(command.Command):
             data_source_id = utils.get_resource_id(
                 client.data_sources, ds)
             client.data_sources.delete(data_source_id)
+            sys.stdout.write(
+                'Data Source "{ds}" has been removed '
+                'successfully.\n'.format(ds=ds))
 
 
 class UpdateDataSource(show.ShowOne):
