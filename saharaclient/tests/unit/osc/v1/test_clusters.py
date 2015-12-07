@@ -35,7 +35,8 @@ CLUSTER_INFO = {
             "id": "ng_id",
             "name": "fakeng",
             "plugin_name": 'fake',
-            "hadoop_version": '0.1'
+            "hadoop_version": '0.1',
+            "node_group_template_id": 'ngt_id'
         }
     ],
     "hadoop_version": "0.1",
@@ -57,6 +58,11 @@ CT_INFO = {
     "hadoop_version": "0.1",
     "name": '"template',
     "id": "ct_id"
+}
+
+NGT_INFO = {
+    'id': 'ngt_id',
+    'name': 'fakeng'
 }
 
 
@@ -404,10 +410,11 @@ class TestScaleCluster(TestClusters):
 
     def test_cluster_scale_resize(self):
         self.ngt_mock.find_unique.return_value = api_ngt.NodeGroupTemplate(
-            None, CLUSTER_INFO['node_groups'][0])
-        arglist = ['fake', '--node-groups', 'fakeng:1']
+            None, NGT_INFO)
+        arglist = ['fake', '--instances', 'fakeng:1']
 
-        verifylist = [('cluster', 'fake'), ('node_groups', ['fakeng:1'])]
+        verifylist = [('cluster', 'fake'),
+                      ('instances', ['fakeng:1'])]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
@@ -416,7 +423,10 @@ class TestScaleCluster(TestClusters):
         # Check that correct arguments were passed
         self.cl_mock.scale.assert_called_once_with(
             'cluster_id',
-            {'resize_node_groups': [{'count': 1, 'name': 'fakeng'}]})
+            {'resize_node_groups': [
+                {'count': 1,
+                 'name': 'fakeng'}]}
+        )
 
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Cluster template id',
@@ -438,18 +448,19 @@ class TestScaleCluster(TestClusters):
         new_ng = {'name': 'new', 'id': 'new_id'}
         self.ngt_mock.find_unique.return_value = api_ngt.NodeGroupTemplate(
             None, new_ng)
-        arglist = ['fake', '--node-groups', 'fakeng:1']
+        arglist = ['fake', '--instances', 'new:1']
 
-        verifylist = [('cluster', 'fake'), ('node_groups', ['fakeng:1'])]
+        verifylist = [('cluster', 'fake'), ('instances', ['new:1'])]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
-        columns, data = self.cmd.take_action(parsed_args)
+        self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
         self.cl_mock.scale.assert_called_once_with(
             'cluster_id',
             {'add_node_groups': [
-                {'count': 1, 'node_group_template_id': 'new_id',
+                {'count': 1,
+                 'node_group_template_id': 'new_id',
                  'name': 'new'}
             ]})
