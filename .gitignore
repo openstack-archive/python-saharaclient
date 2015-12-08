@@ -36,3 +36,5 @@ doc/source/apidoc
 doc/source/api
 doc/build
 *.log
+# Files created by releasenotes build
+releasenotes/build
