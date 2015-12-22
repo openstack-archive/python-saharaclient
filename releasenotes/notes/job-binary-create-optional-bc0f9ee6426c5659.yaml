@@ -1,0 +1,6 @@
+---
+fixes:
+  - >
+    [`bug 1508406  <https://bugs.launchpad.net/python-saharaclient/+bug/1508406>`_]
+    Now ``description`` and ``extra`` parameters of jobs ``create`` method
+    are optional.

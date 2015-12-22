@@ -1,0 +1,6 @@
+---
+fixes:
+  - >
+    [`bug 1507966  <https://bugs.launchpad.net/python-saharaclient/+bug/1507966>`_]
+    Now input_id, output_id, configs parameters of job executions create
+    method are optional.

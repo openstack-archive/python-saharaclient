@@ -1,0 +1,5 @@
+---
+fixes:
+  - >
+    [`bug 1510470  <https://bugs.launchpad.net/python-saharaclient/+bug/1510470>`_]
+    Now ``desc`` parameter of ``update_image`` is optional.

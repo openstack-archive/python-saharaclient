@@ -1,0 +1,6 @@
+---
+fixes:
+  - >
+    [`bug 1506448  <https://bugs.launchpad.net/python-saharaclient/+bug/1506448>`_]
+    Now ``mains``, ``libs`` and ``description`` parameters of jobs ``create``
+    method are optional.

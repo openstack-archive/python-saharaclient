@@ -1,0 +1,5 @@
+---
+deprecations:
+  - >
+    [`bug 1519510  <https://bugs.launchpad.net/python-saharaclient/+bug/1519510>`_]
+    Support of python 2.6 was dropped.
