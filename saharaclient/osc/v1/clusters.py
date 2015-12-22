@@ -462,11 +462,11 @@ class ScaleCluster(show.ShowOne):
             help="Name or ID of the cluster",
         )
         parser.add_argument(
-            '--node-groups',
+            '--instances',
             nargs='+',
-            metavar='<node-group:instances_count>',
-            help='Node groups and number of their instances to be scale to '
-                 '[REQUIRED if JSON is not provided]'
+            metavar='<node-group-template:instances_count>',
+            help='Node group templates and number of their instances to be '
+                 'scale to [REQUIRED if JSON is not provided]'
         )
         parser.add_argument(
             '--json',
@@ -507,19 +507,21 @@ class ScaleCluster(show.ShowOne):
                 "resize_node_groups": []
             }
             scale_node_groups = dict(
-                map(lambda x: x.split(':', 1), parsed_args.node_groups))
-            cluster_node_groups = [ng['name'] for ng in cluster.node_groups]
+                map(lambda x: x.split(':', 1), parsed_args.instances))
+            cluster_ng_map = {
+                ng['node_group_template_id']: ng['name'] for ng
+                in cluster.node_groups}
             for name, count in scale_node_groups.items():
-                ng = utils.get_resource(client.node_group_templates, name)
-                if ng.name in cluster_node_groups:
+                ngt = utils.get_resource(client.node_group_templates, name)
+                if ngt.id in cluster_ng_map:
                     scale_object["resize_node_groups"].append({
-                        "name": ng.name,
+                        "name": cluster_ng_map[ngt.id],
                         "count": int(count)
                     })
                 else:
                     scale_object["add_node_groups"].append({
-                        "node_group_template_id": ng.id,
-                        "name": ng.name,
+                        "node_group_template_id": ngt.id,
+                        "name": ngt.name,
                         "count": int(count)
                     })
             if not scale_object['add_node_groups']:
