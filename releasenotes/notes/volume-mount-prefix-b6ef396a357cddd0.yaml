@@ -1,0 +1,6 @@
+---
+fixes:
+  - >
+    [`bug 1499697  <https://bugs.launchpad.net/python-saharaclient/+bug/1499697>`_]
+    Now node group templates can be created and updated with
+    ``volume_mount_prefix`` parameter.

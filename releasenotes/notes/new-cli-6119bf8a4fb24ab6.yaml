@@ -1,0 +1,4 @@
+---
+features:
+  - >
+    New CLI as part of the openstackclient was implemented.

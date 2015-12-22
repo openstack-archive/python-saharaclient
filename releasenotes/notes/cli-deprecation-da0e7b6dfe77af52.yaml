@@ -1,0 +1,4 @@
+---
+deprecations:
+  - >
+    Old CLI is deprecated and will not be maintained.

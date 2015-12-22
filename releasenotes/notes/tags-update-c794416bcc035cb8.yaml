@@ -1,0 +1,5 @@
+---
+fixes:
+  - >
+    [`bug 1500790 <https://bugs.launchpad.net/python-saharaclient/+bug/1500790>`_]
+    Now tags can be added and removed simultaneously in one call.
