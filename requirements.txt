@@ -15,4 +15,3 @@ python-openstackclient>=2.0.0
 requests!=2.9.0,>=2.8.1
 six>=1.9.0
 PrettyTable<0.8,>=0.7
-argparse
