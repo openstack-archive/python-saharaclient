@@ -22,6 +22,7 @@ class NodeGroupTemplate(base.Resource):
 
 class NodeGroupTemplateManager(base.ResourceManager):
     resource_class = NodeGroupTemplate
+    NotUpdated = base.NotUpdated()
 
     def create(self, name, plugin_name, hadoop_version, flavor_id,
                description=None, volumes_per_node=None, volumes_size=None,
@@ -74,20 +75,22 @@ class NodeGroupTemplateManager(base.ResourceManager):
         return self._create('/node-group-templates', data,
                             'node_group_template')
 
-    def update(self, ng_template_id, name=None, plugin_name=None,
-               hadoop_version=None, flavor_id=None, description=None,
-               volumes_per_node=None, volumes_size=None, node_processes=None,
-               node_configs=None, floating_ip_pool=None, security_groups=None,
-               auto_security_group=None, availability_zone=None,
-               volumes_availability_zone=None, volume_type=None,
-               image_id=None, is_proxy_gateway=None,
-               volume_local_to_instance=None, use_autoconfig=None,
-               shares=None, is_public=None, is_protected=None,
-               volume_mount_prefix=None):
+    def update(self, ng_template_id, name=NotUpdated, plugin_name=NotUpdated,
+               hadoop_version=NotUpdated, flavor_id=NotUpdated,
+               description=NotUpdated, volumes_per_node=NotUpdated,
+               volumes_size=NotUpdated, node_processes=NotUpdated,
+               node_configs=NotUpdated, floating_ip_pool=NotUpdated,
+               security_groups=NotUpdated, auto_security_group=NotUpdated,
+               availability_zone=NotUpdated,
+               volumes_availability_zone=NotUpdated, volume_type=NotUpdated,
+               image_id=NotUpdated, is_proxy_gateway=NotUpdated,
+               volume_local_to_instance=NotUpdated, use_autoconfig=NotUpdated,
+               shares=NotUpdated, is_public=NotUpdated,
+               is_protected=NotUpdated, volume_mount_prefix=NotUpdated):
         """Update a Node Group Template."""
 
         data = {}
-        self._copy_if_defined(
+        self._copy_if_updated(
             data, name=name, plugin_name=plugin_name,
             hadoop_version=hadoop_version, flavor_id=flavor_id,
             description=description, volumes_per_node=volumes_per_node,

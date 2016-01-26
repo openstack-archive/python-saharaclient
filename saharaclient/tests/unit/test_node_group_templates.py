@@ -96,6 +96,7 @@ class NodeGroupTemplateTest(base.BaseTestCase):
         update_url = self.URL + '/node-group-templates/id'
         self.responses.put(update_url, status_code=202, json=self.update_json)
 
+        # check that all parameters will be updated
         updated = self.client.node_group_templates.update(
             "id",
             resp.name,
@@ -121,3 +122,26 @@ class NodeGroupTemplateTest(base.BaseTestCase):
             use_autoconfig=False)
         self.assertIsInstance(updated, ng.NodeGroupTemplate)
         self.assertFields(self.update_json["node_group_template"], updated)
+
+        # check that parameters will not be updated
+        self.client.node_group_templates.update("id")
+        self.assertEqual(update_url, self.responses.last_request.url)
+        self.assertEqual({},
+                         json.loads(self.responses.last_request.body))
+
+        # check that all parameters will be unset
+        unset_json = {
+            'auto_security_group': None, 'availability_zone': None,
+            'description': None, 'flavor_id': None, 'floating_ip_pool': None,
+            'hadoop_version': None, 'image_id': None, 'is_protected': None,
+            'is_proxy_gateway': None, 'is_public': None, 'name': None,
+            'node_configs': None, 'node_processes': None, 'plugin_name': None,
+            'security_groups': None, 'shares': None, 'use_autoconfig': None,
+            'volume_local_to_instance': None, 'volume_mount_prefix': None,
+            'volume_type': None, 'volumes_availability_zone': None,
+            'volumes_per_node': None, 'volumes_size': None}
+
+        self.client.node_group_templates.update("id", **unset_json)
+        self.assertEqual(update_url, self.responses.last_request.url)
+        self.assertEqual(unset_json,
+                         json.loads(self.responses.last_request.body))

@@ -99,6 +99,7 @@ class ClusterTemplateTest(base.BaseTestCase):
         update_url = self.URL + '/cluster-templates/id'
         self.responses.put(update_url, status_code=202, json=self.update_json)
 
+        # check that all parameters will be updated
         updated = self.client.cluster_templates.update(
             "id",
             resp.name,
@@ -115,3 +116,26 @@ class ClusterTemplateTest(base.BaseTestCase):
 
         self.assertIsInstance(updated, ct.ClusterTemplate)
         self.assertFields(self.update_json["cluster_template"], updated)
+
+        # check that parameters will not be updated
+        self.client.cluster_templates.update("id")
+        self.assertEqual(update_url, self.responses.last_request.url)
+        self.assertEqual({},
+                         json.loads(self.responses.last_request.body))
+
+        # check that all parameters will be unset
+        unset_json = {
+            'anti_affinity': None, 'cluster_configs': None,
+            'default_image_id': None, 'description': None,
+            'hadoop_version': None, 'is_protected': None, 'is_public': None,
+            'name': None, 'net_id': None,
+            'node_groups': None, 'plugin_name': None, 'shares': None,
+            'use_autoconfig': None}
+
+        req_json = unset_json.copy()
+        req_json['neutron_management_network'] = req_json.pop('net_id')
+
+        self.client.cluster_templates.update("id", **unset_json)
+        self.assertEqual(update_url, self.responses.last_request.url)
+        self.assertEqual(req_json,
+                         json.loads(self.responses.last_request.body))
