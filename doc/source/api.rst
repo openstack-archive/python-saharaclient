@@ -33,8 +33,8 @@ Session object should be used for this purpose. For example:
 
 .. sourcecode:: python
 
-    from keystoneclient.auth.identity import v2
-    from keystoneclient import session
+    from keystoneauth1.identity import v2
+    from keystoneauth1 import session
     from saharaclient import client
 
     auth = v2.Password(auth_url=AUTH_URL,
@@ -62,8 +62,8 @@ default values.
 
 .. sourcecode:: python
 
-        from keystoneclient.auth.identity import v2
-        from keystoneclient import session
+        from keystoneauth1.identity import v2
+        from keystoneauth1 import session
         from saharaclient import client
 
         auth = v2.Password(auth_url=AUTH_URL,
