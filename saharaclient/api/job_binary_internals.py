@@ -24,6 +24,7 @@ class JobBinaryInternal(base.Resource):
 
 class JobBinaryInternalsManager(base.ResourceManager):
     resource_class = JobBinaryInternal
+    NotUpdated = base.NotUpdated()
 
     def create(self, name, data):
         """Create a Job Binary Internal.
@@ -48,12 +49,12 @@ class JobBinaryInternalsManager(base.ResourceManager):
         """Delete a Job Binary Internal."""
         self._delete('/job-binary-internals/%s' % job_binary_id)
 
-    def update(self, job_binary_id, name=None, is_public=None,
-               is_protected=None):
+    def update(self, job_binary_id, name=NotUpdated, is_public=NotUpdated,
+               is_protected=NotUpdated):
         """Update a Job Binary Internal."""
 
         data = {}
-        self._copy_if_defined(data, name=name, is_public=is_public,
+        self._copy_if_updated(data, name=name, is_public=is_public,
                               is_protected=is_protected)
 
         return self._patch('/job-binary-internals/%s' % job_binary_id, data)

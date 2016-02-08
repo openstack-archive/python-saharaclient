@@ -64,6 +64,12 @@ def _check_items(obj, searches):
         return False
 
 
+class NotUpdated(object):
+    """A sentinel class to signal that parameter should not be updated."""
+    def __repr__(self):
+        return 'NotUpdated'
+
+
 class ResourceManager(object):
     resource_class = None
 
@@ -86,6 +92,11 @@ class ResourceManager(object):
     def _copy_if_defined(self, data, **kwargs):
         for var_name, var_value in six.iteritems(kwargs):
             if var_value is not None:
+                data[var_name] = var_value
+
+    def _copy_if_updated(self, data, **kwargs):
+        for var_name, var_value in six.iteritems(kwargs):
+            if not isinstance(var_value, NotUpdated):
                 data[var_name] = var_value
 
     def _create(self, url, data, response_key=None, dump_json=True):

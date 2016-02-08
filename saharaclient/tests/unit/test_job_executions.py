@@ -103,8 +103,25 @@ class JobExecutionTest(base.BaseTestCase):
         url = self.URL + '/job-executions/id'
         self.responses.patch(url, status_code=202, json=self.update_json)
 
+        # check that all parameters will be updated
         resp = self.client.job_executions.update("id", **self.update_json)
         self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, je.JobExecution)
         self.assertEqual(self.update_json,
+                         json.loads(self.responses.last_request.body))
+
+        # check that parameters will not be updated
+        self.client.job_executions.update("id")
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual({},
+                         json.loads(self.responses.last_request.body))
+
+        # check that all parameters will be unset
+        unset_json = {
+            "is_public": None, "is_protected": None
+        }
+
+        self.client.job_executions.update("id", **unset_json)
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(unset_json,
                          json.loads(self.responses.last_request.body))

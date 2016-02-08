@@ -22,6 +22,7 @@ class JobExecution(base.Resource):
 
 class JobExecutionsManager(base.ResourceManager):
     resource_class = JobExecution
+    NotUpdated = base.NotUpdated()
 
     def list(self, search_opts=None):
         """Get a list of Job Executions."""
@@ -52,10 +53,10 @@ class JobExecutionsManager(base.ResourceManager):
 
         return self._create(url, data, 'job_execution')
 
-    def update(self, obj_id, is_public=None, is_protected=None):
+    def update(self, obj_id, is_public=NotUpdated, is_protected=NotUpdated):
         """Update a Job Execution."""
 
         data = {}
-        self._copy_if_defined(data, is_public=is_public,
+        self._copy_if_updated(data, is_public=is_public,
                               is_protected=is_protected)
         return self._patch('/job-executions/%s' % obj_id, data)

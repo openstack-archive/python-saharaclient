@@ -22,6 +22,7 @@ class Job(base.Resource):
 
 class JobsManager(base.ResourceManager):
     resource_class = Job
+    NotUpdated = base.NotUpdated()
 
     def create(self, name, type, mains=None, libs=None, description=None,
                interface=None, is_public=None, is_protected=None):
@@ -54,12 +55,12 @@ class JobsManager(base.ResourceManager):
         """Delete a Job"""
         self._delete('/jobs/%s' % job_id)
 
-    def update(self, job_id, name=None, description=None, is_public=None,
-               is_protected=None):
+    def update(self, job_id, name=NotUpdated, description=NotUpdated,
+               is_public=NotUpdated, is_protected=NotUpdated):
         """Update a Job."""
 
         data = {}
-        self._copy_if_defined(data, name=name, description=description,
+        self._copy_if_updated(data, name=name, description=description,
                               is_public=is_public, is_protected=is_protected)
 
         return self._patch('/jobs/%s' % job_id, data)

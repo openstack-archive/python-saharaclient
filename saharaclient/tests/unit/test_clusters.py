@@ -167,12 +167,30 @@ class ClusterTest(base.BaseTestCase):
 
         self.responses.patch(url, status_code=202, json=update_body)
 
+        # check that all parameters will be updated
         resp = self.client.clusters.update('id', name='new_name',
                                            description='descr')
 
         self.assertEqual(url, self.responses.last_request.url)
         self.assertIsInstance(resp, cl.Cluster)
         self.assertEqual(update_body,
+                         json.loads(self.responses.last_request.body))
+
+        # check that parameters will not be updated
+        self.client.clusters.update("id")
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual({},
+                         json.loads(self.responses.last_request.body))
+
+        # check that all parameters will be unset
+        unset_json = {
+            "name": None, "description": None, "is_public": None,
+            "is_protected": None, "shares": None
+        }
+
+        self.client.clusters.update("id", **unset_json)
+        self.assertEqual(url, self.responses.last_request.url)
+        self.assertEqual(unset_json,
                          json.loads(self.responses.last_request.body))
 
     def test_clusters_update_share(self):

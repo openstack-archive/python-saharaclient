@@ -24,6 +24,7 @@ class Cluster(base.Resource):
 
 class ClusterManager(base.ResourceManager):
     resource_class = Cluster
+    NotUpdated = base.NotUpdated()
 
     def create(self, name, plugin_name, hadoop_version,
                cluster_template_id=None, default_image_id=None,
@@ -116,12 +117,13 @@ class ClusterManager(base.ResourceManager):
         """Delete a Cluster."""
         self._delete('/clusters/%s' % cluster_id)
 
-    def update(self, cluster_id, name=None, description=None, is_public=None,
-               is_protected=None, shares=None):
+    def update(self, cluster_id, name=NotUpdated, description=NotUpdated,
+               is_public=NotUpdated, is_protected=NotUpdated,
+               shares=NotUpdated):
         """Update a Cluster."""
 
         data = {}
-        self._copy_if_defined(data, name=name, description=description,
+        self._copy_if_updated(data, name=name, description=description,
                               is_public=is_public, is_protected=is_protected,
                               shares=shares)
 
