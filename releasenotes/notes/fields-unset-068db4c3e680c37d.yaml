@@ -1,0 +1,5 @@
+---
+fixes:
+  - >
+    [`bug 1534050  <https://bugs.launchpad.net/python-saharaclient/+bug/1534050>`_]
+    Now object's fields can be unset with ``update`` calls.
