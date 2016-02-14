@@ -15,13 +15,12 @@
 
 import warnings
 
-from keystoneclient import adapter
-from keystoneclient.auth.identity import v2
-from keystoneclient.auth.identity import v3
-from keystoneclient.auth import token_endpoint
-from keystoneclient import exceptions
-from keystoneclient import session as keystone_session
-from keystoneclient.v2_0 import client as keystone_client_v2
+from keystoneauth1 import adapter
+from keystoneauth1 import exceptions
+from keystoneauth1.identity import v2
+from keystoneauth1.identity import v3
+from keystoneauth1 import session as keystone_session
+from keystoneauth1 import token_endpoint
 
 from saharaclient.api import cluster_templates
 from saharaclient.api import clusters
@@ -187,10 +186,3 @@ class Client(object):
                 return st
 
         raise RuntimeError("Could not find Sahara endpoint in catalog")
-
-    @staticmethod
-    def get_projects_list(keystone_client):
-        if isinstance(keystone_client, keystone_client_v2.Client):
-            return keystone_client.tenants
-
-        return keystone_client.projects
