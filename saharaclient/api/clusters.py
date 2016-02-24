@@ -128,3 +128,8 @@ class ClusterManager(base.ResourceManager):
                               shares=shares)
 
         return self._patch('/clusters/%s' % cluster_id, data)
+
+    def verification_update(self, cluster_id, status):
+        """Start a verification for a Cluster."""
+        data = {'verification': {'status': status}}
+        return self._patch("/clusters/%s" % cluster_id, data)
