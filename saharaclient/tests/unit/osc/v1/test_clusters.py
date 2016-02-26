@@ -50,7 +50,18 @@ CLUSTER_INFO = {
     "neutron_management_network": "net_id",
     "user_keypair_id": "test",
     "status": 'Active',
-    "default_image_id": "img_id"
+    "default_image_id": "img_id",
+    'verification': {
+        'status': 'GREEN',
+        'id': 'ver_id',
+        'cluster_id': 'cluster_id',
+        'checks': [
+            {
+                'status': 'GREEN',
+                'name': 'Some check'
+            }
+        ]
+    }
 }
 
 CT_INFO = {
@@ -287,6 +298,34 @@ class TestShowCluster(TestClusters):
                          '0.1')
         self.assertEqual(expected_data, data)
 
+    def test_cluster_show_verification(self):
+        arglist = ['fake', '--verification']
+        verifylist = [('cluster', 'fake'), ('verification', True)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.cl_mock.find_unique.assert_called_once_with(name='fake')
+
+        # Check that columns are correct
+        expected_columns = ('Anti affinity', 'Cluster template id',
+                            'Description', 'Health check (some check)', 'Id',
+                            'Image', 'Is protected', 'Is public', 'Name',
+                            'Neutron management network', 'Node groups',
+                            'Plugin name', 'Status', 'Use autoconfig',
+                            'User keypair id', 'Verification status',
+                            'Version')
+        self.assertEqual(expected_columns, columns)
+
+        # Check that data is correct
+        expected_data = ('', 'ct_id', 'Cluster template for tests', 'GREEN',
+                         'cluster_id', 'img_id', False, False, 'fake',
+                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
+                         'GREEN', '0.1')
+        self.assertEqual(expected_data, data)
+
 
 class TestDeleteCluster(TestClusters):
     def setUp(self):
@@ -464,3 +503,46 @@ class TestScaleCluster(TestClusters):
                  'node_group_template_id': 'new_id',
                  'name': 'new'}
             ]})
+
+
+class TestVerificationUpdateCluster(TestClusters):
+    def setUp(self):
+        super(TestVerificationUpdateCluster, self).setUp()
+        self.cl_mock.find_unique.return_value = api_cl.Cluster(
+            None, CLUSTER_INFO)
+        self.cl_mock.verification_update.return_value = api_cl.Cluster(
+            None, CLUSTER_INFO)
+
+        # Command to test
+        self.cmd = osc_cl.VerificationUpdateCluster(self.app, None)
+
+    def test_verification_show(self):
+        arglist = ['fake', '--show']
+        verifylist = [('cluster', 'fake'), ('show', True)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.cl_mock.find_unique.assert_called_once_with(name='fake')
+
+        # Check that columns are correct
+        expected_columns = ('Health check (some check)', 'Verification status')
+        self.assertEqual(expected_columns, columns)
+
+        # Check that data is correct
+        expected_data = ('GREEN', 'GREEN')
+        self.assertEqual(expected_data, data)
+
+    def test_verification_start(self):
+        arglist = ['fake', '--start']
+        verifylist = [('cluster', 'fake'), ('status', 'START')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.cl_mock.verification_update.assert_called_once_with(
+            'cluster_id', 'START')
