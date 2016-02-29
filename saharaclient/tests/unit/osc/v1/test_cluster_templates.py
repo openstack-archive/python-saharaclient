@@ -273,10 +273,7 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         self.cmd.take_action(parsed_args)
 
         self.ct_mock.update.assert_called_once_with(
-            '0647061f-ab98-4c89-84e0-30738ea55750', cluster_configs=None,
-            description=None, hadoop_version=None, is_protected=None,
-            is_public=None, name=None, node_groups=None, plugin_name=None,
-            shares=None, use_autoconfig=None)
+            '0647061f-ab98-4c89-84e0-30738ea55750')
 
     def test_ct_update_all_options(self):
         arglist = ['template', '--name', 'template', '--node-groups',
@@ -302,8 +299,7 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
                 {'count': 2, 'name': 'fakeng',
                  'node_group_template_id':
                      'd29631fc-0fad-434b-80aa-7a3e9526f57c'}],
-            plugin_name='fake', use_autoconfig=True, shares=None,
-            cluster_configs=None)
+            plugin_name='fake', use_autoconfig=True)
 
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
@@ -327,7 +323,5 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         self.cmd.take_action(parsed_args)
 
         self.ct_mock.update.assert_called_once_with(
-            '0647061f-ab98-4c89-84e0-30738ea55750', cluster_configs=None,
-            description=None, hadoop_version=None, is_protected=False,
-            is_public=False, name=None, node_groups=None, plugin_name=None,
-            shares=None, use_autoconfig=None)
+            '0647061f-ab98-4c89-84e0-30738ea55750', is_protected=False,
+            is_public=False)

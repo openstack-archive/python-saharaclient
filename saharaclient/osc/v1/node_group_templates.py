@@ -660,8 +660,7 @@ class UpdateNodeGroupTemplate(show.ShowOne):
                 flavor_id = osc_utils.find_resource(
                     compute_client.flavors, parsed_args.flavor).id
 
-            data = client.node_group_templates.update(
-                ngt_id,
+            update_dict = utils.create_dict_from_kwargs(
                 name=parsed_args.name,
                 plugin_name=parsed_args.plugin,
                 hadoop_version=parsed_args.version,
@@ -683,7 +682,10 @@ class UpdateNodeGroupTemplate(show.ShowOne):
                 node_configs=configs,
                 shares=shares,
                 volumes_availability_zone=parsed_args.volumes_availability_zone
-            ).to_dict()
+            )
+
+            data = client.node_group_templates.update(
+                ngt_id, **update_dict).to_dict()
 
         _format_ngt_output(data)
         data = utils.prepare_data(data, NGT_FIELDS)

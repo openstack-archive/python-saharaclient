@@ -473,8 +473,7 @@ class UpdateClusterTemplate(show.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
-            data = client.cluster_templates.update(
-                ct_id,
+            update_dict = utils.create_dict_from_kwargs(
                 name=parsed_args.name,
                 plugin_name=plugin,
                 hadoop_version=version,
@@ -485,7 +484,10 @@ class UpdateClusterTemplate(show.ShowOne):
                 shares=shares,
                 is_public=parsed_args.is_public,
                 is_protected=parsed_args.is_protected
-            ).to_dict()
+            )
+
+            data = client.cluster_templates.update(
+                ct_id, **update_dict).to_dict()
 
         _format_ct_output(data)
         data = utils.prepare_data(data, CT_FIELDS)

@@ -246,9 +246,7 @@ class TestUpdateJobTemplate(TestJobTemplates):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.job_mock.update.assert_called_once_with(
-            'job_id', description=None, is_protected=None, is_public=None,
-            name=None)
+        self.job_mock.update.assert_called_once_with('job_id')
 
     def test_job_template_update_all_options(self):
         arglist = ['pig-job', '--name', 'pig-job', '--description', 'descr',
@@ -289,5 +287,4 @@ class TestUpdateJobTemplate(TestJobTemplates):
 
         # Check that correct arguments were passed
         self.job_mock.update.assert_called_once_with(
-            'job_id', description=None, is_protected=False, is_public=False,
-            name=None)
+            'job_id', is_protected=False, is_public=False)

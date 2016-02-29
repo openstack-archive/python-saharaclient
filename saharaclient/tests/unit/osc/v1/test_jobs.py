@@ -278,8 +278,7 @@ class TestUpdateJob(TestJobs):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.update.assert_called_once_with(
-            'job_id', is_protected=None, is_public=None)
+        self.je_mock.update.assert_called_once_with('job_id')
 
     def test_job_update_public_protected(self):
         arglist = ['job_id', '--public', '--protected']

@@ -368,11 +368,12 @@ class UpdateJob(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        data = client.job_executions.update(
-            parsed_args.job,
+        update_dict = utils.create_dict_from_kwargs(
             is_public=parsed_args.is_public,
-            is_protected=parsed_args.is_protected
-        ).job_execution
+            is_protected=parsed_args.is_protected)
+
+        data = client.job_executions.update(
+            parsed_args.job, **update_dict).job_execution
 
         _format_job_output(data)
         data = utils.prepare_data(data, JOB_FIELDS)

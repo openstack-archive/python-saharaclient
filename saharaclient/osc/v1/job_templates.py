@@ -314,13 +314,14 @@ class UpdateJobTemplate(show.ShowOne):
         jt_id = utils.get_resource_id(
             client.jobs, parsed_args.job_template)
 
-        data = client.jobs.update(
-            jt_id,
+        update_data = utils.create_dict_from_kwargs(
             name=parsed_args.name,
             description=parsed_args.description,
             is_public=parsed_args.is_public,
             is_protected=parsed_args.is_protected
-        ).job
+        )
+
+        data = client.jobs.update(jt_id, **update_data).job
 
         _format_job_template_output(data)
         data = utils.prepare_data(data, JOB_TEMPLATE_FIELDS)
