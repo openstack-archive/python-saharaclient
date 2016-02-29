@@ -320,16 +320,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.ngt_mock.update.assert_called_once_with(
-            'ng_id', auto_security_group=None,
-            availability_zone=None, description=None, flavor_id=None,
-            floating_ip_pool=None, hadoop_version=None, is_protected=None,
-            is_proxy_gateway=None, is_public=None, name=None,
-            node_configs=None, node_processes=None, plugin_name=None,
-            security_groups=None, shares=None, use_autoconfig=None,
-            volume_local_to_instance=None, volume_type=None,
-            volumes_availability_zone=None, volumes_per_node=None,
-            volumes_size=None)
+        self.ngt_mock.update.assert_called_once_with('ng_id')
 
     def test_ngt_update_all_options(self):
         arglist = ['template', '--name', 'template', '--plugin', 'fake',
@@ -378,7 +369,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             plugin_name='fake', security_groups=['secgr'], use_autoconfig=True,
             volume_local_to_instance=True, volume_type='type',
             volumes_availability_zone='vavzone', volumes_per_node=2,
-            volumes_size=2, shares=None, node_configs=None)
+            volumes_size=2)
 
         # Check that columns are correct
         expected_columns = (
@@ -410,12 +401,4 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         # Check that correct arguments were passed
         self.ngt_mock.update.assert_called_once_with(
-            'ng_id', auto_security_group=None,
-            availability_zone=None, description=None, flavor_id=None,
-            floating_ip_pool=None, hadoop_version=None, is_protected=False,
-            is_proxy_gateway=None, is_public=False, name=None,
-            node_configs=None, node_processes=None, plugin_name=None,
-            security_groups=None, shares=None, use_autoconfig=None,
-            volume_local_to_instance=None, volume_type=None,
-            volumes_availability_zone=None, volumes_per_node=None,
-            volumes_size=None)
+            'ng_id', is_protected=False, is_public=False)

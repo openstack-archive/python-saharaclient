@@ -455,14 +455,14 @@ class UpdateCluster(show.ShowOne):
                     'An error occurred when reading '
                     'shares from file %s: %s' % (parsed_args.shares, e))
 
-        data = client.clusters.update(
-            cluster_id,
+        update_dict = utils.create_dict_from_kwargs(
             name=parsed_args.name,
             description=parsed_args.description,
             is_public=parsed_args.is_public,
             is_protected=parsed_args.is_protected,
             shares=shares
-        ).cluster
+        )
+        data = client.clusters.update(cluster_id, **update_dict).cluster
 
         _format_cluster_output(data)
         data = utils.prepare_data(data, CLUSTER_FIELDS)

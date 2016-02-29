@@ -376,9 +376,7 @@ class TestUpdateCluster(TestClusters):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.cl_mock.update.assert_called_once_with(
-            'cluster_id', description=None, is_protected=None, is_public=None,
-            name=None, shares=None)
+        self.cl_mock.update.assert_called_once_with('cluster_id')
 
     def test_cluster_update_all_options(self):
         arglist = ['fake', '--name', 'fake', '--description', 'descr',
@@ -395,7 +393,7 @@ class TestUpdateCluster(TestClusters):
         # Check that correct arguments were passed
         self.cl_mock.update.assert_called_once_with(
             'cluster_id', description='descr', is_protected=True,
-            is_public=True, name='fake', shares=None)
+            is_public=True, name='fake')
 
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Cluster template id',
@@ -425,8 +423,7 @@ class TestUpdateCluster(TestClusters):
 
         # Check that correct arguments were passed
         self.cl_mock.update.assert_called_once_with(
-            'cluster_id', description=None, is_protected=False,
-            is_public=False, name=None, shares=None)
+            'cluster_id', is_protected=False, is_public=False)
 
 
 class TestScaleCluster(TestClusters):
