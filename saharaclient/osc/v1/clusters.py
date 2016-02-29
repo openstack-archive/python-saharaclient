@@ -45,14 +45,15 @@ def _format_cluster_output(data):
 
 
 def _prepare_health_checks(data):
+    additional_data = {}
     ver = data.get('verification', {})
     additional_fields = ['verification_status']
-    data['verification_status'] = ver.get('status', 'UNKNOWN')
+    additional_data['verification_status'] = ver.get('status', 'UNKNOWN')
     for check in ver.get('checks', []):
         row_name = "Health check (%s)" % check['name']
-        data[row_name] = check['status']
+        additional_data[row_name] = check['status']
         additional_fields.append(row_name)
-    return data, additional_fields
+    return additional_data, additional_fields
 
 
 def _get_plugin_version(cluster_template, client):
@@ -323,7 +324,8 @@ class ShowCluster(show.ShowOne):
         _format_cluster_output(data)
         fields = []
         if parsed_args.verification:
-            data, fields = _prepare_health_checks(data)
+            ver_data, fields = _prepare_health_checks(data)
+            data.update(ver_data)
         fields.extend(CLUSTER_FIELDS)
         data = utils.prepare_data(data, fields)
 
@@ -581,12 +583,18 @@ class VerificationUpdateCluster(show.ShowOne):
             metavar="<cluster>",
             help="Name or ID of the cluster",
         )
-        status = parser.add_mutually_exclusive_group()
+        status = parser.add_mutually_exclusive_group(required=True)
         status.add_argument(
             '--start',
-            action='store_true',
-            help='Start the cluster verification',
-            dest='is_start'
+            action='store_const',
+            const='START',
+            help='Start health verification for the cluster',
+            dest='status'
+        )
+        status.add_argument(
+            '--show',
+            help='Show health of the cluster',
+            action='store_true'
         )
         return parser
 
@@ -594,20 +602,22 @@ class VerificationUpdateCluster(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        cluster_id = utils.get_resource_id(
-            client.clusters, parsed_args.cluster)
-
-        if parsed_args.is_start:
-            status = 'START'
+        if parsed_args.show:
+            data = utils.get_resource(
+                client.clusters, parsed_args.cluster).to_dict()
+            ver_data, ver_fields = _prepare_health_checks(data)
+            data = utils.prepare_data(ver_data, ver_fields)
+            return self.dict2columns(data)
         else:
-            raise exceptions.CommandError("--start should be provided")
-        data = client.clusters.verification_update(
-            cluster_id, status).cluster
+            cluster_id = utils.get_resource_id(
+                client.clusters, parsed_args.cluster)
+            client.clusters.verification_update(
+                cluster_id, parsed_args.status)
+            if parsed_args.status == 'START':
+                print_status = 'started'
+            sys.stdout.write(
+                'Cluster "{cluster}" health verification has been '
+                '{status}.'.format(cluster=parsed_args.cluster,
+                                   status=print_status))
 
-        data, fields = _prepare_health_checks(data)
-        fields.extend(CLUSTER_FIELDS)
-
-        _format_cluster_output(data)
-        data = utils.prepare_data(data, fields)
-
-        return self.dict2columns(data)
+            return {}, {}
