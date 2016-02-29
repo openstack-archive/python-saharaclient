@@ -176,8 +176,8 @@ class CreateCluster(show.ShowOne):
 
             image_id = utils.get_resource_id(client.images, parsed_args.image)
 
-            net_id = (network_client.api.find_attr(
-                'networks', parsed_args.neutron_network)['id'] if
+            net_id = (network_client.find_network(
+                parsed_args.neutron_network, ignore_missing=False).id if
                 parsed_args.neutron_network else None)
 
             data = client.clusters.create(

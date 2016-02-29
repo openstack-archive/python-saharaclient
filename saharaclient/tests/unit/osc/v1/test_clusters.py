@@ -106,8 +106,8 @@ class TestCreateCluster(TestClusters):
             None, CT_INFO)
         self.img_mock.find_unique.return_value = api_img.Image(
             None, {'id': 'img_id'})
-        self.net_mock = self.app.client_manager.network.api
-        self.net_mock.find_attr.return_value = {'id': 'net_id'}
+        self.net_mock = self.app.client_manager.network
+        self.net_mock.find_network.return_value = mock.Mock(id='net_id')
         self.net_mock.reset_mock()
 
         # Command to test
