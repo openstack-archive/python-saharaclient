@@ -113,13 +113,13 @@ class TestCreateClusterTemplate(TestClusterTemplates):
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
-                            'Plugin name', 'Use autoconfig', 'Version')
+                            'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'Cluster template for tests',
                          '0647061f-ab98-4c89-84e0-30738ea55750', False, False,
-                         False, 'template', 'fakeng:2', 'fake', True, '0.1')
+                         False, 'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)
 
 
@@ -141,7 +141,7 @@ class TestListClusterTemplates(TestClusterTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -158,7 +158,7 @@ class TestListClusterTemplates(TestClusterTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version',
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version',
                             'Node groups', 'Description']
         self.assertEqual(expected_columns, columns)
 
@@ -169,8 +169,9 @@ class TestListClusterTemplates(TestClusterTemplates):
         self.assertEqual(expected_data, list(data))
 
     def test_ct_list_extra_search_opts(self):
-        arglist = ['--plugin', 'fake', '--version', '0.1', '--name', 'templ']
-        verifylist = [('plugin', 'fake'), ('version', '0.1'),
+        arglist = ['--plugin', 'fake', '--plugin-version', '0.1', '--name',
+                   'templ']
+        verifylist = [('plugin', 'fake'), ('plugin_version', '0.1'),
                       ('name', 'templ')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -178,7 +179,7 @@ class TestListClusterTemplates(TestClusterTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -210,14 +211,14 @@ class TestShowClusterTemplate(TestClusterTemplates):
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
-                            'Plugin name', 'Use autoconfig', 'Version')
+                            'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = (
             '', 'Cluster template for tests',
             '0647061f-ab98-4c89-84e0-30738ea55750', False, False, False,
-            'template', 'fakeng:2', 'fake', True, '0.1')
+            'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)
 
 
@@ -304,13 +305,13 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         # Check that columns are correct
         expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
-                            'Plugin name', 'Use autoconfig', 'Version')
+                            'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'Cluster template for tests',
                          '0647061f-ab98-4c89-84e0-30738ea55750', False, False,
-                         False, 'template', 'fakeng:2', 'fake', True, '0.1')
+                         False, 'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)
 
     def test_ct_update_private_unprotected(self):

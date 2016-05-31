@@ -1,0 +1,10 @@
+---
+upgrade:
+  - Option 'version' is replaced by 'plugin-version' option.
+fixes:
+  - Option 'version' is a global option, which is used for getting
+    the client version. So there were problems with the OpenStack client,
+    when we specified 'version' of the plugin, but OSC treated
+    that as a request for getting the current client version. Hence, to fix
+    this problem, 'version' is replaced by 'plugin-version'.
+    Related bug 1565775.

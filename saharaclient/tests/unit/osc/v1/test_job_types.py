@@ -75,8 +75,10 @@ class TestListJobTemplates(TestJobTypes):
         self.assertEqual(expected_data, list(data))
 
     def test_job_types_list_extra_search_opts(self):
-        arglist = ['--type', 'Pig', '--plugin', 'fake', '--version', '0.1']
-        verifylist = [('type', 'Pig'), ('plugin', 'fake'), ('version', '0.1')]
+        arglist = ['--type', 'Pig', '--plugin', 'fake', '--plugin-version',
+                   '0.1']
+        verifylist = [('type', 'Pig'), ('plugin', 'fake'),
+                      ('plugin_version', '0.1')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 

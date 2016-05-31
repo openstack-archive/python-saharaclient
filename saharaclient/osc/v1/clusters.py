@@ -27,7 +27,7 @@ from saharaclient.osc.v1 import utils
 
 CLUSTER_FIELDS = ["cluster_template_id", "use_autoconfig", "user_keypair_id",
                   "status", "image", "node_groups", "id",
-                  "anti_affinity", "version", "name", "is_transient",
+                  "anti_affinity", "plugin_version", "name", "is_transient",
                   "is_protected", "description", "is_public",
                   "neutron_management_network", "plugin_name"]
 
@@ -38,7 +38,7 @@ def _format_node_groups_list(node_groups):
 
 
 def _format_cluster_output(data):
-    data['version'] = data.pop('hadoop_version')
+    data['plugin_version'] = data.pop('hadoop_version')
     data['image'] = data.pop('default_image_id')
     data['node_groups'] = _format_node_groups_list(data['node_groups'])
     data['anti_affinity'] = osc_utils.format_list(data['anti_affinity'])
@@ -171,7 +171,7 @@ class CreateCluster(show.ShowOne):
                     'should be specified or json template should be provided '
                     'with --json argument')
 
-            plugin, version, template_id = _get_plugin_version(
+            plugin, plugin_version, template_id = _get_plugin_version(
                 parsed_args.cluster_template, client)
 
             image_id = utils.get_resource_id(client.images, parsed_args.image)
@@ -183,7 +183,7 @@ class CreateCluster(show.ShowOne):
             data = client.clusters.create(
                 name=parsed_args.name,
                 plugin_name=plugin,
-                hadoop_version=version,
+                hadoop_version=plugin_version,
                 cluster_template_id=template_id,
                 default_image_id=image_id,
                 description=parsed_args.description,
@@ -245,8 +245,8 @@ class ListClusters(lister.Lister):
         )
 
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="List clusters with specific version of the "
                  "plugin"
         )
@@ -265,8 +265,8 @@ class ListClusters(lister.Lister):
         search_opts = {}
         if parsed_args.plugin:
             search_opts['plugin_name'] = parsed_args.plugin
-        if parsed_args.version:
-            search_opts['hadoop_version'] = parsed_args.version
+        if parsed_args.plugin_version:
+            search_opts['hadoop_version'] = parsed_args.plugin_version
 
         data = client.clusters.list(search_opts=search_opts)
 
@@ -277,13 +277,13 @@ class ListClusters(lister.Lister):
             columns = ('name', 'id', 'plugin_name', 'hadoop_version',
                        'status', 'description', 'default_image_id')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version',
+                columns, {'hadoop_version': 'plugin_version',
                           'default_image_id': 'image'})
 
         else:
             columns = ('name', 'id', 'plugin_name', 'hadoop_version', 'status')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version',
+                columns, {'hadoop_version': 'plugin_version',
                           'default_image_id': 'image'})
         return (
             column_headers,
