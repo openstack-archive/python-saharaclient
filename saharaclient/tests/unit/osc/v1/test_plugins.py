@@ -112,8 +112,8 @@ class TestShowPlugin(TestPlugins):
         self.assertEqual(expected_data, data)
 
     def test_plugin_version_show(self):
-        arglist = ['fake', '--version', '0.1']
-        verifylist = [('plugin', 'fake'), ('version', '0.1')]
+        arglist = ['fake', '--plugin-version', '0.1']
+        verifylist = [('plugin', 'fake'), ('plugin_version', '0.1')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
@@ -149,7 +149,7 @@ class TestGetPluginConfigs(TestPlugins):
         m_open = mock.mock_open()
         with mock.patch('six.moves.builtins.open', m_open, create=True):
             arglist = ['fake', '0.1']
-            verifylist = [('plugin', 'fake'), ('version', '0.1')]
+            verifylist = [('plugin', 'fake'), ('plugin_version', '0.1')]
 
             parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
@@ -171,7 +171,7 @@ class TestGetPluginConfigs(TestPlugins):
         m_open = mock.mock_open()
         with mock.patch('six.moves.builtins.open', m_open):
             arglist = ['fake', '0.1', '--file', 'testfile']
-            verifylist = [('plugin', 'fake'), ('version', '0.1'),
+            verifylist = [('plugin', 'fake'), ('plugin_version', '0.1'),
                           ('file', 'testfile')]
 
             parsed_args = self.check_parser(self.cmd, arglist, verifylist)

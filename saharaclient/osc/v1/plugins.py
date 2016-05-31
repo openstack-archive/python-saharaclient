@@ -80,7 +80,8 @@ class ShowPlugin(show.ShowOne):
             help="Name of the plugin to display",
         )
         parser.add_argument(
-            "--version",
+            "--plugin-version",
+            metavar="<plugin_version>",
             help='Version of the plugin to display'
         )
 
@@ -90,9 +91,9 @@ class ShowPlugin(show.ShowOne):
         self.log.debug("take_action(%s)" % parsed_args)
         client = self.app.client_manager.data_processing
 
-        if parsed_args.version:
+        if parsed_args.plugin_version:
             data = client.plugins.get_version_details(
-                parsed_args.plugin, parsed_args.version).to_dict()
+                parsed_args.plugin, parsed_args.plugin_version).to_dict()
 
             processes = data.pop('node_processes')
             for k, v in processes.items():
@@ -129,8 +130,8 @@ class GetPluginConfigs(command.Command):
             help="Name of the plugin to provide config information about",
         )
         parser.add_argument(
-            "version",
-            metavar="<version>",
+            "plugin_version",
+            metavar="<plugin_version>",
             help="Version of the plugin to provide config information about",
         )
         parser.add_argument(
@@ -148,7 +149,7 @@ class GetPluginConfigs(command.Command):
             parsed_args.file = parsed_args.plugin
 
         data = client.plugins.get_version_details(
-            parsed_args.plugin, parsed_args.version).to_dict()
+            parsed_args.plugin, parsed_args.plugin_version).to_dict()
 
         if path.exists(parsed_args.file):
             self.log.error('File "%s" already exists. Chose another one with '

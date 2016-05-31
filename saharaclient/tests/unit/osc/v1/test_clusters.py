@@ -158,15 +158,15 @@ class TestCreateCluster(TestClusters):
                             'Description', 'Id', 'Image',
                             'Is protected', 'Is public', 'Name',
                             'Neutron management network', 'Node groups',
-                            'Plugin name', 'Status', 'Use autoconfig',
-                            'User keypair id', 'Version')
+                            'Plugin name', 'Plugin version', 'Status',
+                            'Use autoconfig', 'User keypair id')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'ct_id', 'Cluster template for tests',
                          'cluster_id', 'img_id', False, False, 'fake',
-                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
-                         '0.1')
+                         'net_id', 'fakeng:2', 'fake', '0.1', 'Active', True,
+                         'test')
         self.assertEqual(expected_data, data)
 
     def test_cluster_create_with_count(self):
@@ -219,7 +219,8 @@ class TestListClusters(TestClusters):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version', 'Status']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version',
+                            'Status']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -235,8 +236,8 @@ class TestListClusters(TestClusters):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version', 'Status',
-                            'Description', 'Image']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version',
+                            'Status', 'Description', 'Image']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -245,8 +246,9 @@ class TestListClusters(TestClusters):
         self.assertEqual(expected_data, list(data))
 
     def test_clusters_list_extra_search_opts(self):
-        arglist = ['--plugin', 'fake', '--version', '0.1', '--name', 'fake']
-        verifylist = [('plugin', 'fake'), ('version', '0.1'),
+        arglist = ['--plugin', 'fake', '--plugin-version', '0.1', '--name',
+                   'fake']
+        verifylist = [('plugin', 'fake'), ('plugin_version', '0.1'),
                       ('name', 'fake')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -254,7 +256,8 @@ class TestListClusters(TestClusters):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version', 'Status']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version',
+                            'Status']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -287,15 +290,15 @@ class TestShowCluster(TestClusters):
                             'Description', 'Id', 'Image',
                             'Is protected', 'Is public', 'Name',
                             'Neutron management network', 'Node groups',
-                            'Plugin name', 'Status', 'Use autoconfig',
-                            'User keypair id', 'Version')
+                            'Plugin name', 'Plugin version', 'Status',
+                            'Use autoconfig', 'User keypair id')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'ct_id', 'Cluster template for tests',
                          'cluster_id', 'img_id', False, False, 'fake',
-                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
-                         '0.1')
+                         'net_id', 'fakeng:2', 'fake', '0.1', 'Active', True,
+                         'test')
         self.assertEqual(expected_data, data)
 
     def test_cluster_show_verification(self):
@@ -314,16 +317,16 @@ class TestShowCluster(TestClusters):
                             'Description', 'Health check (some check)', 'Id',
                             'Image', 'Is protected', 'Is public', 'Name',
                             'Neutron management network', 'Node groups',
-                            'Plugin name', 'Status', 'Use autoconfig',
-                            'User keypair id', 'Verification status',
-                            'Version')
+                            'Plugin name', 'Plugin version', 'Status',
+                            'Use autoconfig', 'User keypair id',
+                            'Verification status')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'ct_id', 'Cluster template for tests', 'GREEN',
                          'cluster_id', 'img_id', False, False, 'fake',
-                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
-                         'GREEN', '0.1')
+                         'net_id', 'fakeng:2', 'fake', '0.1', 'Active', True,
+                         'test', 'GREEN')
         self.assertEqual(expected_data, data)
 
 
@@ -400,15 +403,15 @@ class TestUpdateCluster(TestClusters):
                             'Description', 'Id', 'Image',
                             'Is protected', 'Is public', 'Name',
                             'Neutron management network', 'Node groups',
-                            'Plugin name', 'Status', 'Use autoconfig',
-                            'User keypair id', 'Version')
+                            'Plugin name', 'Plugin version', 'Status',
+                            'Use autoconfig', 'User keypair id')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'ct_id', 'Cluster template for tests',
                          'cluster_id', 'img_id', False, False, 'fake',
-                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
-                         '0.1')
+                         'net_id', 'fakeng:2', 'fake', '0.1', 'Active', True,
+                         'test')
         self.assertEqual(expected_data, data)
 
     def test_cluster_update_private_unprotected(self):
@@ -469,15 +472,15 @@ class TestScaleCluster(TestClusters):
                             'Description', 'Id', 'Image',
                             'Is protected', 'Is public', 'Name',
                             'Neutron management network', 'Node groups',
-                            'Plugin name', 'Status', 'Use autoconfig',
-                            'User keypair id', 'Version')
+                            'Plugin name', 'Plugin version', 'Status',
+                            'Use autoconfig', 'User keypair id')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('', 'ct_id', 'Cluster template for tests',
                          'cluster_id', 'img_id', False, False, 'fake',
-                         'net_id', 'fakeng:2', 'fake', 'Active', True, 'test',
-                         '0.1')
+                         'net_id', 'fakeng:2', 'fake', '0.1', 'Active', True,
+                         'test')
         self.assertEqual(expected_data, data)
 
     def test_cluster_scale_add_ng(self):
