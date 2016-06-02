@@ -77,11 +77,11 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         self.cmd = osc_ngt.CreateNodeGroupTemplate(self.app, None)
 
     def test_ngt_create_minimum_options(self):
-        arglist = ['--name', 'template', '--plugin', 'fake', '--version',
-                   '0.1', '--processes', 'namenode', 'tasktracker',
-                   '--flavor', 'flavor_id']
+        arglist = ['--name', 'template', '--plugin', 'fake',
+                   '--plugin-version', '0.1', '--processes', 'namenode',
+                   'tasktracker', '--flavor', 'flavor_id']
         verifylist = [('name', 'template'), ('plugin', 'fake'),
-                      ('version', '0.1'), ('flavor', 'flavor_id'),
+                      ('plugin_version', '0.1'), ('flavor', 'flavor_id'),
                       ('processes', ['namenode', 'tasktracker'])]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -102,11 +102,12 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             node_configs=None)
 
     def test_ngt_create_all_options(self):
-        arglist = ['--name', 'template', '--plugin', 'fake', '--version',
-                   '0.1', '--processes', 'namenode', 'tasktracker',
-                   '--security-groups', 'secgr', '--auto-security-group',
-                   '--availability-zone', 'av_zone', '--flavor', 'flavor_id',
-                   '--floating-ip-pool', 'floating_pool', '--volumes-per-node',
+        arglist = ['--name', 'template', '--plugin', 'fake',
+                   '--plugin-version', '0.1', '--processes', 'namenode',
+                   'tasktracker', '--security-groups', 'secgr',
+                   '--auto-security-group', '--availability-zone', 'av_zone',
+                   '--flavor', 'flavor_id', '--floating-ip-pool',
+                   'floating_pool', '--volumes-per-node',
                    '2', '--volumes-size', '2', '--volumes-type', 'type',
                    '--volumes-availability-zone', 'vavzone',
                    '--volumes-mount-prefix', '/volume/asd',
@@ -115,7 +116,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
                    '--protected']
 
         verifylist = [('name', 'template'), ('plugin', 'fake'),
-                      ('version', '0.1'),
+                      ('plugin_version', '0.1'),
                       ('processes', ['namenode', 'tasktracker']),
                       ('security_groups', ['secgr']),
                       ('auto_security_group', True),
@@ -151,8 +152,8 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             'Auto security group', 'Availability zone', 'Description',
             'Flavor id', 'Floating ip pool', 'Id', 'Is default',
             'Is protected', 'Is proxy gateway', 'Is public', 'Name',
-            'Node processes', 'Plugin name', 'Security groups',
-            'Use autoconfig', 'Version', 'Volume local to instance',
+            'Node processes', 'Plugin name', 'Plugin version',
+            'Security groups', 'Use autoconfig', 'Volume local to instance',
             'Volume mount prefix', 'Volume type', 'Volumes availability zone',
             'Volumes per node', 'Volumes size')
         self.assertEqual(expected_columns, columns)
@@ -161,8 +162,8 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
         expected_data = (
             True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
             'ng_id', False, False, False,
-            True, 'template', 'namenode, tasktracker', 'fake', None, True,
-            '0.1', False, '/volumes/disk', None, None, 2, 2)
+            True, 'template', 'namenode, tasktracker', 'fake', '0.1',
+            None, True, False, '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
 
 
@@ -184,7 +185,7 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -200,7 +201,7 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version',
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version',
                             'Node processes', 'Description']
         self.assertEqual(expected_columns, columns)
 
@@ -210,8 +211,9 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         self.assertEqual(expected_data, list(data))
 
     def test_ngt_list_extra_search_opts(self):
-        arglist = ['--plugin', 'fake', '--version', '0.1', '--name', 'templ']
-        verifylist = [('plugin', 'fake'), ('version', '0.1'),
+        arglist = ['--plugin', 'fake', '--plugin-version', '0.1', '--name',
+                   'templ']
+        verifylist = [('plugin', 'fake'), ('plugin_version', '0.1'),
                       ('name', 'templ')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
@@ -219,7 +221,7 @@ class TestListNodeGroupTemplates(TestNodeGroupTemplates):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Name', 'Id', 'Plugin name', 'Version']
+        expected_columns = ['Name', 'Id', 'Plugin name', 'Plugin version']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
@@ -252,8 +254,8 @@ class TestShowNodeGroupTemplate(TestNodeGroupTemplates):
             'Auto security group', 'Availability zone', 'Description',
             'Flavor id', 'Floating ip pool', 'Id', 'Is default',
             'Is protected', 'Is proxy gateway', 'Is public', 'Name',
-            'Node processes', 'Plugin name', 'Security groups',
-            'Use autoconfig', 'Version', 'Volume local to instance',
+            'Node processes', 'Plugin name', 'Plugin version',
+            'Security groups', 'Use autoconfig', 'Volume local to instance',
             'Volume mount prefix', 'Volume type', 'Volumes availability zone',
             'Volumes per node', 'Volumes size')
         self.assertEqual(expected_columns, columns)
@@ -262,7 +264,7 @@ class TestShowNodeGroupTemplate(TestNodeGroupTemplates):
         expected_data = (
             True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
             'ng_id', False, False, False, True, 'template',
-            'namenode, tasktracker', 'fake', None, True, '0.1', False,
+            'namenode, tasktracker', 'fake', '0.1', None, True, False,
             '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
 
@@ -324,7 +326,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
     def test_ngt_update_all_options(self):
         arglist = ['template', '--name', 'template', '--plugin', 'fake',
-                   '--version', '0.1', '--processes', 'namenode',
+                   '--plugin-version', '0.1', '--processes', 'namenode',
                    'tasktracker', '--security-groups', 'secgr',
                    '--auto-security-group-enable',
                    '--availability-zone', 'av_zone', '--flavor', 'flavor_id',
@@ -338,7 +340,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
 
         verifylist = [('node_group_template', 'template'),
                       ('name', 'template'), ('plugin', 'fake'),
-                      ('version', '0.1'),
+                      ('plugin_version', '0.1'),
                       ('processes', ['namenode', 'tasktracker']),
                       ('security_groups', ['secgr']),
                       ('use_auto_security_group', True),
@@ -376,8 +378,8 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             'Auto security group', 'Availability zone', 'Description',
             'Flavor id', 'Floating ip pool', 'Id', 'Is default',
             'Is protected', 'Is proxy gateway', 'Is public', 'Name',
-            'Node processes', 'Plugin name', 'Security groups',
-            'Use autoconfig', 'Version', 'Volume local to instance',
+            'Node processes', 'Plugin name', 'Plugin version',
+            'Security groups', 'Use autoconfig', 'Volume local to instance',
             'Volume mount prefix', 'Volume type', 'Volumes availability zone',
             'Volumes per node', 'Volumes size')
         self.assertEqual(expected_columns, columns)
@@ -386,8 +388,8 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
         expected_data = (
             True, 'av_zone', 'description', 'flavor_id', 'floating_pool',
             'ng_id', False, False, False, True, 'template',
-            'namenode, tasktracker', 'fake', None, True,
-            '0.1', False, '/volumes/disk', None, None, 2, 2)
+            'namenode, tasktracker', 'fake', '0.1', None, True,
+            False, '/volumes/disk', None, None, 2, 2)
         self.assertEqual(expected_data, data)
 
     def test_ngt_update_private_unprotected(self):

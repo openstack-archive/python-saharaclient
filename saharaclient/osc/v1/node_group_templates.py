@@ -25,7 +25,7 @@ from oslo_log import log as logging
 
 from saharaclient.osc.v1 import utils
 
-NGT_FIELDS = ['id', 'name', 'plugin_name', 'version', 'node_processes',
+NGT_FIELDS = ['id', 'name', 'plugin_name', 'plugin_version', 'node_processes',
               'description', 'auto_security_group', 'security_groups',
               'availability_zone', 'flavor_id', 'floating_ip_pool',
               'volumes_per_node', 'volumes_size',
@@ -36,7 +36,7 @@ NGT_FIELDS = ['id', 'name', 'plugin_name', 'version', 'node_processes',
 
 def _format_ngt_output(data):
     data['node_processes'] = osc_utils.format_list(data['node_processes'])
-    data['version'] = data.pop('hadoop_version')
+    data['plugin_version'] = data.pop('hadoop_version')
     if data['volumes_per_node'] == 0:
         del data['volume_local_to_instance']
         del data['volume_mount_prefix']
@@ -65,8 +65,8 @@ class CreateNodeGroupTemplate(show.ShowOne):
             help="Name of the plugin [REQUIRED if JSON is not provided]"
         )
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="Version of the plugin [REQUIRED if JSON is not provided]"
         )
         parser.add_argument(
@@ -215,11 +215,11 @@ class CreateNodeGroupTemplate(show.ShowOne):
             data = client.node_group_templates.create(**template).to_dict()
         else:
             if (not parsed_args.name or not parsed_args.plugin or
-                    not parsed_args.version or not parsed_args.flavor or
+                    not parsed_args.plugin_version or not parsed_args.flavor or
                     not parsed_args.processes):
                 raise exceptions.CommandError(
-                    'At least --name, --plugin, --version, --processes, '
-                    '--flavor arguments should be specified or json template '
+                    'At least --name, --plugin, --plugin-version, --processes,'
+                    ' --flavor arguments should be specified or json template '
                     'should be provided with --json argument')
 
             configs = None
@@ -249,7 +249,7 @@ class CreateNodeGroupTemplate(show.ShowOne):
             data = client.node_group_templates.create(
                 name=parsed_args.name,
                 plugin_name=parsed_args.plugin,
-                hadoop_version=parsed_args.version,
+                hadoop_version=parsed_args.plugin_version,
                 flavor_id=flavor_id,
                 description=parsed_args.description,
                 volumes_per_node=parsed_args.volumes_per_node,
@@ -296,8 +296,8 @@ class ListNodeGroupTemplates(lister.Lister):
         )
 
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="List node group templates with specific version of the "
                  "plugin"
         )
@@ -317,8 +317,8 @@ class ListNodeGroupTemplates(lister.Lister):
         search_opts = {}
         if parsed_args.plugin:
             search_opts['plugin_name'] = parsed_args.plugin
-        if parsed_args.version:
-            search_opts['hadoop_version'] = parsed_args.version
+        if parsed_args.plugin_version:
+            search_opts['hadoop_version'] = parsed_args.plugin_version
 
         data = client.node_group_templates.list(search_opts=search_opts)
 
@@ -329,12 +329,12 @@ class ListNodeGroupTemplates(lister.Lister):
             columns = ('name', 'id', 'plugin_name', 'hadoop_version',
                        'node_processes', 'description')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version'})
+                columns, {'hadoop_version': 'plugin_version'})
 
         else:
             columns = ('name', 'id', 'plugin_name', 'hadoop_version')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version'})
+                columns, {'hadoop_version': 'plugin_version'})
 
         return (
             column_headers,
@@ -430,8 +430,8 @@ class UpdateNodeGroupTemplate(show.ShowOne):
             help="Name of the plugin"
         )
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="Version of the plugin"
         )
         parser.add_argument(
@@ -663,7 +663,7 @@ class UpdateNodeGroupTemplate(show.ShowOne):
             update_dict = utils.create_dict_from_kwargs(
                 name=parsed_args.name,
                 plugin_name=parsed_args.plugin,
-                hadoop_version=parsed_args.version,
+                hadoop_version=parsed_args.plugin_version,
                 flavor_id=flavor_id,
                 description=parsed_args.description,
                 volumes_per_node=parsed_args.volumes_per_node,

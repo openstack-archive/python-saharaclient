@@ -46,8 +46,8 @@ class ListJobTypes(lister.Lister):
             help="Get only job types supported by this plugin"
         )
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="Get only job types supported by specific version of the "
                  "plugin. This parameter will be taken into account only if "
                  "plugin is provided"
@@ -64,11 +64,11 @@ class ListJobTypes(lister.Lister):
             search_opts['type'] = parsed_args.type
         if parsed_args.plugin:
             search_opts['plugin'] = parsed_args.plugin
-            if parsed_args.version:
-                search_opts['version'] = parsed_args.version
-        elif parsed_args.version:
+            if parsed_args.plugin_version:
+                search_opts['plugin_version'] = parsed_args.plugin_version
+        elif parsed_args.plugin_version:
             raise exceptions.CommandError(
-                '--version argument should be specified with --plugin '
+                '--plugin-version argument should be specified with --plugin '
                 'argument')
 
         data = client.job_types.list(search_opts=search_opts)

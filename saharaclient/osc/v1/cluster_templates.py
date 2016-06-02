@@ -25,7 +25,7 @@ from oslo_log import log as logging
 
 from saharaclient.osc.v1 import utils
 
-CT_FIELDS = ['id', 'name', 'plugin_name', 'version', 'description',
+CT_FIELDS = ['id', 'name', 'plugin_name', 'plugin_version', 'description',
              'node_groups', 'anti_affinity', 'use_autoconfig', 'is_default',
              'is_protected', 'is_public']
 
@@ -36,7 +36,7 @@ def _format_node_groups_list(node_groups):
 
 
 def _format_ct_output(data):
-    data['version'] = data.pop('hadoop_version')
+    data['plugin_version'] = data.pop('hadoop_version')
     data['node_groups'] = _format_node_groups_list(data['node_groups'])
     data['anti_affinity'] = osc_utils.format_list(data['anti_affinity'])
 
@@ -59,8 +59,8 @@ def _configure_node_groups(node_groups, client):
         raise exceptions.CommandError('Node groups with the same plugins '
                                       'and versions must be specified')
 
-    plugin, version = plugins_versions.pop()
-    return plugin, version, node_groups
+    plugin, plugin_version = plugins_versions.pop()
+    return plugin, plugin_version, node_groups
 
 
 class CreateClusterTemplate(show.ShowOne):
@@ -180,13 +180,13 @@ class CreateClusterTemplate(show.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
-            plugin, version, node_groups = _configure_node_groups(
+            plugin, plugin_version, node_groups = _configure_node_groups(
                 parsed_args.node_groups, client)
 
             data = client.cluster_templates.create(
                 name=parsed_args.name,
                 plugin_name=plugin,
-                hadoop_version=version,
+                hadoop_version=plugin_version,
                 description=parsed_args.description,
                 node_groups=node_groups,
                 use_autoconfig=parsed_args.autoconfig,
@@ -222,8 +222,8 @@ class ListClusterTemplates(lister.Lister):
         )
 
         parser.add_argument(
-            '--version',
-            metavar="<version>",
+            '--plugin-version',
+            metavar="<plugin_version>",
             help="List cluster templates with specific version of the "
                  "plugin"
         )
@@ -243,8 +243,8 @@ class ListClusterTemplates(lister.Lister):
         search_opts = {}
         if parsed_args.plugin:
             search_opts['plugin_name'] = parsed_args.plugin
-        if parsed_args.version:
-            search_opts['hadoop_version'] = parsed_args.version
+        if parsed_args.plugin_version:
+            search_opts['hadoop_version'] = parsed_args.plugin_version
 
         data = client.cluster_templates.list(search_opts=search_opts)
 
@@ -255,12 +255,12 @@ class ListClusterTemplates(lister.Lister):
             columns = ('name', 'id', 'plugin_name', 'hadoop_version',
                        'node_groups', 'description')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version'})
+                columns, {'hadoop_version': 'plugin_version'})
 
         else:
             columns = ('name', 'id', 'plugin_name', 'hadoop_version')
             column_headers = utils.prepare_column_headers(
-                columns, {'hadoop_version': 'version'})
+                columns, {'hadoop_version': 'plugin_version'})
 
         return (
             column_headers,
@@ -448,9 +448,9 @@ class UpdateClusterTemplate(show.ShowOne):
             data = client.cluster_templates.update(
                 ct_id, **template).to_dict()
         else:
-            plugin, version, node_groups = None, None, None
+            plugin, plugin_version, node_groups = None, None, None
             if parsed_args.node_groups:
-                plugin, version, node_groups = _configure_node_groups(
+                plugin, plugin_version, node_groups = _configure_node_groups(
                     parsed_args.node_groups, client)
 
             configs = None
@@ -476,7 +476,7 @@ class UpdateClusterTemplate(show.ShowOne):
             update_dict = utils.create_dict_from_kwargs(
                 name=parsed_args.name,
                 plugin_name=plugin,
-                hadoop_version=version,
+                hadoop_version=plugin_version,
                 description=parsed_args.description,
                 node_groups=node_groups,
                 use_autoconfig=parsed_args.use_autoconfig,
