@@ -34,5 +34,5 @@ class ClientTestBase(base.ClientTestBase):
             uri=os.environ.get('OS_AUTH_URL'),
             cli_dir=cli_dir)
 
-    def sahara(self, *args, **kwargs):
-        return self.clients.sahara(*args, **kwargs)
+    def openstack(self, *args, **kwargs):
+        return self.clients.openstack(*args, **kwargs)

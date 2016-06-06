@@ -10,10 +10,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import re
-
-from tempest.lib import exceptions
-
 from saharaclient.tests.functional import base
 
 
@@ -25,132 +21,93 @@ class SimpleReadOnlySaharaClientTest(base.ClientTestBase):
     their own. They only verify the structure of output if present.
     """
 
-    def test_sahara_fake_action(self):
-        self.assertRaises(exceptions.CommandFailed,
-                          self.sahara,
-                          'this-does-not-exist')
-
-    def test_sahara_plugins_list(self):
-        plugins = self.parser.listing(self.sahara('plugin-list'))
-        self.assertTableStruct(plugins, [
-            'name',
-            'versions',
-            'title'
-        ])
-
-    def test_sahara_plugins_show(self):
-        plugins = self.parser.listing(self.sahara('plugin-list'))
-        plugin_names = [p['name'] for p in plugins]
-        if not plugin_names:
-            raise self.skipException('No plugins defined')
-        name_param = '--name %s' % (plugin_names[0])
-        result = self.sahara('plugin-show', params=name_param)
-        plugin = self.parser.listing(result)
-        self.assertTableStruct(plugin, [
-            'Property',
-            'Value'
-        ])
-
-    def test_sahara_node_group_template_list(self):
-        result = self.sahara('node-group-template-list')
-        node_group_templates = self.parser.listing(result)
-        self.assertTableStruct(node_group_templates, [
-            'name',
-            'id',
-            'plugin_name',
-            'node_processes',
-            'description'
-        ])
-
-    def test_sahara_cluster_template_list(self):
-        result = self.sahara('cluster-template-list')
-        cluster_templates = self.parser.listing(result)
-        self.assertTableStruct(cluster_templates, [
-            'name',
-            'id',
-            'plugin_name',
-            'node_groups',
-            'description'
-        ])
-
-    def test_sahara_cluster_list(self):
-        result = self.sahara('cluster-list')
+    def test_openstack_cluster_list(self):
+        result = self.openstack('dataprocessing cluster list')
         clusters = self.parser.listing(result)
         self.assertTableStruct(clusters, [
-            'name',
-            'id',
-            'status',
-            'node_count'
+            'Name',
+            'Id',
+            'Plugin name',
+            'Plugin version',
+            'Status'
         ])
 
-    def test_sahara_data_source_list(self):
-        result = self.sahara('data-source-list')
-        data_sources = self.parser.listing(result)
-        self.assertTableStruct(data_sources, [
+    def test_openstack_cluster_template_list(self):
+        result = self.openstack('dataprocessing cluster template list')
+        templates = self.parser.listing(result)
+        self.assertTableStruct(templates, [
+            'Name',
+            'Id',
+            'Plugin name',
+            'Plugin version'
+        ])
+
+    def test_openstack_image_list(self):
+        result = self.openstack('dataprocessing image list')
+        images = self.parser.listing(result)
+        self.assertTableStruct(images, [
+            'Name',
+            'Id',
+            'Username',
+            'Tags'
+        ])
+
+    def test_openstack_job_binary_list(self):
+        result = self.openstack('dataprocessing job binary list')
+        job_binary = self.parser.listing(result)
+        self.assertTableStruct(job_binary, [
             'name',
-            'id',
+            'url'
+        ])
+
+    def test_openstack_job_template_list(self):
+        result = self.openstack('dataprocessing job template list')
+        job_template = self.parser.listing(result)
+        self.assertTableStruct(job_template, [
+            'name',
+            'type'
+        ])
+
+    def test_openstack_data_source_list(self):
+        result = self.openstack('dataprocessing data source list')
+        data_source = self.parser.listing(result)
+        self.assertTableStruct(data_source, [
+            'name',
             'type',
-            'description'
+            'url'
         ])
 
-    def test_sahara_job_binary_data_list(self):
-        result = self.sahara('job-binary-data-list')
-        job_binary_data_list = self.parser.listing(result)
-        self.assertTableStruct(job_binary_data_list, [
-            'id',
-            'name'
+    def test_openstack_job_type_list(self):
+        result = self.openstack('dataprocessing job type list')
+        job_type = self.parser.listing(result)
+        self.assertTableStruct(job_type, [
+            'Name',
+            'Plugins'
         ])
 
-    def test_sahara_job_binary_list(self):
-        result = self.sahara('job-binary-list')
-        job_binaries = self.parser.listing(result)
-        self.assertTableStruct(job_binaries, [
-            'id',
-            'name',
-            'description'
+    def test_openstack_node_group_template_list(self):
+        result = self.openstack('dataprocessing node group template list')
+        node_group = self.parser.listing(result)
+        self.assertTableStruct(node_group, [
+            'Name',
+            'Id',
+            'Plugin version',
+            'Plugin name'
         ])
 
-    def test_sahara_job_template_list(self):
-        result = self.sahara('job-template-list')
-        job_templates = self.parser.listing(result)
-        self.assertTableStruct(job_templates, [
-            'id',
-            'name',
-            'description'
+    def test_openstack_plugin_list(self):
+        result = self.openstack('dataprocessing plugin list')
+        plugin = self.parser.listing(result)
+        self.assertTableStruct(plugin, [
+            'Name',
+            'Versions'
         ])
 
-    def test_sahara_job_list(self):
-        result = self.sahara('job-list')
+    def test_openstack_job_list(self):
+        result = self.openstack('dataprocessing job list')
         jobs = self.parser.listing(result)
         self.assertTableStruct(jobs, [
             'id',
             'cluster_id',
             'status'
         ])
-
-    def test_sahara_bash_completion(self):
-        self.sahara('bash-completion')
-
-    # Optional arguments
-    def test_sahara_help(self):
-        help_text = self.sahara('help')
-        lines = help_text.split('\n')
-        self.assertIn('DeprecationWarning', lines[0])
-
-        commands = []
-        cmds_start = lines.index('Positional arguments:')
-        cmds_end = lines.index('Optional arguments:')
-        command_pattern = re.compile('^ {4}([a-z0-9\-\_]+)')
-        for line in lines[cmds_start:cmds_end]:
-            match = command_pattern.match(line)
-            if match:
-                commands.append(match.group(1))
-        commands = set(commands)
-        wanted_commands = set(('cluster-create', 'data-source-create',
-                               'image-unregister', 'job-binary-create',
-                               'plugin-list', 'job-binary-create', 'help'))
-        self.assertFalse(wanted_commands - commands)
-
-    def test_sahara_version(self):
-        version = self.sahara('', flags='--version')
-        self.assertTrue(re.search('[0-9.]+', version))
