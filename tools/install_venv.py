@@ -22,7 +22,7 @@ import ConfigParser
 import os
 import sys
 
-import install_venv_common as install_venv  # flake8: noqa
+import install_venv_common as install_venv
 
 
 def print_help(project, venv, root):
