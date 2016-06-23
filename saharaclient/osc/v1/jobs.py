@@ -18,8 +18,8 @@ import sys
 from cliff import command
 from cliff import lister
 from cliff import show
-from openstackclient.common import exceptions
-from openstackclient.common import utils as osc_utils
+from osc_lib import exceptions
+from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 

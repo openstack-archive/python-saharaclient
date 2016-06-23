@@ -15,7 +15,7 @@
 
 import mock
 
-from openstackclient.tests import utils as osc_utils
+from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import jobs as api_j
 from saharaclient.osc.v1 import job_templates as osc_j

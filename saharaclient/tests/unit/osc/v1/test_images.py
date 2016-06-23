@@ -15,7 +15,7 @@
 
 import mock
 
-from openstackclient.tests import utils as osc_utils
+from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import images as api_images
 from saharaclient.osc.v1 import images as osc_images
