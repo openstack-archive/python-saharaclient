@@ -19,7 +19,7 @@ import os
 import sys
 
 from docutils import nodes
-from sphinxarg import ext
+from . import ext
 
 
 def _get_command(classes):
