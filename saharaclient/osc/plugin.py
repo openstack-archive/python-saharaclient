@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstackclient.common import utils
+from osc_lib import utils
 from oslo_log import log as logging
 
 LOG = logging.getLogger(__name__)

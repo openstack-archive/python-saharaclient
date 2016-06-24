@@ -15,7 +15,7 @@
 
 import mock
 
-from openstackclient.tests import utils as osc_utils
+from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import node_group_templates as api_ngt
 from saharaclient.osc.v1 import node_group_templates as osc_ngt

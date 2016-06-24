@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstackclient.tests import utils as osc_utils
+from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import cluster_templates as api_ct
 from saharaclient.api import node_group_templates as api_ngt
