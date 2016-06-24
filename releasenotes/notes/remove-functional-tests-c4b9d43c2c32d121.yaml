@@ -1,0 +1,4 @@
+---
+prelude: >
+    Functional tests were replaced to sahara-tests repository. Please refer to
+    README of sahara-tests about how to run these tests now.
