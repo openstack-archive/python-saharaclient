@@ -15,9 +15,7 @@
 
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
@@ -39,7 +37,7 @@ def _format_job_output(data):
     data['job_template_id'] = data.pop('job_id')
 
 
-class ExecuteJob(show.ShowOne):
+class ExecuteJob(command.ShowOne):
     """Executes job"""
 
     log = logging.getLogger(__name__ + ".ExecuteJob")
@@ -198,7 +196,7 @@ class ExecuteJob(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListJobs(lister.Lister):
+class ListJobs(command.Lister):
     """Lists jobs"""
 
     log = logging.getLogger(__name__ + ".ListJobs")
@@ -251,7 +249,7 @@ class ListJobs(lister.Lister):
         )
 
 
-class ShowJob(show.ShowOne):
+class ShowJob(command.ShowOne):
     """Display job details"""
 
     log = logging.getLogger(__name__ + ".ShowJob")
@@ -320,7 +318,7 @@ class DeleteJob(command.Command):
                             job=job_id))
 
 
-class UpdateJob(show.ShowOne):
+class UpdateJob(command.ShowOne):
     """Updates job"""
 
     log = logging.getLogger(__name__ + ".UpdateJob")

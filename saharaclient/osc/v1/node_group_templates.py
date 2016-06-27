@@ -16,9 +16,7 @@
 import json
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
@@ -45,7 +43,7 @@ def _format_ngt_output(data):
         del data['volumes_size']
 
 
-class CreateNodeGroupTemplate(show.ShowOne):
+class CreateNodeGroupTemplate(command.ShowOne):
     """Creates node group template"""
 
     log = logging.getLogger(__name__ + ".CreateNodeGroupTemplate")
@@ -276,7 +274,7 @@ class CreateNodeGroupTemplate(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListNodeGroupTemplates(lister.Lister):
+class ListNodeGroupTemplates(command.Lister):
     """Lists node group templates"""
 
     log = logging.getLogger(__name__ + ".ListNodeGroupTemplates")
@@ -348,7 +346,7 @@ class ListNodeGroupTemplates(lister.Lister):
         )
 
 
-class ShowNodeGroupTemplate(show.ShowOne):
+class ShowNodeGroupTemplate(command.ShowOne):
     """Display node group template details"""
 
     log = logging.getLogger(__name__ + ".ShowNodeGroupTemplate")
@@ -406,7 +404,7 @@ class DeleteNodeGroupTemplate(command.Command):
                 'successfully.\n'.format(ngt=ngt))
 
 
-class UpdateNodeGroupTemplate(show.ShowOne):
+class UpdateNodeGroupTemplate(command.ShowOne):
     """Updates node group template"""
 
     log = logging.getLogger(__name__ + ".UpdateNodeGroupTemplate")
