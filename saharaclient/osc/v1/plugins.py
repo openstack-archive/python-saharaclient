@@ -16,9 +16,7 @@
 from os import path
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
@@ -26,7 +24,7 @@ from oslo_serialization import jsonutils
 from saharaclient.osc.v1 import utils
 
 
-class ListPlugins(lister.Lister):
+class ListPlugins(command.Lister):
     """Lists plugins"""
 
     log = logging.getLogger(__name__ + ".ListPlugins")
@@ -67,7 +65,7 @@ class ListPlugins(lister.Lister):
         )
 
 
-class ShowPlugin(show.ShowOne):
+class ShowPlugin(command.ShowOne):
     """Display plugin details"""
 
     log = logging.getLogger(__name__ + ".ShowPlugin")

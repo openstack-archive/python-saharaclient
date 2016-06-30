@@ -15,9 +15,7 @@
 
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 
@@ -28,7 +26,7 @@ DATA_SOURCE_FIELDS = ['name', 'id', 'type', 'url', 'description', 'is_public',
 DATA_SOURCE_CHOICES = ["swift", "hdfs", "maprfs", "manila"]
 
 
-class CreateDataSource(show.ShowOne):
+class CreateDataSource(command.ShowOne):
     """Creates data source"""
 
     log = logging.getLogger(__name__ + ".CreateDataSource")
@@ -102,7 +100,7 @@ class CreateDataSource(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListDataSources(lister.Lister):
+class ListDataSources(command.Lister):
     """Lists data sources"""
 
     log = logging.getLogger(__name__ + ".ListDataSources")
@@ -149,7 +147,7 @@ class ListDataSources(lister.Lister):
         )
 
 
-class ShowDataSource(show.ShowOne):
+class ShowDataSource(command.ShowOne):
     """Display data source details"""
 
     log = logging.getLogger(__name__ + ".ShowDataSource")
@@ -203,7 +201,7 @@ class DeleteDataSource(command.Command):
                 'successfully.\n'.format(ds=ds))
 
 
-class UpdateDataSource(show.ShowOne):
+class UpdateDataSource(command.ShowOne):
     """Update data source"""
 
     log = logging.getLogger(__name__ + ".UpdateDataSource")

@@ -16,9 +16,7 @@
 import json
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
@@ -61,7 +59,7 @@ def _get_plugin_version(cluster_template, client):
     return ct.plugin_name, ct.hadoop_version, ct.id
 
 
-class CreateCluster(show.ShowOne):
+class CreateCluster(command.ShowOne):
     """Creates cluster"""
 
     log = logging.getLogger(__name__ + ".CreateCluster")
@@ -225,7 +223,7 @@ class CreateCluster(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListClusters(lister.Lister):
+class ListClusters(command.Lister):
     """Lists clusters"""
 
     log = logging.getLogger(__name__ + ".ListClusters")
@@ -294,7 +292,7 @@ class ListClusters(lister.Lister):
         )
 
 
-class ShowCluster(show.ShowOne):
+class ShowCluster(command.ShowOne):
     """Display cluster details"""
 
     log = logging.getLogger(__name__ + ".ShowCluster")
@@ -378,7 +376,7 @@ class DeleteCluster(command.Command):
                         'successfully.\n'.format(cluster=cluster_arg))
 
 
-class UpdateCluster(show.ShowOne):
+class UpdateCluster(command.ShowOne):
     """Updates cluster"""
 
     log = logging.getLogger(__name__ + ".UpdateCluster")
@@ -470,7 +468,7 @@ class UpdateCluster(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ScaleCluster(show.ShowOne):
+class ScaleCluster(command.ShowOne):
     """Scales cluster"""
 
     log = logging.getLogger(__name__ + ".ScaleCluster")
@@ -570,7 +568,7 @@ class ScaleCluster(show.ShowOne):
         return self.dict2columns(data)
 
 
-class VerificationUpdateCluster(show.ShowOne):
+class VerificationUpdateCluster(command.ShowOne):
     """Updates cluster verifications"""
 
     log = logging.getLogger(__name__ + ".VerificationUpdateCluster")

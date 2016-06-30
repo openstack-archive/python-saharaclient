@@ -15,9 +15,7 @@
 
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 
@@ -26,7 +24,7 @@ from saharaclient.osc.v1 import utils
 IMAGE_FIELDS = ['name', 'id', 'username', 'tags', 'status', 'description']
 
 
-class ListImages(lister.Lister):
+class ListImages(command.Lister):
     """Lists registered images"""
 
     log = logging.getLogger(__name__ + ".ListImages")
@@ -91,7 +89,7 @@ class ListImages(lister.Lister):
         )
 
 
-class ShowImage(show.ShowOne):
+class ShowImage(command.ShowOne):
     """Display image details"""
 
     log = logging.getLogger(__name__ + ".ShowImage")
@@ -119,7 +117,7 @@ class ShowImage(show.ShowOne):
         return self.dict2columns(data)
 
 
-class RegisterImage(show.ShowOne):
+class RegisterImage(command.ShowOne):
     """Register an image"""
 
     log = logging.getLogger(__name__ + ".RegisterImage")
@@ -192,7 +190,7 @@ class UnregisterImage(command.Command):
                 'successfully.\n'.format(image=image))
 
 
-class SetImageTags(show.ShowOne):
+class SetImageTags(command.ShowOne):
     """Set image tags (Replace current image tags with provided ones)"""
 
     log = logging.getLogger(__name__ + ".AddImageTags")
@@ -227,7 +225,7 @@ class SetImageTags(show.ShowOne):
         return self.dict2columns(data)
 
 
-class AddImageTags(show.ShowOne):
+class AddImageTags(command.ShowOne):
     """Add image tags"""
 
     log = logging.getLogger(__name__ + ".AddImageTags")
@@ -264,7 +262,7 @@ class AddImageTags(show.ShowOne):
         return self.dict2columns(data)
 
 
-class RemoveImageTags(show.ShowOne):
+class RemoveImageTags(command.ShowOne):
     """Remove image tags"""
 
     log = logging.getLogger(__name__ + ".RemoveImageTags")

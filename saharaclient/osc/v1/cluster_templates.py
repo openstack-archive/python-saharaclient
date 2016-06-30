@@ -16,9 +16,7 @@
 import json
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
@@ -63,7 +61,7 @@ def _configure_node_groups(node_groups, client):
     return plugin, plugin_version, node_groups
 
 
-class CreateClusterTemplate(show.ShowOne):
+class CreateClusterTemplate(command.ShowOne):
     """Creates cluster template"""
 
     log = logging.getLogger(__name__ + ".CreateClusterTemplate")
@@ -202,7 +200,7 @@ class CreateClusterTemplate(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListClusterTemplates(lister.Lister):
+class ListClusterTemplates(command.Lister):
     """Lists cluster templates"""
 
     log = logging.getLogger(__name__ + ".ListClusterTemplates")
@@ -274,7 +272,7 @@ class ListClusterTemplates(lister.Lister):
         )
 
 
-class ShowClusterTemplate(show.ShowOne):
+class ShowClusterTemplate(command.ShowOne):
     """Display cluster template details"""
 
     log = logging.getLogger(__name__ + ".ShowClusterTemplate")
@@ -329,7 +327,7 @@ class DeleteClusterTemplate(command.Command):
                 'successfully.\n'.format(ct=ct))
 
 
-class UpdateClusterTemplate(show.ShowOne):
+class UpdateClusterTemplate(command.ShowOne):
     """Updates cluster template"""
 
     log = logging.getLogger(__name__ + ".UpdateClusterTemplate")

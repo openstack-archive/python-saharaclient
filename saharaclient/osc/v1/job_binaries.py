@@ -16,9 +16,7 @@
 from os import path
 import sys
 
-from cliff import command
-from cliff import lister
-from cliff import show
+from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
@@ -31,7 +29,7 @@ JOB_BINARY_FIELDS = ['name', 'id', 'url', 'description', 'is_public',
                      'is_protected']
 
 
-class CreateJobBinary(show.ShowOne):
+class CreateJobBinary(command.ShowOne):
     """Creates job binary"""
 
     log = logging.getLogger(__name__ + ".CreateJobBinary")
@@ -152,7 +150,7 @@ class CreateJobBinary(show.ShowOne):
         return self.dict2columns(data)
 
 
-class ListJobBinaries(lister.Lister):
+class ListJobBinaries(command.Lister):
     """Lists job binaries"""
 
     log = logging.getLogger(__name__ + ".ListJobBinaries")
@@ -201,7 +199,7 @@ class ListJobBinaries(lister.Lister):
         )
 
 
-class ShowJobBinary(show.ShowOne):
+class ShowJobBinary(command.ShowOne):
     """Display job binary details"""
 
     log = logging.getLogger(__name__ + ".ShowJobBinary")
@@ -264,7 +262,7 @@ class DeleteJobBinary(command.Command):
                 'successfully.\n'.format(jb=jb))
 
 
-class UpdateJobBinary(show.ShowOne):
+class UpdateJobBinary(command.ShowOne):
     """Updates job binary"""
 
     log = logging.getLogger(__name__ + ".UpdateJobBinary")
