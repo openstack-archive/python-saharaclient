@@ -178,6 +178,26 @@ class ResourceManager(object):
         else:
             self._raise_api_exception(resp)
 
+    def _page(self, url, response_key, limit=None):
+        resp = self.api.get(url)
+        if resp.status_code == 200:
+            result = get_json(resp)
+            data = result[response_key]
+            meta = result.get('markers')
+
+            next, prev = None, None
+
+            if meta:
+                prev = meta.get('prev')
+                next = meta.get('next')
+
+            l = [self.resource_class(self, res)
+                 for res in data]
+
+            return Page(l, prev, next, limit)
+        else:
+            self._raise_api_exception(resp)
+
     def _get(self, url, response_key=None):
         resp = self.api.get(url)
 
@@ -231,10 +251,25 @@ class APIException(Exception):
         self.error_message = error_message
 
 
-def get_query_string(search_opts):
-    if search_opts:
-        qparams = sorted(search_opts.items(), key=lambda x: x[0])
+def get_query_string(search_opts, limit=None, marker=None):
+    opts = {}
+    if marker is not None:
+        opts['marker'] = marker
+    if limit is not None:
+        opts['limit'] = limit
+    if search_opts is not None:
+        opts.update(search_opts)
+    if opts:
+        qparams = sorted(opts.items(), key=lambda x: x[0])
         query_string = "?%s" % parse.urlencode(qparams, doseq=True)
     else:
         query_string = ""
     return query_string
+
+
+class Page(list):
+    def __init__(self, l, prev, next, limit):
+        super(Page, self).__init__(l)
+        self.prev = prev
+        self.next = next
+        self.limit = limit
