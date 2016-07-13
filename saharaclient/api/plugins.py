@@ -49,6 +49,12 @@ class PluginManager(base.ResourceManager):
         return self._get('/plugins/%s/%s' % (plugin_name, hadoop_version),
                          'plugin')
 
+    def update(self, plugin_name, values):
+        """Update plugin and then return updated result to user
+
+        """
+        return self._patch("/plugins/%s" % plugin_name, values, 'plugin')
+
     def convert_to_cluster_template(self, plugin_name, hadoop_version,
                                     template_name, filecontent):
         """Convert to cluster template

@@ -13,15 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 from os import path
 import sys
 
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
+import six
 
 from saharaclient.osc.v1 import utils
+
+
+def _serialize_label_items(plugin):
+    labels = {}
+    pl_labels = plugin.get('plugin_labels', {})
+    for label, data in six.iteritems(pl_labels):
+        labels['plugin: %s' % label] = data['status']
+    vr_labels = plugin.get('version_labels', {})
+    for version, version_data in six.iteritems(vr_labels):
+        for label, data in six.iteritems(version_data):
+            labels[
+                'plugin version %s: %s' % (version, label)] = data['status']
+    labels = utils.prepare_data(labels, list(labels.keys()))
+    return sorted(labels.items())
 
 
 class ListPlugins(command.Lister):
@@ -98,20 +115,22 @@ class ShowPlugin(command.ShowOne):
                 processes[k] = osc_utils.format_list(v)
             data['required_image_tags'] = osc_utils.format_list(
                 data['required_image_tags'])
-
+            label_items = _serialize_label_items(data)
             data = utils.prepare_data(
                 data, ['required_image_tags', 'name', 'description', 'title'])
-
-            data = zip(*sorted(data.items()) + [('', ''), (
-                'Service:', 'Available processes:'), ('', '')] + sorted(
-                processes.items()))
+            data = self.dict2columns(data)
+            data = utils.extend_columns(data, label_items)
+            data = utils.extend_columns(
+                data, [('Service:', 'Available processes:')])
+            data = utils.extend_columns(
+                data, sorted(processes.items()))
         else:
             data = client.plugins.get(parsed_args.plugin).to_dict()
             data['versions'] = osc_utils.format_list(data['versions'])
+            items = _serialize_label_items(data)
             data = utils.prepare_data(
                 data, ['versions', 'name', 'description', 'title'])
-            data = self.dict2columns(data)
-
+            data = utils.extend_columns(self.dict2columns(data), items)
         return data
 
 
@@ -159,3 +178,41 @@ class GetPluginConfigs(command.Command):
                 '"%(plugin)s" plugin configs was saved in "%(file)s"'
                 'file' % {'plugin': parsed_args.plugin,
                           'file': parsed_args.file})
+
+
+class UpdatePlugin(command.ShowOne):
+    log = logging.getLogger(__name__ + ".UpdatePlugin")
+
+    def get_parser(self, prog_name):
+        parser = super(UpdatePlugin, self).get_parser(prog_name)
+        parser.add_argument(
+            "plugin",
+            metavar="<plugin>",
+            help="Name of the plugin to provide config information about",
+        )
+        parser.add_argument(
+            'json',
+            metavar="<json>",
+            help='JSON representation of the plugin update dictionary',
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)" % parsed_args)
+        client = self.app.client_manager.data_processing
+        blob = osc_utils.read_blob_file_contents(parsed_args.json)
+        try:
+            update_dict = json.loads(blob)
+        except ValueError as e:
+            raise exceptions.CommandError(
+                'An error occurred when reading '
+                'update dict from file %s: %s' % (parsed_args.json, e))
+        plugin = client.plugins.update(parsed_args.plugin, update_dict)
+        data = plugin.to_dict()
+        data['versions'] = osc_utils.format_list(data['versions'])
+        items = _serialize_label_items(data)
+        data = utils.prepare_data(
+            data, ['versions', 'name', 'description', 'title'])
+        data = utils.extend_columns(self.dict2columns(data), items)
+
+        return data

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import mock
 
 from saharaclient.api import plugins as api_plugins
@@ -28,7 +29,8 @@ PLUGIN_INFO = {'name': 'fake',
                'node_processes': {
                    'HDFS': ['datanode', 'namenode'],
                    'MapReduce': ['jobtracker', 'tasktracker']
-               }}
+               }, 'plugin_labels': {'enabled': {'status': True}},
+               'version_labels': {'0.1': {'enabled': {'status': True}}}}
 
 
 class TestPlugins(fakes.TestDataProcessing):
@@ -104,11 +106,13 @@ class TestShowPlugin(TestPlugins):
         self.plugins_mock.get.assert_called_once_with('fake')
 
         # Check that columns are correct
-        expected_columns = ('Description', 'Name', 'Title', 'Versions')
+        expected_columns = ('Description', 'Name', 'Title', 'Versions', '',
+                            'Plugin version 0.1: enabled', 'Plugin: enabled')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('Plugin for tests', 'fake', 'Fake Plugin', '0.1, 0.2')
+        expected_data = ('Plugin for tests', 'fake', 'Fake Plugin',
+                         '0.1, 0.2', '', True, True)
         self.assertEqual(expected_data, data)
 
     def test_plugin_version_show(self):
@@ -125,12 +129,15 @@ class TestShowPlugin(TestPlugins):
 
         # Check that columns are correct
         expected_columns = ('Description', 'Name', 'Required image tags',
-                            'Title', '', 'Service:', '', 'HDFS', 'MapReduce')
+                            'Title', '', 'Plugin version 0.1: enabled',
+                            'Plugin: enabled', '', 'Service:', '', 'HDFS',
+                            'MapReduce')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = ('Plugin for tests', 'fake', '0.1, fake',
-                         'Fake Plugin', '', 'Available processes:', '',
+                         'Fake Plugin', '', True, True, '',
+                         'Available processes:', '',
                          'datanode, namenode', 'jobtracker, tasktracker')
         self.assertEqual(expected_data, data)
 
@@ -188,3 +195,38 @@ class TestGetPluginConfigs(TestPlugins):
             self.assertEqual(PLUGIN_INFO, args_to_dump[0])
             # Check that data will be saved to the right file
             self.assertEqual('testfile', m_open.call_args[0][0])
+
+
+class TestUpdatePlugin(TestPlugins):
+    def setUp(self):
+        super(TestUpdatePlugin, self).setUp()
+        self.plugins_mock.update.return_value = api_plugins.Plugin(
+            None, PLUGIN_INFO)
+
+        # Command to test
+        self.cmd = osc_plugins.UpdatePlugin(self.app, None)
+
+    @mock.patch('osc_lib.utils.read_blob_file_contents')
+    def test_plugin_update(self, read):
+        arglist = ['fake', 'update.json']
+        verifylist = [('plugin', 'fake'), ('json', 'update.json')]
+        value = {'plugin_labels': {'enabled': {'status': True}}}
+        value = json.dumps(value)
+        read.return_value = value
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+
+        # Check that correct arguments were passed
+        self.plugins_mock.update.assert_called_once_with(
+            'fake', {'plugin_labels': {'enabled': {'status': True}}})
+
+        # Check that columns are correct
+        expected_columns = ('Description', 'Name', 'Title', 'Versions', '',
+                            'Plugin version 0.1: enabled', 'Plugin: enabled')
+        self.assertEqual(expected_columns, columns)
+
+        # Check that data is correct
+        expected_data = ('Plugin for tests', 'fake', 'Fake Plugin',
+                         '0.1, 0.2', '', True, True)
+        self.assertEqual(expected_data, data)

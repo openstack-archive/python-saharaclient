@@ -1,0 +1,4 @@
+---
+features:
+  - Plugins updates are supported now in saharaclient. Also
+    information about plugin labels is available for users.

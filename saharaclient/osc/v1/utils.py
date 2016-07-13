@@ -49,6 +49,14 @@ def prepare_data(data, fields):
     return new_data
 
 
+def unzip(data):
+    return zip(*data)
+
+
+def extend_columns(columns, items):
+    return unzip(list(unzip(columns)) + [('', '')] + items)
+
+
 def prepare_column_headers(columns, remap=None):
     remap = remap if remap else {}
     new_columns = []
