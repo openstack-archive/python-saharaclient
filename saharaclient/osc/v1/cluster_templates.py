@@ -25,7 +25,7 @@ from saharaclient.osc.v1 import utils
 
 CT_FIELDS = ['id', 'name', 'plugin_name', 'plugin_version', 'description',
              'node_groups', 'anti_affinity', 'use_autoconfig', 'is_default',
-             'is_protected', 'is_public']
+             'is_protected', 'is_public', 'domain_name']
 
 
 def _format_node_groups_list(node_groups):
@@ -132,6 +132,12 @@ class CreateClusterTemplate(command.ShowOne):
             metavar='<filename>',
             help='JSON representation of the cluster template configs'
         )
+        parser.add_argument(
+            '--domain-name',
+            metavar='<domain-name>',
+            help='Domain name for instances of this cluster template. This '
+                 'option is available if \'use_designate\' config is True'
+        )
         return parser
 
     def take_action(self, parsed_args):
@@ -191,7 +197,8 @@ class CreateClusterTemplate(command.ShowOne):
                 cluster_configs=configs,
                 shares=shares,
                 is_public=parsed_args.public,
-                is_protected=parsed_args.protected
+                is_protected=parsed_args.protected,
+                domain_name=parsed_args.domain_name
             ).to_dict()
 
         _format_ct_output(data)
@@ -424,6 +431,13 @@ class UpdateClusterTemplate(command.ShowOne):
             metavar='<filename>',
             help='JSON representation of the cluster template configs'
         )
+        parser.add_argument(
+            '--domain-name',
+            metavar='<domain-name>',
+            default=None,
+            help='Domain name for instances of this cluster template. This '
+                 'option is available if \'use_designate\' config is True'
+        )
         parser.set_defaults(is_public=None, is_protected=None,
                             use_autoconfig=None)
         return parser
@@ -481,7 +495,8 @@ class UpdateClusterTemplate(command.ShowOne):
                 cluster_configs=configs,
                 shares=shares,
                 is_public=parsed_args.is_public,
-                is_protected=parsed_args.is_protected
+                is_protected=parsed_args.is_protected,
+                domain_name=parsed_args.domain_name
             )
 
             data = client.cluster_templates.update(
