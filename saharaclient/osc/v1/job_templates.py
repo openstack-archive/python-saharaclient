@@ -26,8 +26,8 @@ from saharaclient.osc.v1 import utils
 JOB_TEMPLATE_FIELDS = ['name', 'id', 'type', 'mains', 'libs', 'description',
                        'is_public', 'is_protected']
 
-JOB_TYPES_CHOICES = ['Hive', 'Java', 'MapReduce', 'Storm', 'Pig', 'Shell',
-                     'MapReduce.Streaming', 'Spark']
+JOB_TYPES_CHOICES = ['Hive', 'Java', 'MapReduce', 'Storm', 'Storm.Pyleus',
+                     'Pig', 'Shell', 'MapReduce.Streaming', 'Spark']
 
 
 def _format_job_template_output(data):
