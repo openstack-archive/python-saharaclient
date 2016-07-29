@@ -100,10 +100,11 @@ class ClusterManager(base.ResourceManager):
         """
         return self._update('/clusters/%s' % cluster_id, scale_object)
 
-    def list(self, search_opts=None):
+    def list(self, search_opts=None, limit=None, marker=None):
         """Get a list of Clusters."""
-        query = base.get_query_string(search_opts)
-        return self._list('/clusters%s' % query, 'clusters')
+        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        url = "/clusters%s" % query
+        return self._page(url, 'clusters', limit)
 
     def get(self, cluster_id, show_progress=False):
         """Get information about a Cluster."""

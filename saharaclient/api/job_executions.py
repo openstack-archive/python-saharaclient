@@ -24,10 +24,11 @@ class JobExecutionsManager(base.ResourceManager):
     resource_class = JobExecution
     NotUpdated = base.NotUpdated()
 
-    def list(self, search_opts=None):
+    def list(self, search_opts=None, marker=None, limit=None):
         """Get a list of Job Executions."""
-        query = base.get_query_string(search_opts)
-        return self._list('/job-executions%s' % query, 'job_executions')
+        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        url = "/job-executions%s" % query
+        return self._page(url, 'job_executions', limit)
 
     def get(self, obj_id):
         """Get information about a Job Execution."""
