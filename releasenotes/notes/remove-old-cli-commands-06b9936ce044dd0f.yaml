@@ -1,0 +1,7 @@
+---
+prelude: >
+    Old CLI commands are removed. Please use OpenStackClient
+    instead.
+deprecations:
+  - Old CLI commands are removed. Please use OpenStackClient
+    instead.

@@ -2,7 +2,6 @@
 branch = True
 source = saharaclient
 omit =
- */openstack/common/*
  .tox/*
  saharaclient/tests/*
 
