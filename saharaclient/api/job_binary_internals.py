@@ -35,9 +35,11 @@ class JobBinaryInternalsManager(base.ResourceManager):
                             urlparse.quote(name.encode('utf-8')), data,
                             'job_binary_internal', dump_json=False)
 
-    def list(self, search_opts=None, limit=None, marker=None):
+    def list(self, search_opts=None, limit=None, marker=None,
+             sort_by=None, reverse=None):
         """Get a list of Job Binary Internals."""
-        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        query = base.get_query_string(search_opts, limit=limit, marker=marker,
+                                      sort_by=sort_by, reverse=reverse)
         url = "/job-binary-internals%s" % query
         return self._page(url, 'binaries', limit)
 

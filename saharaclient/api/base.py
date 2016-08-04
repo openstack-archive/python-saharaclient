@@ -251,12 +251,18 @@ class APIException(Exception):
         self.error_message = error_message
 
 
-def get_query_string(search_opts, limit=None, marker=None):
+def get_query_string(search_opts, limit=None, marker=None, sort_by=None,
+                     reverse=None):
     opts = {}
     if marker is not None:
         opts['marker'] = marker
     if limit is not None:
         opts['limit'] = limit
+    if sort_by is not None:
+        if reverse:
+            opts['sort_by'] = "-%s" % sort_by
+        else:
+            opts['sort_by'] = sort_by
     if search_opts is not None:
         opts.update(search_opts)
     if opts:

@@ -77,9 +77,11 @@ class ClusterTemplateManager(base.ResourceManager):
         return self._update('/cluster-templates/%s' % cluster_template_id,
                             data, 'cluster_template')
 
-    def list(self, search_opts=None, marker=None, limit=None):
+    def list(self, search_opts=None, marker=None,
+             limit=None, sort_by=None, reverse=None):
         """Get list of Cluster Templates."""
-        query = base.get_query_string(search_opts, marker=marker, limit=limit)
+        query = base.get_query_string(search_opts, marker=marker, limit=limit,
+                                      sort_by=sort_by, reverse=reverse)
         url = "/cluster-templates%s" % query
         return self._page(url, 'cluster_templates', limit)
 

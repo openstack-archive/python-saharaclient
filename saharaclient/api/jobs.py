@@ -38,9 +38,11 @@ class JobsManager(base.ResourceManager):
 
         return self._create('/jobs', data, 'job')
 
-    def list(self, search_opts=None, limit=None, marker=None):
+    def list(self, search_opts=None, limit=None,
+             marker=None, sort_by=None, reverse=None):
         """Get a list of Jobs."""
-        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        query = base.get_query_string(search_opts, limit=limit, marker=marker,
+                                      sort_by=sort_by, reverse=reverse)
         url = "/jobs%s" % query
         return self._page(url, 'jobs', limit)
 

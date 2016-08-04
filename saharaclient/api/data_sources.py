@@ -44,9 +44,11 @@ class DataSourceManager(base.ResourceManager):
 
         return self._create('/data-sources', data, 'data_source')
 
-    def list(self, search_opts=None, limit=None, marker=None):
+    def list(self, search_opts=None, limit=None, marker=None,
+             sort_by=None, reverse=None):
         """Get a list of Data Sources."""
-        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        query = base.get_query_string(search_opts, limit=limit, marker=marker,
+                                      sort_by=sort_by, reverse=reverse)
         url = "/data-sources%s" % query
         return self._page(url, 'data_sources', limit)
 
