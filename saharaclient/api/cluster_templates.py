@@ -27,7 +27,8 @@ class ClusterTemplateManager(base.ResourceManager):
     def create(self, name, plugin_name, hadoop_version, description=None,
                cluster_configs=None, node_groups=None, anti_affinity=None,
                net_id=None, default_image_id=None, use_autoconfig=None,
-               shares=None, is_public=None, is_protected=None):
+               shares=None, is_public=None, is_protected=None,
+               domain_name=None):
         """Create a Cluster Template."""
 
         data = {
@@ -46,7 +47,8 @@ class ClusterTemplateManager(base.ResourceManager):
                               use_autoconfig=use_autoconfig,
                               shares=shares,
                               is_public=is_public,
-                              is_protected=is_protected)
+                              is_protected=is_protected,
+                              domain_name=domain_name)
 
         return self._create('/cluster-templates', data, 'cluster_template')
 
@@ -56,7 +58,8 @@ class ClusterTemplateManager(base.ResourceManager):
                node_groups=NotUpdated, anti_affinity=NotUpdated,
                net_id=NotUpdated, default_image_id=NotUpdated,
                use_autoconfig=NotUpdated, shares=NotUpdated,
-               is_public=NotUpdated, is_protected=NotUpdated):
+               is_public=NotUpdated, is_protected=NotUpdated,
+               domain_name=NotUpdated):
         """Update a Cluster Template."""
 
         data = {}
@@ -72,7 +75,8 @@ class ClusterTemplateManager(base.ResourceManager):
                               use_autoconfig=use_autoconfig,
                               shares=shares,
                               is_public=is_public,
-                              is_protected=is_protected)
+                              is_protected=is_protected,
+                              domain_name=domain_name)
 
         return self._update('/cluster-templates/%s' % cluster_template_id,
                             data, 'cluster_template')

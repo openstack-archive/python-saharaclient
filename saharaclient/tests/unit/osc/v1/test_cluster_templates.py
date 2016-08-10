@@ -39,7 +39,8 @@ CT_INFO = {
     "id": "0647061f-ab98-4c89-84e0-30738ea55750",
     "anti_affinity": [],
     "name": "template",
-    "is_protected": False
+    "is_protected": False,
+    "domain_name": 'domain.org.'
 }
 
 
@@ -83,18 +84,20 @@ class TestCreateClusterTemplate(TestClusterTemplates):
                  'node_group_template_id':
                      'd29631fc-0fad-434b-80aa-7a3e9526f57c'}],
             plugin_name='fake', use_autoconfig=False, shares=None,
-            cluster_configs=None)
+            cluster_configs=None, domain_name=None)
 
     def test_ct_create_all_options(self):
         arglist = ['--name', 'template', '--node-groups', 'fakeng:2',
                    '--anti-affinity', 'datanode',
                    '--description', 'descr',
-                   '--autoconfig', '--public', '--protected']
+                   '--autoconfig', '--public', '--protected',
+                   '--domain-name', 'domain.org.']
 
         verifylist = [('name', 'template'),
                       ('node_groups', ['fakeng:2']),
                       ('description', 'descr'), ('autoconfig', True),
-                      ('public', True), ('protected', True)]
+                      ('public', True), ('protected', True),
+                      ('domain_name', 'domain.org.')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
@@ -108,16 +111,17 @@ class TestCreateClusterTemplate(TestClusterTemplates):
                  'node_group_template_id':
                      'd29631fc-0fad-434b-80aa-7a3e9526f57c'}],
             plugin_name='fake', use_autoconfig=True, shares=None,
-            cluster_configs=None)
+            cluster_configs=None, domain_name='domain.org.')
 
         # Check that columns are correct
-        expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
+        expected_columns = ('Anti affinity', 'Description',
+                            'Domain name', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
                             'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('', 'Cluster template for tests',
+        expected_data = ('', 'Cluster template for tests', 'domain.org.',
                          '0647061f-ab98-4c89-84e0-30738ea55750', False, False,
                          False, 'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)
@@ -209,14 +213,15 @@ class TestShowClusterTemplate(TestClusterTemplates):
         self.ct_mock.find_unique.assert_called_once_with(name='template')
 
         # Check that columns are correct
-        expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
+        expected_columns = ('Anti affinity', 'Description',
+                            'Domain name', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
                             'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
         expected_data = (
-            '', 'Cluster template for tests',
+            '', 'Cluster template for tests', 'domain.org.',
             '0647061f-ab98-4c89-84e0-30738ea55750', False, False, False,
             'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)
@@ -280,12 +285,13 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         arglist = ['template', '--name', 'template', '--node-groups',
                    'fakeng:2', '--anti-affinity', 'datanode',
                    '--description', 'descr', '--autoconfig-enable',
-                   '--public', '--protected']
+                   '--public', '--protected', '--domain-name', 'domain.org.']
 
         verifylist = [('cluster_template', 'template'), ('name', 'template'),
                       ('node_groups', ['fakeng:2']),
                       ('description', 'descr'), ('use_autoconfig', True),
-                      ('is_public', True), ('is_protected', True)]
+                      ('is_public', True), ('is_protected', True),
+                      ('domain_name', 'domain.org.')]
 
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
@@ -300,16 +306,17 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
                 {'count': 2, 'name': 'fakeng',
                  'node_group_template_id':
                      'd29631fc-0fad-434b-80aa-7a3e9526f57c'}],
-            plugin_name='fake', use_autoconfig=True)
+            plugin_name='fake', use_autoconfig=True, domain_name='domain.org.')
 
         # Check that columns are correct
-        expected_columns = ('Anti affinity', 'Description', 'Id', 'Is default',
+        expected_columns = ('Anti affinity', 'Description',
+                            'Domain name', 'Id', 'Is default',
                             'Is protected', 'Is public', 'Name', 'Node groups',
                             'Plugin name', 'Plugin version', 'Use autoconfig')
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('', 'Cluster template for tests',
+        expected_data = ('', 'Cluster template for tests', 'domain.org.',
                          '0647061f-ab98-4c89-84e0-30738ea55750', False, False,
                          False, 'template', 'fakeng:2', 'fake', '0.1', True)
         self.assertEqual(expected_data, data)

@@ -31,6 +31,7 @@ class ClusterTemplateTest(base.BaseTestCase):
             'count': 1
         },
         "use_autoconfig": False,
+        "domain_name": 'domain.org.'
     }
 
     update_json = {
@@ -46,6 +47,7 @@ class ClusterTemplateTest(base.BaseTestCase):
                 'count': 1
             },
             "use_autoconfig": True,
+            "domain_name": 'domain.org.'
         }
     }
 
@@ -112,6 +114,7 @@ class ClusterTemplateTest(base.BaseTestCase):
             net_id=getattr(resp, "neutron_management_network", None),
             default_image_id=getattr(resp, "default_image_id", None),
             use_autoconfig=True,
+            domain_name=getattr(resp, "domain_name", None)
         )
 
         self.assertIsInstance(updated, ct.ClusterTemplate)
@@ -130,7 +133,7 @@ class ClusterTemplateTest(base.BaseTestCase):
             'hadoop_version': None, 'is_protected': None, 'is_public': None,
             'name': None, 'net_id': None,
             'node_groups': None, 'plugin_name': None, 'shares': None,
-            'use_autoconfig': None}
+            'use_autoconfig': None, 'domain_name': None}
 
         req_json = unset_json.copy()
         req_json['neutron_management_network'] = req_json.pop('net_id')
