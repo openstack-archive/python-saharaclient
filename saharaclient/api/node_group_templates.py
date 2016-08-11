@@ -111,9 +111,11 @@ class NodeGroupTemplateManager(base.ResourceManager):
         return self._update('/node-group-templates/%s' % ng_template_id, data,
                             'node_group_template')
 
-    def list(self, search_opts=None, marker=None, limit=None):
+    def list(self, search_opts=None, marker=None,
+             limit=None, sort_by=None, reverse=None):
         """Get a list of Node Group Templates."""
-        query = base.get_query_string(search_opts, limit=limit, marker=marker)
+        query = base.get_query_string(search_opts, limit=limit, marker=marker,
+                                      sort_by=sort_by, reverse=reverse)
         url = "/node-group-templates%s" % query
         return self._page(url, 'node_group_templates', limit)
 
