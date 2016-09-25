@@ -154,7 +154,8 @@ class GetPluginConfigs(command.Command):
         parser.add_argument(
             '--file',
             metavar="<file>",
-            help='Destination file (defaults to plugin name)',
+            help="Destination file (defaults to a combination of "
+                 "plugin name and plugin version)",
         )
         return parser
 
@@ -163,21 +164,25 @@ class GetPluginConfigs(command.Command):
         client = self.app.client_manager.data_processing
 
         if not parsed_args.file:
-            parsed_args.file = parsed_args.plugin
-
-        data = client.plugins.get_version_details(
-            parsed_args.plugin, parsed_args.plugin_version).to_dict()
+            parsed_args.file = (parsed_args.plugin + '-' +
+                                parsed_args.plugin_version)
 
         if path.exists(parsed_args.file):
-            self.log.error('File "%s" already exists. Chose another one with '
-                           '--file argument.' % parsed_args.file)
+            msg = ('File "%s" already exists. Choose another one with '
+                   '--file argument.' % parsed_args.file)
+            raise exceptions.CommandError(msg)
         else:
+            data = client.plugins.get_version_details(
+                parsed_args.plugin, parsed_args.plugin_version).to_dict()
+
             with open(parsed_args.file, 'w') as f:
                 jsonutils.dump(data, f, indent=4)
             sys.stdout.write(
-                '"%(plugin)s" plugin configs was saved in "%(file)s"'
-                'file' % {'plugin': parsed_args.plugin,
-                          'file': parsed_args.file})
+                '"%(plugin)s" plugin "%(version)s" version configs '
+                'was saved in "%(file)s" file\n' % {
+                    'plugin': parsed_args.plugin,
+                    'version': parsed_args.plugin_version,
+                    'file': parsed_args.file})
 
 
 class UpdatePlugin(command.ShowOne):

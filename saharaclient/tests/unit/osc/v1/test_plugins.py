@@ -171,7 +171,7 @@ class TestGetPluginConfigs(TestPlugins):
 
             self.assertEqual(PLUGIN_INFO, args_to_dump[0])
             # Check that data will be saved to the right file
-            self.assertEqual('fake', m_open.call_args[0][0])
+            self.assertEqual('fake-0.1', m_open.call_args[0][0])
 
     @mock.patch('oslo_serialization.jsonutils.dump')
     def test_get_plugin_configs_specified_file(self, p_dump):
