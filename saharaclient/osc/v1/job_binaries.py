@@ -419,8 +419,9 @@ class DownloadJobBinary(command.Command):
         data = client.job_binaries.get_file(jb_id)
 
         if path.exists(parsed_args.file):
-            self.log.error('File "%s" already exists. Chose another one with '
-                           '--file argument.' % parsed_args.file)
+            msg = ('File "%s" already exists. Chose another one with '
+                   '--file argument.' % parsed_args.file)
+            raise exceptions.CommandError(msg)
         else:
             with open(parsed_args.file, 'w') as f:
                 f.write(data)
