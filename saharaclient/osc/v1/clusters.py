@@ -657,7 +657,7 @@ class VerificationUpdateCluster(command.ShowOne):
                 print_status = 'started'
             sys.stdout.write(
                 'Cluster "{cluster}" health verification has been '
-                '{status}.'.format(cluster=parsed_args.cluster,
-                                   status=print_status))
+                '{status}.\n'.format(cluster=parsed_args.cluster,
+                                     status=print_status))
 
             return {}, {}
