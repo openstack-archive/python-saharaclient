@@ -414,15 +414,15 @@ class DownloadJobBinary(command.Command):
         if not parsed_args.file:
             parsed_args.file = parsed_args.job_binary
 
-        jb_id = utils.get_resource_id(
-            client.job_binaries, parsed_args.job_binary)
-        data = client.job_binaries.get_file(jb_id)
-
         if path.exists(parsed_args.file):
             msg = ('File "%s" already exists. Chose another one with '
                    '--file argument.' % parsed_args.file)
             raise exceptions.CommandError(msg)
         else:
+            jb_id = utils.get_resource_id(
+                client.job_binaries, parsed_args.job_binary)
+            data = client.job_binaries.get_file(jb_id)
+
             with open(parsed_args.file, 'w') as f:
                 f.write(data)
             sys.stdout.write(
