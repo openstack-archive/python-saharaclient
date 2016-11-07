@@ -25,7 +25,7 @@ from oslo_serialization import jsonutils
 from saharaclient.osc.v1 import utils
 
 CLUSTER_FIELDS = ["cluster_template_id", "use_autoconfig", "user_keypair_id",
-                  "status", "image", "node_groups", "id",
+                  "status", "image", "node_groups", "id", "info",
                   "anti_affinity", "plugin_version", "name", "is_transient",
                   "is_protected", "description", "is_public",
                   "neutron_management_network", "plugin_name"]
