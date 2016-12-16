@@ -15,14 +15,11 @@
 
 import copy
 import json
-import logging
 
 import six
 from six.moves.urllib import parse
 
 from saharaclient._i18n import _
-
-LOG = logging.getLogger(__name__)
 
 
 class Resource(object):
