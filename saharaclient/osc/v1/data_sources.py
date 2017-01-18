@@ -50,18 +50,18 @@ class CreateDataSource(command.ShowOne):
         parser.add_argument(
             '--url',
             metavar="<url>",
-            help="Url for the data source [REQUIRED]",
+            help="URL for the data source [REQUIRED]",
             required=True
         )
         parser.add_argument(
             '--username',
             metavar="<username>",
-            help="Username for accessing the data source url"
+            help="Username for accessing the data source URL"
         )
         parser.add_argument(
             '--password',
             metavar="<password>",
-            help="Password for accessing the data source url"
+            help="Password for accessing the data source URL"
         )
         parser.add_argument(
             '--description',
@@ -228,17 +228,17 @@ class UpdateDataSource(command.ShowOne):
         parser.add_argument(
             '--url',
             metavar="<url>",
-            help="Url for the data source"
+            help="URL for the data source"
         )
         parser.add_argument(
             '--username',
             metavar="<username>",
-            help="Username for accessing the data source url"
+            help="Username for accessing the data source URL"
         )
         parser.add_argument(
             '--password',
             metavar="<password>",
-            help="Password for accessing the data source url"
+            help="Password for accessing the data source URL"
         )
         parser.add_argument(
             '--description',
