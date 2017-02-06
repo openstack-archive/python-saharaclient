@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import saharaclient
 from saharaclient.api import base as api_base
 from saharaclient.tests.unit import base
 
@@ -26,3 +27,6 @@ class BaseTest(base.BaseTestCase):
 
         res = api_base.get_query_string({'opt1': 2}, limit=None, marker=3)
         self.assertEqual("?marker=3&opt1=2", res)
+
+    def test_module_version(self):
+        self.assertTrue(hasattr(saharaclient, '__version__'))
