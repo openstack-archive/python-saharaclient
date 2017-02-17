@@ -29,7 +29,7 @@ class JobBinaryInternalsManager(base.ResourceManager):
     def create(self, name, data):
         """Create a Job Binary Internal.
 
-        :param str data: raw data ot script text
+        :param str data: raw data of script text
         """
         return self._update('/job-binary-internals/%s' %
                             urlparse.quote(name.encode('utf-8')), data,
