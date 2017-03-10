@@ -142,7 +142,7 @@ class CreateCluster(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         network_client = self.app.client_manager.network
 
@@ -203,7 +203,7 @@ class CreateCluster(command.ShowOne):
                     if not osc_utils.wait_for_status(
                             client.clusters.get, cluster.id):
                         self.log.error(
-                            'Error occurred during cluster creation: %s' %
+                            'Error occurred during cluster creation: %s',
                             data['id'])
 
             data = {}
@@ -215,7 +215,7 @@ class CreateCluster(command.ShowOne):
                 if not osc_utils.wait_for_status(
                         client.clusters.get, data['id']):
                     self.log.error(
-                        'Error occurred during cluster creation: %s' %
+                        'Error occurred during cluster creation: %s',
                         data['id'])
                 data = client.clusters.get(data['id']).to_dict()
             _format_cluster_output(data)
@@ -259,7 +259,7 @@ class ListClusters(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         search_opts = {}
         if parsed_args.plugin:
@@ -328,7 +328,7 @@ class ShowCluster(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         kwargs = {}
@@ -395,7 +395,7 @@ class DeleteCluster(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         clusters = []
         for cluster in parsed_args.cluster:
@@ -479,7 +479,7 @@ class UpdateCluster(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         cluster_id = utils.get_resource_id(
@@ -547,7 +547,7 @@ class ScaleCluster(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         cluster = utils.get_resource(
@@ -639,7 +639,7 @@ class VerificationUpdateCluster(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         if parsed_args.show:

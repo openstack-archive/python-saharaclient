@@ -57,7 +57,7 @@ class ListImages(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         search_opts = {'tags': parsed_args.tags} if parsed_args.tags else {}
 
@@ -105,7 +105,7 @@ class ShowImage(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         data = utils.get_resource(
@@ -145,7 +145,7 @@ class RegisterImage(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         image_client = self.app.client_manager.image
 
@@ -180,7 +180,7 @@ class UnregisterImage(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         for image in parsed_args.image:
             image_id = utils.get_resource_id(client.images, image)
@@ -212,7 +212,7 @@ class SetImageTags(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         image_id = utils.get_resource_id(client.images, parsed_args.image)
@@ -247,7 +247,7 @@ class AddImageTags(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         image = utils.get_resource(client.images, parsed_args.image)
@@ -290,7 +290,7 @@ class RemoveImageTags(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         image = utils.get_resource(client.images, parsed_args.image)

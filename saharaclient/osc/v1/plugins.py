@@ -58,7 +58,7 @@ class ListPlugins(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         data = client.plugins.list()
 
@@ -103,7 +103,7 @@ class ShowPlugin(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         if parsed_args.plugin_version:
@@ -160,7 +160,7 @@ class GetPluginConfigs(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         if not parsed_args.file:
@@ -203,7 +203,7 @@ class UpdatePlugin(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         blob = osc_utils.read_blob_file_contents(parsed_args.json)
         try:

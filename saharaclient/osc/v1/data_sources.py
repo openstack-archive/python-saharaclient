@@ -83,7 +83,7 @@ class CreateDataSource(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         description = parsed_args.description or ''
@@ -124,7 +124,7 @@ class ListDataSources(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         search_opts = {'type': parsed_args.type} if parsed_args.type else {}
 
@@ -163,7 +163,7 @@ class ShowDataSource(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         data = utils.get_resource(
@@ -190,7 +190,7 @@ class DeleteDataSource(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         for ds in parsed_args.data_source:
             data_source_id = utils.get_resource_id(
@@ -276,7 +276,7 @@ class UpdateDataSource(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         credentials = {}

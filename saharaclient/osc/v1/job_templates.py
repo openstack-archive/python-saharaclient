@@ -100,7 +100,7 @@ class CreateJobTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         if parsed_args.json:
@@ -168,7 +168,7 @@ class ListJobTemplates(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         search_opts = {'type': parsed_args.type} if parsed_args.type else {}
 
@@ -211,7 +211,7 @@ class ShowJobTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         data = utils.get_resource(
@@ -240,7 +240,7 @@ class DeleteJobTemplate(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         for jt in parsed_args.job_template:
             jt_id = utils.get_resource_id(client.jobs, jt)
@@ -306,7 +306,7 @@ class UpdateJobTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         jt_id = utils.get_resource_id(

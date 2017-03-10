@@ -141,7 +141,7 @@ class CreateClusterTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         if parsed_args.json:
@@ -243,7 +243,7 @@ class ListClusterTemplates(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         search_opts = {}
         if parsed_args.plugin:
@@ -295,7 +295,7 @@ class ShowClusterTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         data = utils.get_resource(
@@ -324,7 +324,7 @@ class DeleteClusterTemplate(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         for ct in parsed_args.cluster_template:
             ct_id = utils.get_resource_id(client.cluster_templates, ct)
@@ -443,7 +443,7 @@ class UpdateClusterTemplate(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)" % parsed_args)
+        self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
         ct_id = utils.get_resource_id(
