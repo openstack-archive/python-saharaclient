@@ -89,9 +89,52 @@ class TestExecuteJob(TestJobs):
 
         # Check that correct arguments were passed
         self.je_mock.create.assert_called_once_with(
+            cluster_id='cluster_id', configs={}, input_id=None,
+            interface=None, is_protected=False, is_public=False,
+            job_id='job_id', output_id=None)
+
+    def test_job_execute_with_input_output_option(self):
+        arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
+                   '--input', 'input', '--output', 'output']
+        verifylist = [('job_template', 'job-template'), ('cluster', 'cluster'),
+                      ('input', 'input'), ('output', 'output')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.je_mock.create.assert_called_once_with(
             cluster_id='cluster_id', configs={}, input_id='ds_id',
             interface=None, is_protected=False, is_public=False,
             job_id='job_id', output_id='ds_id')
+
+        # without option --output
+        arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
+                   '--input', 'input']
+        verifylist = [('job_template', 'job-template'), ('cluster', 'cluster'),
+                      ('input', 'input')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.je_mock.create.assert_called_with(
+            cluster_id='cluster_id', configs={}, input_id='ds_id',
+            interface=None, is_protected=False, is_public=False,
+            job_id='job_id', output_id=None)
+
+        # without options --output and --input
+        arglist = ['--job-template', 'job-template', '--cluster', 'cluster']
+        verifylist = [('job_template', 'job-template'), ('cluster', 'cluster')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.je_mock.create.assert_called_with(
+            cluster_id='cluster_id', configs={}, input_id=None,
+            interface=None, is_protected=False, is_public=False,
+            job_id='job_id', output_id=None)
 
     def test_job_execute_all_options(self):
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
