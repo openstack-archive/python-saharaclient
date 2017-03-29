@@ -174,11 +174,16 @@ class ExecuteJob(command.ShowOne):
                 client.jobs, parsed_args.job_template)
             cluster_id = utils.get_resource_id(
                 client.clusters, parsed_args.cluster)
-
-            input_id = utils.get_resource_id(
-                client.data_sources, parsed_args.input)
-            output_id = utils.get_resource_id(
-                client.data_sources, parsed_args.output)
+            if parsed_args.input not in [None, "", "None"]:
+                input_id = utils.get_resource_id(
+                    client.data_sources, parsed_args.input)
+            else:
+                input_id = None
+            if parsed_args.output not in [None, "", "None"]:
+                output_id = utils.get_resource_id(
+                    client.data_sources, parsed_args.output)
+            else:
+                output_id = None
 
             data = client.job_executions.create(
                 job_id=jt_id, cluster_id=cluster_id, input_id=input_id,
