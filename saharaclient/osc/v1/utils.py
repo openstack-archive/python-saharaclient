@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import six
 import time
 
 from oslo_utils import timeutils
@@ -53,7 +52,7 @@ def get_resource_id(manager, name_or_id):
 
 
 def create_dict_from_kwargs(**kwargs):
-    return dict((k, v) for (k, v) in six.iteritems(kwargs) if v is not None)
+    return dict((k, v) for (k, v) in kwargs.items() if v is not None)
 
 
 def prepare_data(data, fields):

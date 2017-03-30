@@ -22,7 +22,6 @@ from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
-import six
 
 from saharaclient.osc.v1 import utils
 
@@ -30,11 +29,11 @@ from saharaclient.osc.v1 import utils
 def _serialize_label_items(plugin):
     labels = {}
     pl_labels = plugin.get('plugin_labels', {})
-    for label, data in six.iteritems(pl_labels):
+    for label, data in pl_labels.items():
         labels['plugin: %s' % label] = data['status']
     vr_labels = plugin.get('version_labels', {})
-    for version, version_data in six.iteritems(vr_labels):
-        for label, data in six.iteritems(version_data):
+    for version, version_data in vr_labels.items():
+        for label, data in version_data.items():
             labels[
                 'plugin version %s: %s' % (version, label)] = data['status']
     labels = utils.prepare_data(labels, list(labels.keys()))

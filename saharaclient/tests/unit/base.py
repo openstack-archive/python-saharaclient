@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import six
 import testtools
 
 from saharaclient.api import base
@@ -33,7 +32,7 @@ class BaseTestCase(testtools.TestCase):
                                     input_auth_token=self.TOKEN)
 
     def assertFields(self, body, obj):
-        for key, value in six.iteritems(body):
+        for key, value in body.items():
             self.assertEqual(value, getattr(obj, key))
 
 

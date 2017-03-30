@@ -16,7 +16,6 @@
 import copy
 import json
 
-import six
 from six.moves.urllib import parse
 
 from saharaclient._i18n import _
@@ -34,12 +33,12 @@ class Resource(object):
         self._add_details(info)
 
     def _set_defaults(self, info):
-        for name, value in six.iteritems(self.defaults):
+        for name, value in self.defaults.items():
             if name not in info:
                 info[name] = value
 
     def _add_details(self, info):
-        for (k, v) in six.iteritems(info):
+        for (k, v) in info.items():
             try:
                 setattr(self, k, v)
                 self._info[k] = v
@@ -87,12 +86,12 @@ class ResourceManager(object):
         return found[0]
 
     def _copy_if_defined(self, data, **kwargs):
-        for var_name, var_value in six.iteritems(kwargs):
+        for var_name, var_value in kwargs.items():
             if var_value is not None:
                 data[var_name] = var_value
 
     def _copy_if_updated(self, data, **kwargs):
-        for var_name, var_value in six.iteritems(kwargs):
+        for var_name, var_value in kwargs.items():
             if not isinstance(var_value, NotUpdated):
                 data[var_name] = var_value
 
