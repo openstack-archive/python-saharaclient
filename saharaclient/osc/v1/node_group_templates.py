@@ -171,7 +171,7 @@ class CreateNodeGroupTemplate(command.ShowOne):
             action='store_true',
             default=False,
             help='Make the node group template public (Visible from other '
-                 'tenants)',
+                 'projects)',
         )
         parser.add_argument(
             '--protected',
@@ -569,14 +569,14 @@ class UpdateNodeGroupTemplate(command.ShowOne):
             '--public',
             action='store_true',
             help='Make the node group template public '
-                 '(Visible from other tenants)',
+                 '(Visible from other projects)',
             dest='is_public'
         )
         public.add_argument(
             '--private',
             action='store_false',
             help='Make the node group template private '
-                 '(Visible only from this tenant)',
+                 '(Visible only from this project)',
             dest='is_public'
         )
         protected = parser.add_mutually_exclusive_group()

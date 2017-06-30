@@ -250,7 +250,7 @@ class UpdateDataSource(command.ShowOne):
             '--public',
             action='store_true',
             dest='is_public',
-            help='Make the data source public (Visible from other tenants)',
+            help='Make the data source public (Visible from other projects)',
         )
         public.add_argument(
             '--private',

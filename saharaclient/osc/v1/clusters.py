@@ -111,7 +111,7 @@ class CreateCluster(command.ShowOne):
             '--public',
             action='store_true',
             default=False,
-            help='Make the cluster public (Visible from other tenants)',
+            help='Make the cluster public (Visible from other projects)',
         )
         parser.add_argument(
             '--protected',
@@ -451,7 +451,7 @@ class UpdateCluster(command.ShowOne):
             '--public',
             action='store_true',
             help='Make the cluster public '
-                 '(Visible from other tenants)',
+                 '(Visible from other projects)',
             dest='is_public'
         )
         public.add_argument(

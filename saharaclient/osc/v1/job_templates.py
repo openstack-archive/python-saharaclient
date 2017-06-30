@@ -278,7 +278,7 @@ class UpdateJobTemplate(command.ShowOne):
             '--public',
             action='store_true',
             help='Make the job template public '
-                 '(Visible from other tenants)',
+                 '(Visible from other projects)',
             dest='is_public'
         )
         public.add_argument(

@@ -340,13 +340,13 @@ class UpdateJob(command.ShowOne):
         public.add_argument(
             '--public',
             action='store_true',
-            help='Make the job public (Visible from other tenants)',
+            help='Make the job public (Visible from other projects)',
             dest='is_public'
         )
         public.add_argument(
             '--private',
             action='store_false',
-            help='Make the job private (Visible only from this tenant)',
+            help='Make the job private (Visible only from this project)',
             dest='is_public'
         )
         protected = parser.add_mutually_exclusive_group()
