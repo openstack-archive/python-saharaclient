@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 from os import path
 import sys
 
@@ -206,7 +205,7 @@ class UpdatePlugin(command.ShowOne):
         client = self.app.client_manager.data_processing
         blob = osc_utils.read_blob_file_contents(parsed_args.json)
         try:
-            update_dict = json.loads(blob)
+            update_dict = jsonutils.loads(blob)
         except ValueError as e:
             raise exceptions.CommandError(
                 'An error occurred when reading '

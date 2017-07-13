@@ -15,7 +15,7 @@
 from saharaclient.api import node_group_templates as ng
 from saharaclient.tests.unit import base
 
-import json
+from oslo_serialization import jsonutils as json
 
 
 class NodeGroupTemplateTest(base.BaseTestCase):

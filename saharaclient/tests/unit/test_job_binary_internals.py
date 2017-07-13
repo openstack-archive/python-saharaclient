@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
+from oslo_serialization import jsonutils as json
 
 from saharaclient.api import job_binary_internals as jbi
 from saharaclient.tests.unit import base

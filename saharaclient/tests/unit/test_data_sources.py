@@ -15,7 +15,7 @@
 from saharaclient.api import data_sources as ds
 from saharaclient.tests.unit import base
 
-import json
+from oslo_serialization import jsonutils as json
 
 
 class DataSourceTest(base.BaseTestCase):

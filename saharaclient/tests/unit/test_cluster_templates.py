@@ -15,7 +15,7 @@
 from saharaclient.api import cluster_templates as ct
 from saharaclient.tests.unit import base
 
-import json
+from oslo_serialization import jsonutils as json
 
 
 class ClusterTemplateTest(base.BaseTestCase):

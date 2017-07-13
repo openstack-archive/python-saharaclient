@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import mock
-
 from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import jobs as api_j

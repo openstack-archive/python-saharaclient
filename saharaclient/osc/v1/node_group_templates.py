@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import sys
 
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
+from oslo_serialization import jsonutils as json
 
 from saharaclient.osc.v1 import utils
 

@@ -52,7 +52,7 @@ def get_resource_id(manager, name_or_id):
 
 
 def create_dict_from_kwargs(**kwargs):
-    return dict((k, v) for (k, v) in kwargs.items() if v is not None)
+    return {k: v for (k, v) in kwargs.items() if v is not None}
 
 
 def prepare_data(data, fields):
