@@ -40,10 +40,14 @@ sys.path.append(os.path.abspath('../bin'))
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo',
               'sphinx.ext.coverage',
-              'sphinx.ext.viewcode', 'ext.cli']
+              'sphinx.ext.viewcode', 'ext.cli',
+              'openstackdocstheme']
 
-if not on_rtd:
-    extensions.append('oslosphinx')
+# openstackdocstheme options
+repository_name = 'openstack/python-saharaclient'
+bug_project = 'python-saharaclient'
+bug_tag = 'doc'
+html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -110,6 +114,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+html_theme = 'openstackdocs'
 
 if on_rtd:
     html_theme_path = ['.']
@@ -143,17 +148,6 @@ html_title = 'Sahara Client'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
-
-# If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
-# using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
-git_cmd = ["git", "log", "--pretty=format:'%ad, commit %h'", "--date=local",
-           "-n1"]
-try:
-    html_last_updated_fmt = subprocess.check_output(git_cmd).decode('utf-8')
-except Exception:
-    warnings.warn('Cannot get last updated time from git repository. '
-                  'Not setting "html_last_updated_fmt".')
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
