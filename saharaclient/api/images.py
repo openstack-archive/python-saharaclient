@@ -48,9 +48,11 @@ class ImageManager(base.ResourceManager):
     def update_tags(self, image_id, new_tags):
         """Update an Image tags.
 
-        :param list new_tags: list of tags that will replace currently
-                              assigned tags
+        :param new_tags: list of tags that will replace currently
+                              assigned  tags
         """
+        # Do not add :param list in the docstring above until this is solved:
+        # https://github.com/sphinx-doc/sphinx/issues/2549
         old_image = self.get(image_id)
 
         old_tags = frozenset(old_image.tags)
