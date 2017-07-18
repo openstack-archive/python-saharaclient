@@ -25,7 +25,7 @@ Getting started
   * Sign `OpenStack Individual Contributor License Agreement <https://review.openstack.org/#/settings/agreements>`_
   * Make sure that your email is listed in `identities <https://review.openstack.org/#/settings/web-identities>`_
 
-* Subscribe to code-reviews. Go to your settings on http://review.openstack.org
+* Subscribe to code-reviews. Go to your settings on https://review.openstack.org
 
   * Go to ``watched projects``
   * Add ``openstack/sahara``, ``openstack/sahara-dashboard``,
@@ -40,7 +40,7 @@ How to stay in touch with the community?
   `OpenStack development mail-list <http://lists.openstack.org/cgi-bin/mailman/listinfo/openstack-dev>`_.
   Prefix mail subject with ``[Sahara]``
 
-* Join ``#openstack-sahara`` IRC channel on `freenode <http://freenode.net/>`_
+* Join ``#openstack-sahara`` IRC channel on `freenode <https://freenode.net/>`_
 
 * Join public weekly meetings on *Thursdays at 18:00 UTC* on
   ``#openstack-meeting-alt`` IRC channel
@@ -53,9 +53,9 @@ How to send your first patch on review?
 
 * Checkout Sahara code from `Github <https://github.com/openstack/sahara>`_
 
-* Carefully read https://wiki.openstack.org/wiki/Gerrit_Workflow
+* Carefully read https://docs.openstack.org/infra/manual/developers.html#development-workflow
 
-  * Pay special attention to https://wiki.openstack.org/wiki/Gerrit_Workflow#Committing_Changes
+  * Pay special attention to https://docs.openstack.org/infra/manual/developers.html#committing-a-change
 
 * Apply and commit your changes
 

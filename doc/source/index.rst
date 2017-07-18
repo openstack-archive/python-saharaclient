@@ -13,7 +13,7 @@ You may want to read the `OpenStack Sahara Docs`__  -- the overview, at
 least -- to get an idea of the concepts. By understanding the concepts
 this library should make more sense.
 
- __ http://docs.openstack.org/developer/sahara/
+ __ https://docs.openstack.org/sahara/latest/
 
 Contents:
 
@@ -35,8 +35,8 @@ using `gerrit`_.
 
 .. _review.o.o: https://review.openstack.org
 .. _github: https://github.com/openstack/python-saharaclient
-.. _git.o.o: http://git.openstack.org/cgit/openstack/python-saharaclient
+.. _git.o.o: https://git.openstack.org/cgit/openstack/python-saharaclient
 .. _launchpad: https://launchpad.net/sahara
 .. _launchpad_client: https://launchpad.net/python-saharaclient
-.. _gerrit: http://docs.openstack.org/infra/manual/developers.html#development-workflow
+.. _gerrit: https://docs.openstack.org/infra/manual/developers.html#development-workflow
 

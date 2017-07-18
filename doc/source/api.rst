@@ -49,7 +49,7 @@ Session object should be used for this purpose. For example:
 
 For more information about Keystone Sessions, see `Using Sessions`_.
 
-.. _Using Sessions: http://docs.openstack.org/developer/python-keystoneclient/using-sessions.html
+.. _Using Sessions: https://docs.openstack.org/python-keystoneclient/latest/using-sessions.html
 
 Sahara endpoint discovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~

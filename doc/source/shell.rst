@@ -24,13 +24,13 @@ For more information about commands and their parameters you can refer to
 :doc:`the Sahara CLI commands <cli>`.
 
 For more information about abilities and features of OpenStackClient CLI you
-can refer to `OpenStackClient documentation <http://docs.openstack.org/developer/python-openstackclient/>`_
+can refer to `OpenStackClient documentation <https://docs.openstack.org/python-openstackclient/latest/>`_
 
 Configuration
 -------------
 
 The CLI is configured via environment variables and command-line options which
-are described in http://docs.openstack.org/developer/python-openstackclient/authentication.html.
+are described in https://docs.openstack.org/python-openstackclient/latest/cli/authentication.html.
 
 Authentication using username/password is most commonly used and can be
 provided with environment variables:

@@ -2,8 +2,8 @@
 Team and repository tags
 ========================
 
-.. image:: http://governance.openstack.org/badges/python-saharaclient.svg
-    :target: http://governance.openstack.org/reference/tags/index.html
+.. image:: https://governance.openstack.org/tc/badges/python-saharaclient.svg
+    :target: https://governance.openstack.org/tc/reference/tags/index.html
 
 .. Change things from this point on
 
@@ -25,9 +25,9 @@ Python bindings and CLI in `Docs`_.
 
 Development takes place via the usual OpenStack processes as outlined
 in the `developer guide
-<http://docs.openstack.org/infra/manual/developers.html>`_.
+<https://docs.openstack.org/infra/manual/developers.html>`_.
 
-.. _Docs: http://docs.openstack.org/developer/python-saharaclient/
+.. _Docs: https://docs.openstack.org/python-saharaclient/latest/
 
 * License: Apache License, Version 2.0
 * `PyPi`_ - package installation
@@ -40,11 +40,11 @@ in the `developer guide
 * `How to Contribute`_
 
 .. _PyPi: https://pypi.python.org/pypi/python-saharaclient
-.. _Online Documentation: http://docs.openstack.org/developer/python-saharaclient
+.. _Online Documentation: https://docs.openstack.org/python-saharaclient/latest/
 .. _Launchpad project: https://launchpad.net/python-saharaclient
 .. _Blueprints: https://blueprints.launchpad.net/python-saharaclient
 .. _Bugs: https://bugs.launchpad.net/python-saharaclient
 .. _Source: https://git.openstack.org/cgit/openstack/python-saharaclient
-.. _How to Contribute: http://docs.openstack.org/infra/manual/developers.html
-.. _Specs: http://specs.openstack.org/openstack/sahara-specs/
+.. _How to Contribute: https://docs.openstack.org/infra/manual/developers.html
+.. _Specs: https://specs.openstack.org/openstack/sahara-specs/
 
