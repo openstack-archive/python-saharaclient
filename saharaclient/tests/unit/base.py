@@ -35,6 +35,11 @@ class BaseTestCase(testtools.TestCase):
         for key, value in body.items():
             self.assertEqual(value, getattr(obj, key))
 
+    def assertDictsEqual(self, dict1, dict2):
+        self.assertEqual(len(dict1), len(dict2))
+        for key in dict1:
+            self.assertEqual(dict1[key], dict2[key])
+
 
 class TestResource(base.Resource):
     resource_name = 'Test Resource'
