@@ -15,7 +15,7 @@
 from saharaclient.api import job_binaries as jb
 from saharaclient.tests.unit import base
 
-import json
+from oslo_serialization import jsonutils as json
 
 
 class JobBinaryTest(base.BaseTestCase):

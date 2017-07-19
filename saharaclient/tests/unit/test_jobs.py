@@ -15,7 +15,7 @@
 from saharaclient.api import jobs
 from saharaclient.tests.unit import base
 
-import json
+from oslo_serialization import jsonutils as json
 
 
 class JobTest(base.BaseTestCase):

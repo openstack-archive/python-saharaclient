@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import sys
 
 from osc_lib.command import command
@@ -149,7 +148,7 @@ class CreateCluster(command.ShowOne):
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
             try:
-                template = json.loads(blob)
+                template = jsonutils.loads(blob)
             except ValueError as e:
                 raise exceptions.CommandError(
                     'An error occurred when reading '
@@ -489,7 +488,7 @@ class UpdateCluster(command.ShowOne):
         if parsed_args.shares:
             blob = osc_utils.read_blob_file_contents(parsed_args.shares)
             try:
-                shares = json.loads(blob)
+                shares = jsonutils.loads(blob)
             except ValueError as e:
                 raise exceptions.CommandError(
                     'An error occurred when reading '
@@ -556,7 +555,7 @@ class ScaleCluster(command.ShowOne):
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
             try:
-                template = json.loads(blob)
+                template = jsonutils.loads(blob)
             except ValueError as e:
                 raise exceptions.CommandError(
                     'An error occurred when reading '

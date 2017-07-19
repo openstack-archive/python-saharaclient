@@ -18,7 +18,6 @@ import mock
 from saharaclient.api import job_types as api_jt
 from saharaclient.api import jobs as api_j
 from saharaclient.osc.v1 import job_types as osc_jt
-
 from saharaclient.tests.unit.osc.v1 import fakes
 
 JOB_TYPE_INFO = {

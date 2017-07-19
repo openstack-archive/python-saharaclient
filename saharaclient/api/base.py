@@ -14,8 +14,8 @@
 # limitations under the License.
 
 import copy
-import json
 
+from oslo_serialization import jsonutils
 from six.moves.urllib import parse
 
 from saharaclient._i18n import _
@@ -236,7 +236,7 @@ def get_json(response):
     if callable(json_field_or_function):
         return response.json()
     else:
-        return json.loads(response.content)
+        return jsonutils.loads(response.content)
 
 
 class APIException(Exception):

@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import mock
-
 from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import cluster_templates as api_ct

@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import mock
+from oslo_serialization import jsonutils as json
 
 from saharaclient.api import plugins as api_plugins
 from saharaclient.osc.v1 import plugins as osc_plugins

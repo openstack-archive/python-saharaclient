@@ -17,8 +17,8 @@ import mock
 
 from saharaclient.api import job_binaries as api_jb
 from saharaclient.osc.v1 import job_binaries as osc_jb
-
 from saharaclient.tests.unit.osc.v1 import fakes
+
 
 JOB_BINARY_INFO = {
     "name": 'job-binary',
