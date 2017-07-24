@@ -768,3 +768,38 @@ class ImportNodeGroupTemplate(command.ShowOne):
         data = utils.prepare_data(data, NGT_FIELDS)
 
         return self.dict2columns(data)
+
+
+class ExportNodeGroupTemplate(command.Command):
+    """Export node group template to JSON"""
+
+    log = logging.getLogger(__name__ + ".ExportNodeGroupTemplate")
+
+    def get_parser(self, prog_name):
+        parser = super(ExportNodeGroupTemplate, self).get_parser(prog_name)
+        parser.add_argument(
+            "node_group_template",
+            metavar="<node-group-template>",
+            help="Name or id of the node group template to export",
+        )
+        parser.add_argument(
+            "--file",
+            metavar="<filename>",
+            help="Name of the file node group template should be exported to."
+                 "If not provided, print to stdout",
+        )
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+        ngt_id = utils.get_resource_id(
+            client.node_group_templates, parsed_args.node_group_template)
+        response = client.node_group_templates.export(ngt_id)
+        result = json.dumps(response._info, indent=4)+"\n"
+        if parsed_args.file:
+            with open(parsed_args.file, "w+") as file:
+                file.write(result)
+        else:
+            sys.stdout.write(result)
