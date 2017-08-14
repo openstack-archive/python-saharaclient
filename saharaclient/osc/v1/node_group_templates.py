@@ -265,7 +265,9 @@ class CreateNodeGroupTemplate(command.ShowOne):
                 is_protected=parsed_args.protected,
                 node_configs=configs,
                 shares=shares,
-                volumes_availability_zone=parsed_args.volumes_availability_zone
+                volumes_availability_zone=(
+                    parsed_args.volumes_availability_zone),
+                volume_mount_prefix=parsed_args.volumes_mount_prefix
             ).to_dict()
 
         _format_ngt_output(data)
@@ -679,7 +681,9 @@ class UpdateNodeGroupTemplate(command.ShowOne):
                 is_protected=parsed_args.is_protected,
                 node_configs=configs,
                 shares=shares,
-                volumes_availability_zone=parsed_args.volumes_availability_zone
+                volumes_availability_zone=(
+                    parsed_args.volumes_availability_zone),
+                volume_mount_prefix=parsed_args.volumes_mount_prefix
             )
 
             data = client.node_group_templates.update(

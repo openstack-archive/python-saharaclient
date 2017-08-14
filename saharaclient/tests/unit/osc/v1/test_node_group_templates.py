@@ -98,7 +98,7 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             volume_local_to_instance=False,
             volume_type=None, volumes_availability_zone=None,
             volumes_per_node=None, volumes_size=None, shares=None,
-            node_configs=None)
+            node_configs=None, volume_mount_prefix=None)
 
     def test_ngt_create_all_options(self):
         arglist = ['--name', 'template', '--plugin', 'fake',
@@ -144,7 +144,8 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             plugin_name='fake', security_groups=['secgr'], use_autoconfig=True,
             volume_local_to_instance=True, volume_type='type',
             volumes_availability_zone='vavzone', volumes_per_node=2,
-            volumes_size=2, shares=None, node_configs=None)
+            volumes_size=2, shares=None, node_configs=None,
+            volume_mount_prefix='/volume/asd')
 
         # Check that columns are correct
         expected_columns = (
@@ -370,7 +371,7 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             plugin_name='fake', security_groups=['secgr'], use_autoconfig=True,
             volume_local_to_instance=True, volume_type='type',
             volumes_availability_zone='vavzone', volumes_per_node=2,
-            volumes_size=2)
+            volumes_size=2, volume_mount_prefix='/volume/asd')
 
         # Check that columns are correct
         expected_columns = (
