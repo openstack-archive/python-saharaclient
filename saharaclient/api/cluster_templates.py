@@ -97,3 +97,7 @@ class ClusterTemplateManager(base.ResourceManager):
     def delete(self, cluster_template_id):
         """Delete a Cluster Template."""
         self._delete('/cluster-templates/%s' % cluster_template_id)
+
+    def export(self, cluster_template_id):
+        """Export a Cluster Template."""
+        return self._get('/cluster-templates/%s/export' % cluster_template_id)
