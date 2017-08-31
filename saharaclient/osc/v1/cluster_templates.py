@@ -506,3 +506,85 @@ class UpdateClusterTemplate(command.ShowOne):
         data = utils.prepare_data(data, CT_FIELDS)
 
         return self.dict2columns(data)
+
+
+class ImportClusterTemplate(command.ShowOne):
+    """Imports node group template"""
+
+    log = logging.getLogger(__name__ + ".ImportClusterTemplate")
+
+    def get_parser(self, prog_name):
+        parser = super(ImportClusterTemplate, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'json',
+            metavar="<json>",
+            help="JSON containing cluster template",
+        )
+        parser.add_argument(
+            '--name',
+            metavar="<name>",
+            help="Name of the cluster template",
+        )
+        parser.add_argument(
+            '--default-image-id',
+            metavar="<default_image_id>",
+            help="Default image ID to be used",
+        )
+        parser.add_argument(
+            '--node-groups',
+            metavar="<node-group:instances_count>",
+            nargs="+",
+            required=True,
+            help="List of the node groups(names or IDs) and numbers of "
+                 "instances for each one of them"
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        if (not parsed_args.node_groups):
+            raise exceptions.CommandError('--node_groups should be specified')
+
+        blob = osc_utils.read_blob_file_contents(parsed_args.json)
+        try:
+            template = json.loads(blob)
+        except ValueError as e:
+            raise exceptions.CommandError(
+                'An error occurred when reading '
+                'template from file %s: %s' % (parsed_args.json, e))
+
+        if parsed_args.default_image_id:
+            template['cluster_template']['default_image_id'] = (
+                parsed_args.default_image_id)
+        else:
+            template['cluster_template']['default_image_id'] = None
+
+        if parsed_args.name:
+            template['cluster_template']['name'] = parsed_args.name
+
+        if 'neutron_management_network' in template['cluster_template']:
+            template['cluster_template']['net_id'] = (
+                template['cluster_template'].pop('neutron_management_network'))
+
+        plugin, plugin_version, node_groups = _configure_node_groups(
+            parsed_args.node_groups, client)
+        if (('plugin_version' in template['cluster_template'] and
+                template['cluster_template']['plugin_version'] !=
+                plugin_version) or
+                ('plugin' in template['cluster_template'] and
+                    template['cluster_template']['plugin'] != plugin)):
+            raise exceptions.CommandError(
+                'Plugin of plugin version do not match between template '
+                'and given node group templates')
+        template['cluster_template']['node_groups'] = node_groups
+
+        data = client.cluster_templates.create(
+            **template['cluster_template']).to_dict()
+
+        _format_ct_output(data)
+        data = utils.prepare_data(data, CT_FIELDS)
+
+        return self.dict2columns(data)
