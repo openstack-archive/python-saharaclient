@@ -127,3 +127,7 @@ class NodeGroupTemplateManager(base.ResourceManager):
     def delete(self, ng_template_id):
         """Delete a Node Group Template."""
         self._delete('/node-group-templates/%s' % ng_template_id)
+
+    def export(self, ng_template_id):
+        """Export a Node Group Template."""
+        return self._get('/node-group-templates/%s/export' % ng_template_id)
