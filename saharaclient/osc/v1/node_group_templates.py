@@ -693,3 +693,78 @@ class UpdateNodeGroupTemplate(command.ShowOne):
         data = utils.prepare_data(data, NGT_FIELDS)
 
         return self.dict2columns(data)
+
+
+class ImportNodeGroupTemplate(command.ShowOne):
+    """Imports node group template"""
+
+    log = logging.getLogger(__name__ + ".ImportNodeGroupTemplate")
+
+    def get_parser(self, prog_name):
+        parser = super(ImportNodeGroupTemplate, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'json',
+            metavar="<json>",
+            help="JSON containing node group template",
+        )
+        parser.add_argument(
+            '--name',
+            metavar="<name>",
+            help="Name of the node group template",
+        )
+        parser.add_argument(
+            '--security_groups',
+            metavar="<security_groups>",
+            help="Security groups of the node group template"
+        )
+        parser.add_argument(
+            '--floating_ip_pool',
+            metavar="<floating_ip_pool>",
+            help="Floating IP pool of the node group template"
+        )
+        parser.add_argument(
+            '--image_id',
+            metavar="<image_id>",
+            required=True,
+            help="Image ID of the node group template",
+        )
+        parser.add_argument(
+            '--flavor_id',
+            metavar="<flavor_id>",
+            required=True,
+            help="Flavor ID of the node group template",
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+        if (not parsed_args.image_id or
+                not parsed_args.flavor_id):
+            raise exceptions.CommandError(
+                'At least --image_id and --flavor_id should be specified')
+        blob = osc_utils.read_blob_file_contents(parsed_args.json)
+        try:
+            template = json.loads(blob)
+        except ValueError as e:
+            raise exceptions.CommandError(
+                'An error occurred when reading '
+                'template from file %s: %s' % (parsed_args.json, e))
+        template['node_group_template']['floating_ip_pool'] = (
+            parsed_args.floating_ip_pool)
+        template['node_group_template']['image_id'] = (
+            parsed_args.image_id)
+        template['node_group_template']['flavor_id'] = (
+            parsed_args.flavor_id)
+        template['node_group_template']['security_groups'] = (
+            parsed_args.security_groups)
+        if parsed_args.name:
+            template['node_group_template']['name'] = parsed_args.name
+        data = client.node_group_templates.create(
+            **template['node_group_template']).to_dict()
+
+        _format_ngt_output(data)
+        data = utils.prepare_data(data, NGT_FIELDS)
+
+        return self.dict2columns(data)
