@@ -33,7 +33,6 @@ AUTHORS
 cover
 doc/html
 doc/source/apidoc
-doc/source/api
 doc/build
 *.log
 # Files created by releasenotes build
