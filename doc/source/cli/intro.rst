@@ -1,5 +1,5 @@
-Sahara CLI
-==========
+Introduction
+============
 
 The Sahara shell utility now is part of the OpenStackClient, so all
 shell commands take the following form:
@@ -21,7 +21,7 @@ To get detailed help for the command you can run:
     $ openstack help dataprocessing <command>
 
 For more information about commands and their parameters you can refer to
-:doc:`the Sahara CLI commands <cli>`.
+:doc:`the Sahara CLI commands <reference>`.
 
 For more information about abilities and features of OpenStackClient CLI you
 can refer to `OpenStackClient documentation <https://docs.openstack.org/python-openstackclient/latest/>`_

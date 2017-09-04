@@ -1,5 +1,5 @@
-Sahara CLI Commands
-===================
+CLI Reference
+=============
 
 The following commands are currently supported by the Sahara CLI:
 

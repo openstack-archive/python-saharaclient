@@ -1,5 +1,5 @@
-Sahara Client
-=============
+Python Sahara client
+====================
 
 Overview
 --------
