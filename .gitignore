@@ -17,6 +17,7 @@ pip-log.txt
 Thumbs.db
 .venv
 .idea
+.stestr
 out
 target
 *.iml
