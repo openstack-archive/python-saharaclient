@@ -561,7 +561,7 @@ class ScaleCluster(command.ShowOne):
                     'An error occurred when reading '
                     'template from file %s: %s' % (parsed_args.json, e))
 
-            data = client.clusters.scale(cluster.id, template).to_dict()
+            data = client.clusters.scale(cluster.id, template).cluster
         else:
             scale_object = {
                 "add_node_groups": [],
@@ -601,7 +601,7 @@ class ScaleCluster(command.ShowOne):
                 self.log.error(
                     'Error occurred during cluster scaling: %s' %
                     cluster.id)
-            data = client.clusters.get(cluster.id).to_dict()
+            data = client.clusters.get(cluster.id).cluster
 
         _format_cluster_output(data)
         data = utils.prepare_data(data, CLUSTER_FIELDS)
