@@ -25,7 +25,14 @@ class JobBinariesManager(base.ResourceManager):
 
     def create(self, name, url, description=None, extra=None, is_public=None,
                is_protected=None):
-        """Create a Job Binary."""
+        """Create a Job Binary.
+
+        :param dict extra: authentication info needed for some job binaries,
+            containing the keys `username` and `password` for job binary in
+            Swift or the keys `accesskey`, `secretkey`, and `endpoint` for job
+            binary in S3
+
+        """
         data = {
             "name": name,
             "url": url
@@ -73,7 +80,9 @@ class JobBinariesManager(base.ResourceManager):
         * url
         * is_public
         * is_protected
-        * extra - dict with `user` and `password` keyword arguments
+        * extra - dict with the keys `username` and `password` for job binary
+          in Swift, or with the keys `accesskey`, `secretkey`, and `endpoint`
+          for job binary in S3
         """
         return self._update(
             '/job-binaries/%s' % job_binary_id, data, 'job_binary')
