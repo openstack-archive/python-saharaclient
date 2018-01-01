@@ -14,6 +14,8 @@
 # limitations under the License.
 
 import mock
+from osc_lib.tests import utils as osc_u
+import testtools
 
 from saharaclient.api import job_binaries as api_jb
 from saharaclient.osc.v1 import job_binaries as osc_jb
@@ -95,6 +97,14 @@ class TestCreateJobBinary(TestJobBinaries):
                 is_public=False, name='job-binary', url='internal-db://jbi_id')
 
             self.jbi_mock.create.assert_called_once_with('job-binary', '')
+
+    def test_job_binary_create_mutual_exclusion(self):
+        arglist = ['job-binary', '--name', 'job-binary', '--access-key', 'ak',
+                   '--secret-key', 'sk', '--url', 's3://abc/def',
+                   '--password', 'pw']
+
+        with testtools.ExpectedException(osc_u.ParserException):
+            self.check_parser(self.cmd, arglist, mock.Mock())
 
 
 class TestListJobBinaries(TestJobBinaries):
@@ -277,6 +287,14 @@ class TestUpdateJobBinary(TestJobBinaries):
         # Check that correct arguments were passed
         self.jb_mock.update.assert_called_once_with(
             'jb_id', {})
+
+    def test_job_binary_update_mutual_exclusion(self):
+        arglist = ['job-binary', '--name', 'job-binary', '--access-key', 'ak',
+                   '--secret-key', 'sk', '--url', 's3://abc/def',
+                   '--password', 'pw']
+
+        with testtools.ExpectedException(osc_u.ParserException):
+            self.check_parser(self.cmd, arglist, mock.Mock())
 
 
 class TestDownloadJobBinary(TestJobBinaries):
