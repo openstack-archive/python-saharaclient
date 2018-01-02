@@ -28,8 +28,8 @@ class JobBinariesManager(base.ResourceManager):
         """Create a Job Binary.
 
         :param dict extra: authentication info needed for some job binaries,
-            containing the keys `username` and `password` for job binary in
-            Swift or the keys `accesskey`, `secretkey`, and `endpoint` for job
+            containing the keys `user` and `password` for job binary in Swift
+            or the keys `accesskey`, `secretkey`, and `endpoint` for job
             binary in S3
 
         """
@@ -80,7 +80,7 @@ class JobBinariesManager(base.ResourceManager):
         * url
         * is_public
         * is_protected
-        * extra - dict with the keys `username` and `password` for job binary
+        * extra - dict with the keys `user` and `password` for job binary
           in Swift, or with the keys `accesskey`, `secretkey`, and `endpoint`
           for job binary in S3
         """
