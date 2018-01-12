@@ -21,7 +21,7 @@ class Image(base.Resource):
     defaults = {'description': ''}
 
 
-class ImageManager(base.ResourceManager):
+class _ImageManager(base.ResourceManager):
     resource_class = Image
 
     def list(self, search_opts=None):
@@ -45,6 +45,8 @@ class ImageManager(base.ResourceManager):
 
         return self._post('/images/%s' % image_id, data)
 
+
+class ImageManagerV1(_ImageManager):
     def update_tags(self, image_id, new_tags):
         """Update an Image tags.
 
@@ -72,3 +74,18 @@ class ImageManager(base.ResourceManager):
                                          {'tags': to_remove}, 'image')
 
         return remove_response or add_response or self.get(image_id)
+
+
+class ImageManagerV2(_ImageManager):
+    def get_tags(self, image_id):
+        return self._get('/images/%s/tags' % image_id)
+
+    def update_tags(self, image_id, new_tags):
+        return self._update('/images/%s/tags' % image_id,
+                            {'tags': new_tags})
+
+    def delete_tags(self, image_id):
+        return self._delete('/images/%s/tags' % image_id)
+
+# NOTE(jfreud): keep this around for backwards compatibility
+ImageManager = ImageManagerV1

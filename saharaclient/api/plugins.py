@@ -28,7 +28,7 @@ class Plugin(base.Resource):
         self.id = self.name
 
 
-class PluginManager(base.ResourceManager):
+class _PluginManager(base.ResourceManager):
     resource_class = Plugin
 
     def list(self, search_opts=None):
@@ -55,6 +55,8 @@ class PluginManager(base.ResourceManager):
         """
         return self._patch("/plugins/%s" % plugin_name, values, 'plugin')
 
+
+class PluginManagerV1(_PluginManager):
     def convert_to_cluster_template(self, plugin_name, hadoop_version,
                                     template_name, filecontent):
         """Convert to cluster template
@@ -73,3 +75,17 @@ class PluginManager(base.ResourceManager):
                                (plugin_name, hadoop_version))
         else:
             return base.get_json(resp)['cluster_template']
+
+
+class PluginManagerV2(_PluginManager):
+    def get_version_details(self, plugin_name, plugin_version):
+        """Get version details
+
+        Get the list of Services and Service Parameters for a specified
+        Plugin and Plugin Version.
+        """
+        return self._get('/plugins/%s/%s' % (plugin_name, plugin_version),
+                         'plugin')
+
+# NOTE(jfreud): keep this around for backwards compatibility
+PluginManager = PluginManagerV1

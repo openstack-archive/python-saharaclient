@@ -20,8 +20,9 @@ class JobBinaries(base.Resource):
     resource_name = 'Job Binary'
 
 
-class JobBinariesManager(base.ResourceManager):
+class JobBinariesManagerV1(base.ResourceManager):
     resource_class = JobBinaries
+    version = 1.1
 
     def create(self, name, url, description=None, extra=None, is_public=None,
                is_protected=None):
@@ -84,5 +85,19 @@ class JobBinariesManager(base.ResourceManager):
           in Swift, or with the keys `accesskey`, `secretkey`, and `endpoint`
           for job binary in S3
         """
-        return self._update(
+
+        if self.version >= 2:
+            UPDATE_FUNC = self._patch
+        else:
+            UPDATE_FUNC = self._update
+
+        return UPDATE_FUNC(
             '/job-binaries/%s' % job_binary_id, data, 'job_binary')
+
+
+class JobBinariesManagerV2(JobBinariesManagerV1):
+    version = 2
+
+
+# NOTE(jfreud): keep this around for backwards compatibility
+JobBinariesManager = JobBinariesManagerV1

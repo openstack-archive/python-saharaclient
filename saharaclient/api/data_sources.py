@@ -20,8 +20,9 @@ class DataSources(base.Resource):
     resource_name = 'Data Source'
 
 
-class DataSourceManager(base.ResourceManager):
+class DataSourceManagerV1(base.ResourceManager):
     resource_class = DataSources
+    version = 1.1
 
     def create(self, name, description, data_source_type,
                url, credential_user=None, credential_pass=None,
@@ -76,5 +77,18 @@ class DataSourceManager(base.ResourceManager):
         * is_protected
         * credentials - dict with `user` and `password` keyword arguments
         """
-        return self._update('/data-sources/%s' % data_source_id,
-                            update_data)
+
+        if self.version >= 2:
+            UPDATE_FUNC = self._patch
+        else:
+            UPDATE_FUNC = self._update
+
+        return UPDATE_FUNC('/data-sources/%s' % data_source_id,
+                           update_data)
+
+
+class DataSourceManagerV2(DataSourceManagerV1):
+    version = 2
+
+# NOTE(jfreud): keep this around for backwards compatibility
+DataSourceManager = DataSourceManagerV1

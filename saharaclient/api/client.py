@@ -16,7 +16,6 @@
 import warnings
 
 from keystoneauth1 import adapter
-from keystoneauth1 import exceptions
 from keystoneauth1.identity import v2
 from keystoneauth1.identity import v3
 from keystoneauth1 import session as keystone_session
@@ -33,6 +32,8 @@ from saharaclient.api import job_types
 from saharaclient.api import jobs
 from saharaclient.api import node_group_templates
 from saharaclient.api import plugins
+from saharaclient.api.v2 import job_templates
+from saharaclient.api.v2 import jobs as jobs_v2
 
 
 USER_AGENT = 'python-saharaclient'
@@ -42,11 +43,15 @@ class HTTPClient(adapter.Adapter):
 
     def request(self, *args, **kwargs):
         kwargs.setdefault('raise_exc', False)
+        kwargs.setdefault('allow', {'allow_experimental': True})
         return super(HTTPClient, self).request(*args, **kwargs)
 
 
 class Client(object):
-    """Client for the OpenStack Data Processing v1 API.
+
+    _api_version = '1.1'
+
+    """Client for the OpenStack Data Processing API.
 
         :param str username: Username for Keystone authentication.
         :param str api_key: Password for Keystone authentication.
@@ -101,16 +106,6 @@ class Client(object):
         if not auth:
             auth = session.auth
 
-        # NOTE(Toan): bug #1512801. If sahara_url is provided, it does not
-        # matter if service_type is orthographically correct or not.
-        # Only find Sahara service_type and endpoint in Keystone catalog
-        # if sahara_url is not provided.
-        if not sahara_url:
-            service_type = self._determine_service_type(session,
-                                                        auth,
-                                                        service_type,
-                                                        endpoint_type)
-
         kwargs['user_agent'] = USER_AGENT
         kwargs.setdefault('interface', endpoint_type)
         kwargs.setdefault('endpoint_override', sahara_url)
@@ -119,22 +114,25 @@ class Client(object):
                             auth=auth,
                             service_type=service_type,
                             region_name=region_name,
+                            version=self._api_version,
                             **kwargs)
 
-        self.clusters = clusters.ClusterManager(client)
+        self._register_managers(client)
+
+    def _register_managers(self, client):
+        self.clusters = clusters.ClusterManagerV1(client)
         self.cluster_templates = (
-            cluster_templates.ClusterTemplateManager(client)
+            cluster_templates.ClusterTemplateManagerV1(client)
         )
         self.node_group_templates = (
-            node_group_templates.NodeGroupTemplateManager(client)
+            node_group_templates.NodeGroupTemplateManagerV1(client)
         )
-        self.plugins = plugins.PluginManager(client)
-        self.images = images.ImageManager(client)
-
-        self.data_sources = data_sources.DataSourceManager(client)
-        self.jobs = jobs.JobsManager(client)
+        self.plugins = plugins.PluginManagerV1(client)
+        self.images = images.ImageManagerV1(client)
+        self.data_sources = data_sources.DataSourceManagerV1(client)
+        self.jobs = jobs.JobsManagerV1(client)
         self.job_executions = job_executions.JobExecutionsManager(client)
-        self.job_binaries = job_binaries.JobBinariesManager(client)
+        self.job_binaries = job_binaries.JobBinariesManagerV1(client)
         self.job_binary_internals = (
             job_binary_internals.JobBinaryInternalsManager(client)
         )
@@ -162,27 +160,23 @@ class Client(object):
                                project_name=project_name,
                                project_domain_id='default')
 
-    @staticmethod
-    def _determine_service_type(session, auth, service_type, interface):
-        """Check a catalog for data-processing or data_processing"""
 
-        # NOTE(jamielennox): calling get_endpoint forces an auth on
-        # initialization which is required for backwards compatibility. It
-        # also allows us to reset the service type if not in the catalog.
-        for st in (service_type, service_type.replace('-', '_')):
-            try:
-                url = auth.get_endpoint(session,
-                                        service_type=st,
-                                        interface=interface)
-            except exceptions.Unauthorized:
-                raise RuntimeError("Not Authorized")
-            except exceptions.EndpointNotFound:
-                # NOTE(jamielennox): bug #1428447. This should not be
-                # raised, instead None should be returned. Handle in case
-                # it changes in the future
-                url = None
+class ClientV2(Client):
 
-            if url:
-                return st
+    _api_version = '2'
 
-        raise RuntimeError("Could not find Sahara endpoint in catalog")
+    def _register_managers(self, client):
+        self.clusters = clusters.ClusterManagerV2(client)
+        self.cluster_templates = (
+            cluster_templates.ClusterTemplateManagerV2(client)
+        )
+        self.node_group_templates = (
+            node_group_templates.NodeGroupTemplateManagerV2(client)
+        )
+        self.plugins = plugins.PluginManagerV2(client)
+        self.images = images.ImageManagerV2(client)
+        self.data_sources = data_sources.DataSourceManagerV2(client)
+        self.job_templates = job_templates.JobTemplatesManagerV2(client)
+        self.jobs = jobs_v2.JobsManagerV2(client)
+        self.job_binaries = job_binaries.JobBinariesManagerV2(client)
+        self.job_types = job_types.JobTypesManager(client)

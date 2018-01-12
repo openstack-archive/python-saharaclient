@@ -29,6 +29,7 @@ def get_client_class(version):
     version_map = {
         '1.0': 'saharaclient.api.client.Client',
         '1.1': 'saharaclient.api.client.Client',
+        '2': 'saharaclient.api.client.ClientV2',
     }
     try:
         client_path = version_map[str(version)]

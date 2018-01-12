@@ -22,7 +22,7 @@ class Cluster(base.Resource):
     resource_name = 'Cluster'
 
 
-class ClusterManager(base.ResourceManager):
+class ClusterManagerV1(base.ResourceManager):
     resource_class = Cluster
     NotUpdated = base.NotUpdated()
 
@@ -40,6 +40,17 @@ class ClusterManager(base.ResourceManager):
             'plugin_name': plugin_name,
             'hadoop_version': hadoop_version,
         }
+
+        return self._do_create(data, cluster_template_id, default_image_id,
+                               is_transient, description, cluster_configs,
+                               node_groups, user_keypair_id, anti_affinity,
+                               net_id, count, use_autoconfig, shares,
+                               is_public, is_protected)
+
+    def _do_create(self, data, cluster_template_id, default_image_id,
+                   is_transient, description, cluster_configs, node_groups,
+                   user_keypair_id, anti_affinity, net_id, count,
+                   use_autoconfig, shares, is_public, is_protected):
 
         # Checking if count is greater than 1, otherwise we set it to None
         # so the created dict in the _copy_if_defined method does not contain
@@ -136,3 +147,69 @@ class ClusterManager(base.ResourceManager):
         """Start a verification for a Cluster."""
         data = {'verification': {'status': status}}
         return self._patch("/clusters/%s" % cluster_id, data)
+
+
+class ClusterManagerV2(ClusterManagerV1):
+
+    def create(self, name, plugin_name, plugin_version,
+               cluster_template_id=None, default_image_id=None,
+               is_transient=None, description=None, cluster_configs=None,
+               node_groups=None, user_keypair_id=None,
+               anti_affinity=None, net_id=None, count=None,
+               use_autoconfig=None, shares=None,
+               is_public=None, is_protected=None):
+        """Launch a Cluster."""
+
+        data = {
+            'name': name,
+            'plugin_name': plugin_name,
+            'plugin_version': plugin_version,
+        }
+
+        return self._do_create(data, cluster_template_id, default_image_id,
+                               is_transient, description, cluster_configs,
+                               node_groups, user_keypair_id, anti_affinity,
+                               net_id, count, use_autoconfig, shares,
+                               is_public, is_protected)
+
+    def scale(self, cluster_id, scale_object):
+        """Scale an existing Cluster.
+
+        :param scale_object: dict that describes scaling operation
+
+        :Example:
+
+        The following `scale_object` can be used to change the number of
+        instances in the node group (optionally specifiying which instances to
+        delete) or add instances of a new node group to an existing cluster:
+
+        .. sourcecode:: json
+
+            {
+                "add_node_groups": [
+                    {
+                        "count": 3,
+                        "name": "new_ng",
+                        "node_group_template_id": "ngt_id"
+                    }
+                ],
+                "resize_node_groups": [
+                    {
+                        "count": 2,
+                        "name": "old_ng",
+                        "instances": ["instance_id1", "instance_id2"]
+                    }
+                ]
+            }
+
+        """
+        return self._update('/clusters/%s' % cluster_id, scale_object)
+
+    def force_delete(self, cluster_id):
+        """Force Delete a Cluster."""
+        data = {'force': True}
+        self._delete('/clusters/%s' % cluster_id, data)
+
+
+# NOTE(jfreud): keep this around for backwards compatibility
+ClusterManager = ClusterManagerV1

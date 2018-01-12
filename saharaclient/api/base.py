@@ -120,7 +120,7 @@ class ResourceManager(object):
 
         resp = self.api.put(url, **kwargs)
 
-        if resp.status_code != 202:
+        if resp.status_code not in [200, 202]:
             self._raise_api_exception(resp)
         if response_key is not None:
             data = get_json(resp)[response_key]
@@ -206,8 +206,12 @@ class ResourceManager(object):
         else:
             self._raise_api_exception(resp)
 
-    def _delete(self, url):
-        resp = self.api.delete(url)
+    def _delete(self, url, data=None):
+        if data is not None:
+            kwargs = {'json': data}
+            resp = self.api.delete(url, **kwargs)
+        else:
+            resp = self.api.delete(url)
 
         if resp.status_code != 204:
             self._raise_api_exception(resp)
