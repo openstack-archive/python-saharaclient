@@ -60,10 +60,16 @@ class CreateJobBinary(command.ShowOne):
             metavar="<description>",
             help="Description of the job binary"
         )
-        parser.add_argument(
+        username = parser.add_mutually_exclusive_group()
+        username.add_argument(
             '--username',
             metavar='<username>',
             help='Username for accessing the job binary URL',
+        )
+        username.add_argument(
+            '--access-key',
+            metavar='<accesskey>',
+            help='S3 access key for accessing the job binary URL',
         )
         password = parser.add_mutually_exclusive_group()
         password.add_argument(
@@ -72,10 +78,27 @@ class CreateJobBinary(command.ShowOne):
             help='Password for accessing the job binary URL',
         )
         password.add_argument(
+            '--secret-key',
+            metavar='<secretkey>',
+            help='S3 secret key for accessing the job binary URL',
+        )
+        password.add_argument(
             '--password-prompt',
             dest="password_prompt",
             action="store_true",
             help='Prompt interactively for password',
+        )
+        password.add_argument(
+            '--secret-key-prompt',
+            dest="secret_key_prompt",
+            action="store_true",
+            help='Prompt interactively for S3 secret key',
+        )
+        parser.add_argument(
+            '--s3-endpoint',
+            metavar='<endpoint>',
+            help='S3 endpoint for accessing the job binary URL (ignored if '
+                 'binary not in S3',
         )
         parser.add_argument(
             '--public',
@@ -122,20 +145,47 @@ class CreateJobBinary(command.ShowOne):
                 parsed_args.password = osc_utils.get_password(
                     self.app.stdin, confirm=False)
 
+            if parsed_args.secret_key_prompt:
+                parsed_args.secret_key = osc_utils.get_password(
+                    self.app.stdin, confirm=False)
+
+            if not parsed_args.password:
+                parsed_args.password = parsed_args.secret_key
+
+            if not parsed_args.username:
+                parsed_args.username = parsed_args.access_key
+
             if parsed_args.password and not parsed_args.username:
                 raise exceptions.CommandError(
-                    'Username via --username should be provided with password')
+                    'Username via --username, or S3 access key via '
+                    '--access-key should be provided with password')
 
             if parsed_args.username and not parsed_args.password:
                 raise exceptions.CommandError(
-                    'Password should be provided via --password or entered '
-                    'interactively with --password-prompt')
+                    'Password should be provided via --password or '
+                    '--secret-key, or entered interactively with '
+                    '--password-prompt or --secret-key-prompt')
 
             if parsed_args.password and parsed_args.username:
-                extra = {
-                    'user': parsed_args.username,
-                    'password': parsed_args.password
-                }
+                if not parsed_args.url:
+                    raise exceptions.CommandError(
+                        'URL must be provided via --url')
+                if parsed_args.url.startswith('s3'):
+                    if not parsed_args.s3_endpoint:
+                        raise exceptions.CommandError(
+                            'S3 job binaries need an endpoint provided via '
+                            '--s3-endpoint')
+                    extra = {
+                        'accesskey': parsed_args.username,
+                        'secretkey': parsed_args.password,
+                        'endpoint': parsed_args.s3_endpoint,
+                    }
+
+                else:
+                    extra = {
+                        'user': parsed_args.username,
+                        'password': parsed_args.password
+                    }
             else:
                 extra = None
 
@@ -290,10 +340,16 @@ class UpdateJobBinary(command.ShowOne):
             metavar="<description>",
             help='Description of the job binary'
         )
-        parser.add_argument(
+        username = parser.add_mutually_exclusive_group()
+        username.add_argument(
             '--username',
             metavar='<username>',
             help='Username for accessing the job binary URL',
+        )
+        username.add_argument(
+            '--access-key',
+            metavar='<accesskey>',
+            help='S3 access key for accessing the job binary URL',
         )
         password = parser.add_mutually_exclusive_group()
         password.add_argument(
@@ -302,10 +358,27 @@ class UpdateJobBinary(command.ShowOne):
             help='Password for accessing the job binary URL',
         )
         password.add_argument(
+            '--secret-key',
+            metavar='<secretkey>',
+            help='S3 secret key for accessing the job binary URL',
+        )
+        password.add_argument(
             '--password-prompt',
             dest="password_prompt",
             action="store_true",
             help='Prompt interactively for password',
+        )
+        password.add_argument(
+            '--secret-key-prompt',
+            dest="secret_key_prompt",
+            action="store_true",
+            help='Prompt interactively for S3 secret key',
+        )
+        parser.add_argument(
+            '--s3-endpoint',
+            metavar='<endpoint>',
+            help='S3 endpoint for accessing the job binary URL (ignored if '
+                 'binary not in S3',
         )
         public = parser.add_mutually_exclusive_group()
         public.add_argument(
@@ -365,12 +438,21 @@ class UpdateJobBinary(command.ShowOne):
             if parsed_args.password_prompt:
                 parsed_args.password = osc_utils.get_password(
                     self.app.stdin, confirm=False)
+            if parsed_args.secret_key_prompt:
+                parsed_args.secret_key = osc_utils.get_password(
+                    self.app.stdin, confirm=False)
 
             extra = {}
             if parsed_args.password:
                 extra['password'] = parsed_args.password
             if parsed_args.username:
                 extra['user'] = parsed_args.username
+            if parsed_args.access_key:
+                extra['accesskey'] = parsed_args.access_key
+            if parsed_args.secret_key:
+                extra['secretkey'] = parsed_args.secret_key
+            if parsed_args.s3_endpoint:
+                extra['endpoint'] = parsed_args.s3_endpoint
             if not extra:
                 extra = None
 
