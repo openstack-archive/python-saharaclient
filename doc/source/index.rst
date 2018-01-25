@@ -21,6 +21,7 @@ Contents:
    :maxdepth: 2
 
    reference/index
+   v2_reference/index
    cli/index
    contributor/index
 

@@ -103,37 +103,37 @@ Supported operations
 Plugin ops
 ~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.plugins.PluginManager
+.. autoclass:: saharaclient.api.plugins.PluginManagerV1
     :members:
 
 Image Registry ops
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.images.ImageManager
+.. autoclass:: saharaclient.api.images.ImageManagerV1
     :members:
 
 Node Group Template ops
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.node_group_templates.NodeGroupTemplateManager
+.. autoclass:: saharaclient.api.node_group_templates.NodeGroupTemplateManagerV1
     :members:
 
 Cluster Template ops
 ~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.cluster_templates.ClusterTemplateManager
+.. autoclass:: saharaclient.api.cluster_templates.ClusterTemplateManagerV1
     :members:
 
 Cluster ops
 ~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.clusters.ClusterManager
+.. autoclass:: saharaclient.api.clusters.ClusterManagerV1
    :members:
 
 Data Source ops
 ~~~~~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.data_sources.DataSourceManager
+.. autoclass:: saharaclient.api.data_sources.DataSourceManagerV1
    :members:
 
 Job Binary Internal ops
@@ -145,13 +145,13 @@ Job Binary Internal ops
 Job Binary ops
 ~~~~~~~~~~~~~~
 
-.. autoclass:: saharaclient.api.job_binaries.JobBinariesManager
+.. autoclass:: saharaclient.api.job_binaries.JobBinariesManagerV1
    :members:
 
 Job ops
 ~~~~~~~
 
-.. autoclass:: saharaclient.api.jobs.JobsManager
+.. autoclass:: saharaclient.api.jobs.JobsManagerV1
    :members:
 
 Job Execution ops
