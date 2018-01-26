@@ -105,36 +105,42 @@ Plugin ops
 
 .. autoclass:: saharaclient.api.plugins.PluginManagerV1
     :members:
+    :inherited-members:
 
 Image Registry ops
 ~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.images.ImageManagerV1
     :members:
+    :inherited-members:
 
 Node Group Template ops
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.node_group_templates.NodeGroupTemplateManagerV1
     :members:
+    :inherited-members:
 
 Cluster Template ops
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.cluster_templates.ClusterTemplateManagerV1
     :members:
+    :inherited-members:
 
 Cluster ops
 ~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.clusters.ClusterManagerV1
    :members:
+   :inherited-members:
 
 Data Source ops
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.data_sources.DataSourceManagerV1
    :members:
+   :inherited-members:
 
 Job Binary Internal ops
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,21 +153,25 @@ Job Binary ops
 
 .. autoclass:: saharaclient.api.job_binaries.JobBinariesManagerV1
    :members:
+   :inherited-members:
 
 Job ops
 ~~~~~~~
 
 .. autoclass:: saharaclient.api.jobs.JobsManagerV1
    :members:
+   :inherited-members:
 
 Job Execution ops
 ~~~~~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.job_executions.JobExecutionsManager
    :members:
+   :inherited-members:
 
 Job Types ops
 ~~~~~~~~~~~~~
 
 .. autoclass:: saharaclient.api.job_types.JobTypesManager
    :members:
+   :inherited-members:
