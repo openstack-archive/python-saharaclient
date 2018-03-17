@@ -21,7 +21,7 @@ extensions = [
 
 # openstackdocstheme options
 repository_name = 'openstack/python-saharaclient'
-bug_project = 'python-saharaclient'
+bug_project = '934'
 bug_tag = 'releasenotes'
 html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
