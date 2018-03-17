@@ -32,18 +32,16 @@ in the `developer guide
 * License: Apache License, Version 2.0
 * `PyPi`_ - package installation
 * `Online Documentation`_
-* `Launchpad project`_ - release management
 * `Blueprints`_ - feature specifications
-* `Bugs`_ - issue tracking
+* `Bugs`_ - stories and issue tracking
 * `Source`_
 * `Specs`_
 * `How to Contribute`_
 
 .. _PyPi: https://pypi.python.org/pypi/python-saharaclient
 .. _Online Documentation: https://docs.openstack.org/python-saharaclient/latest/
-.. _Launchpad project: https://launchpad.net/python-saharaclient
-.. _Blueprints: https://blueprints.launchpad.net/python-saharaclient
-.. _Bugs: https://bugs.launchpad.net/python-saharaclient
+.. _Blueprints: http://specs.openstack.org/openstack/sahara-specs/
+.. _Bugs: https://storyboard.openstack.org/#!/project/934
 .. _Source: https://git.openstack.org/cgit/openstack/python-saharaclient
 .. _How to Contribute: https://docs.openstack.org/infra/manual/developers.html
 .. _Specs: https://specs.openstack.org/openstack/sahara-specs/

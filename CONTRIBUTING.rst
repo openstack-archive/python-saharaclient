@@ -16,6 +16,6 @@ the workflow documented at:
 
 Pull requests submitted through GitHub will be ignored.
 
-Bugs should be filed on Launchpad, not GitHub:
+Bugs should be filed on Storyboard, not GitHub:
 
-   https://bugs.launchpad.net/python-saharaclient
+   https://storyboard.openstack.org/#!/project/934
