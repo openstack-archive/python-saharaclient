@@ -3,11 +3,13 @@
       jobs:
         - python-saharaclient-scenario
         - python-saharaclient-tempest
+        - openstack-tox-lower-constraints
     gate:
       jobs:
         - python-saharaclient-scenario
         - python-saharaclient-tempest
 
+        - openstack-tox-lower-constraints
 - job:
     name: python-saharaclient-scenario
     description: |
