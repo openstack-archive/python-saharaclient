@@ -11,11 +11,11 @@ Python bindings to the OpenStack Sahara API
 ===========================================
 
 .. image:: https://img.shields.io/pypi/v/python-saharaclient.svg
-    :target: https://pypi.python.org/pypi/python-saharaclient/
+    :target: https://pypi.org/project/python-saharaclient/
     :alt: Latest Version
 
 .. image:: https://img.shields.io/pypi/dm/python-saharaclient.svg
-    :target: https://pypi.python.org/pypi/python-saharaclient/
+    :target: https://pypi.org/project/python-saharaclient/
     :alt: Downloads
 
 This is a client for the OpenStack Sahara API. There's a Python API (the
@@ -38,7 +38,7 @@ in the `developer guide
 * `Specs`_
 * `How to Contribute`_
 
-.. _PyPi: https://pypi.python.org/pypi/python-saharaclient
+.. _PyPi: https://pypi.org/project/python-saharaclient
 .. _Online Documentation: https://docs.openstack.org/python-saharaclient/latest/
 .. _Blueprints: http://specs.openstack.org/openstack/sahara-specs/
 .. _Bugs: https://storyboard.openstack.org/#!/project/934
