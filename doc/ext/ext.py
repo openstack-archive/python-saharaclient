@@ -19,7 +19,7 @@ import os
 from docutils import nodes
 from docutils.statemachine import StringList
 from docutils.parsers.rst.directives import flag, unchanged
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 
 from .parser import parse_parser, parser_navigate
