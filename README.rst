@@ -14,10 +14,6 @@ Python bindings to the OpenStack Sahara API
     :target: https://pypi.org/project/python-saharaclient/
     :alt: Latest Version
 
-.. image:: https://img.shields.io/pypi/dm/python-saharaclient.svg
-    :target: https://pypi.org/project/python-saharaclient/
-    :alt: Downloads
-
 This is a client for the OpenStack Sahara API. There's a Python API (the
 ``saharaclient`` module), and a command-line script (``sahara``). Each
 implements the OpenStack Sahara API. You can find documentation for both
