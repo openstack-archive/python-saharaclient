@@ -208,7 +208,7 @@ class ClusterManagerV2(ClusterManagerV1):
     def force_delete(self, cluster_id):
         """Force Delete a Cluster."""
         data = {'force': True}
-        self._delete('/clusters/%s' % cluster_id, data)
+        return self._delete('/clusters/%s' % cluster_id, data)
 
 
 # NOTE(jfreud): keep this around for backwards compatibility

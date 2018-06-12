@@ -213,8 +213,11 @@ class ResourceManager(object):
         else:
             resp = self.api.delete(url)
 
-        if resp.status_code != 204:
+        if resp.status_code not in [200, 204]:
             self._raise_api_exception(resp)
+
+        if resp.status_code == 200:
+            return get_json(resp)
 
     def _plurify_resource_name(self):
         return self.resource_class.resource_name + 's'
