@@ -45,12 +45,12 @@ class ClusterManagerV1(base.ResourceManager):
                                is_transient, description, cluster_configs,
                                node_groups, user_keypair_id, anti_affinity,
                                net_id, count, use_autoconfig, shares,
-                               is_public, is_protected)
+                               is_public, is_protected, api_ver=1.1)
 
     def _do_create(self, data, cluster_template_id, default_image_id,
                    is_transient, description, cluster_configs, node_groups,
                    user_keypair_id, anti_affinity, net_id, count,
-                   use_autoconfig, shares, is_public, is_protected):
+                   use_autoconfig, shares, is_public, is_protected, api_ver):
 
         # Checking if count is greater than 1, otherwise we set it to None
         # so the created dict in the _copy_if_defined method does not contain
@@ -75,7 +75,10 @@ class ClusterManagerV1(base.ResourceManager):
                               is_protected=is_protected)
 
         if count:
-            return self._create('/clusters/multiple', data)
+            if api_ver >= 2:
+                return self._create('/clusters', data)
+            else:
+                return self._create('/clusters/multiple', data)
 
         return self._create('/clusters', data, 'cluster')
 
@@ -170,7 +173,7 @@ class ClusterManagerV2(ClusterManagerV1):
                                is_transient, description, cluster_configs,
                                node_groups, user_keypair_id, anti_affinity,
                                net_id, count, use_autoconfig, shares,
-                               is_public, is_protected)
+                               is_public, is_protected, api_ver=2)
 
     def scale(self, cluster_id, scale_object):
         """Scale an existing Cluster.

@@ -1,0 +1,4 @@
+---
+other:
+  - When using APIv2, the creation of multiple clusters simultaneously
+    now only supports the API behavior of Sahara 9.0.0.0b2 or later.
