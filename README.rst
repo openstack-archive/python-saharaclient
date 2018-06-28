@@ -41,4 +41,5 @@ in the `developer guide
 .. _Source: https://git.openstack.org/cgit/openstack/python-saharaclient
 .. _How to Contribute: https://docs.openstack.org/infra/manual/developers.html
 .. _Specs: https://specs.openstack.org/openstack/sahara-specs/
+.. _Release Notes: https://docs.openstack.org/releasenotes/python-saharaclient
 
