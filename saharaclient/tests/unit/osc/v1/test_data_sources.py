@@ -15,6 +15,7 @@
 
 import mock
 from osc_lib.tests import utils as osc_utils
+import testtools
 
 from saharaclient.api import data_sources as api_ds
 from saharaclient.osc.v1 import data_sources as osc_ds
@@ -65,7 +66,8 @@ class TestCreateDataSource(TestDataSources):
                        'data_source_type': 'swift', 'name': 'source',
                        'description': '',
                        'url': 'swift://container.sahara/object',
-                       'is_public': False, 'is_protected': False}
+                       'is_public': False, 'is_protected': False,
+                       's3_credentials': None}
         self.ds_mock.create.assert_called_once_with(**called_args)
 
         # Check that columns are correct
@@ -98,7 +100,8 @@ class TestCreateDataSource(TestDataSources):
                        'data_source_type': 'swift', 'name': 'source',
                        'description': 'Data Source for tests',
                        'url': 'swift://container.sahara/object',
-                       'is_protected': True, 'is_public': True}
+                       'is_protected': True, 'is_public': True,
+                       's3_credentials': None}
         self.ds_mock.create.assert_called_once_with(**called_args)
 
         # Check that columns are correct
@@ -110,6 +113,13 @@ class TestCreateDataSource(TestDataSources):
         expected_data = ('Data Source for tests', 'id', True, True, 'source',
                          'swift', 'swift://container.sahara/object')
         self.assertEqual(expected_data, data)
+
+    def test_data_source_create_mutual_exclusion(self):
+        arglist = ['data-source', '--name', 'data-source', '--access-key',
+                   'ak', '--secret-key', 'sk', '--url', 's3a://abc/def',
+                   '--password', 'pw']
+        with testtools.ExpectedException(osc_utils.ParserException):
+            self.check_parser(self.cmd, arglist, mock.Mock())
 
 
 class TestListDataSources(TestDataSources):
@@ -304,3 +314,11 @@ class TestUpdateDataSource(TestDataSources):
         # Check that data source was created with correct arguments
         self.ds_mock.update.assert_called_once_with(
             'id', {'is_public': False, 'is_protected': False})
+
+    def test_data_source_update_mutual_exclusion(self):
+        arglist = ['data-source', '--name', 'data-source', '--access-key',
+                   'ak', '--secret-key', 'sk', '--url', 's3a://abc/def',
+                   '--password', 'pw']
+
+        with testtools.ExpectedException(osc_utils.ParserException):
+            self.check_parser(self.cmd, arglist, mock.Mock())
