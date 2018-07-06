@@ -13,13 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import warnings
-
 from keystoneauth1 import adapter
-from keystoneauth1.identity import v2
-from keystoneauth1.identity import v3
-from keystoneauth1 import session as keystone_session
-from keystoneauth1 import token_endpoint
 
 from saharaclient.api import cluster_templates
 from saharaclient.api import clusters
@@ -52,59 +46,21 @@ class Client(object):
     _api_version = '1.1'
 
     """Client for the OpenStack Data Processing API.
-
-        :param str username: Username for Keystone authentication.
-        :param str api_key: Password for Keystone authentication.
-        :param str project_id: Keystone Tenant id.
-        :param str project_name: Keystone Tenant name.
-        :param str auth_url: Keystone URL that will be used for authentication.
-        :param str sahara_url: Sahara REST API URL to communicate with.
-        :param str endpoint_type: Desired Sahara endpoint type.
-        :param str service_type: Sahara service name in Keystone catalog.
-        :param str input_auth_token: Keystone authorization token.
-        :param session: Keystone Session object.
-        :param auth: Keystone Authentication Plugin object.
-        :param boolean insecure: Allow insecure.
-        :param string cacert: Path to the Privacy Enhanced Mail (PEM) file
-                              which contains certificates needed to establish
-                              SSL connection with the identity service.
+        :param session: Keystone session object. Required.
+        :param string sahara_url: Endpoint override.
+        :param string endpoint_type: Desired Sahara endpoint type.
+        :param string service_type: Sahara service name in Keystone catalog.
         :param string region_name: Name of a region to select when choosing an
                                    endpoint from the service catalog.
     """
-    def __init__(self, username=None, api_key=None, project_id=None,
-                 project_name=None, auth_url=None, sahara_url=None,
+    def __init__(self, session=None, sahara_url=None,
                  endpoint_type='publicURL', service_type='data-processing',
-                 input_auth_token=None, session=None, auth=None,
-                 insecure=False, cacert=None, region_name=None, **kwargs):
+                 region_name=None, **kwargs):
 
         if not session:
-            warnings.simplefilter('once', category=DeprecationWarning)
-            warnings.warn('Passing authentication parameters to saharaclient '
-                          'is deprecated. Please construct and pass an '
-                          'authenticated session object directly.',
-                          DeprecationWarning)
-            warnings.resetwarnings()
+            raise RuntimeError("Must provide session")
 
-            if input_auth_token:
-                auth = token_endpoint.Token(sahara_url, input_auth_token)
-
-            else:
-                auth = self._get_keystone_auth(auth_url=auth_url,
-                                               username=username,
-                                               api_key=api_key,
-                                               project_id=project_id,
-                                               project_name=project_name)
-
-            verify = True
-            if insecure:
-                verify = False
-            elif cacert:
-                verify = cacert
-
-            session = keystone_session.Session(verify=verify)
-
-        if not auth:
-            auth = session.auth
+        auth = session.auth
 
         kwargs['user_agent'] = USER_AGENT
         kwargs.setdefault('interface', endpoint_type)
@@ -137,28 +93,6 @@ class Client(object):
             job_binary_internals.JobBinaryInternalsManager(client)
         )
         self.job_types = job_types.JobTypesManager(client)
-
-    def _get_keystone_auth(self, username=None, api_key=None, auth_url=None,
-                           project_id=None, project_name=None):
-        if not auth_url:
-            raise RuntimeError("No auth url specified")
-
-        if 'v2.0' in auth_url:
-            return v2.Password(auth_url=auth_url,
-                               username=username,
-                               password=api_key,
-                               tenant_id=project_id,
-                               tenant_name=project_name)
-        else:
-            # NOTE(jamielennox): Setting these to default is what
-            # keystoneclient does in the event they are not passed.
-            return v3.Password(auth_url=auth_url,
-                               username=username,
-                               password=api_key,
-                               user_domain_id='default',
-                               project_id=project_id,
-                               project_name=project_name,
-                               project_domain_id='default')
 
 
 class ClientV2(Client):

@@ -17,19 +17,19 @@ import testtools
 from saharaclient.api import base
 from saharaclient.api import client
 
+from keystoneauth1 import session
 from requests_mock.contrib import fixture
 
 
 class BaseTestCase(testtools.TestCase):
 
     URL = 'http://localhost:8386'
-    TOKEN = 'token'
+    SESSION = session.Session()
 
     def setUp(self):
         super(BaseTestCase, self).setUp()
         self.responses = self.useFixture(fixture.Fixture())
-        self.client = client.Client(sahara_url=self.URL,
-                                    input_auth_token=self.TOKEN)
+        self.client = client.Client(session=self.SESSION, sahara_url=self.URL)
 
     def assertFields(self, body, obj):
         for key, value in body.items():
