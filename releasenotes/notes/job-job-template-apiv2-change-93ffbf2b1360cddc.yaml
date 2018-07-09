@@ -1,0 +1,4 @@
+other:
+  - When using APIv2, the viewing (GET) of specific job templates and jobs and
+    the creation (POST) of job templates and jobs now only supports the API
+    behavior of Sahara 9.0.0.0b3 or later.

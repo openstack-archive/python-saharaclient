@@ -36,7 +36,7 @@ class JobTemplatesManagerV2(base.ResourceManager):
                               libs=libs, interface=interface,
                               is_public=is_public, is_protected=is_protected)
 
-        return self._create('/%s' % 'job-templates', data, 'job')
+        return self._create('/%s' % 'job-templates', data, 'job_template')
 
     def list(self, search_opts=None, limit=None,
              marker=None, sort_by=None, reverse=None):
@@ -49,7 +49,7 @@ class JobTemplatesManagerV2(base.ResourceManager):
 
     def get(self, job_id):
         """Get information about a Job Template."""
-        return self._get('/%s/%s' % ('job-templates', job_id), 'job')
+        return self._get('/%s/%s' % ('job-templates', job_id), 'job_template')
 
     def get_configs(self, job_type):
         """Get config hints for a specified Job Template type."""

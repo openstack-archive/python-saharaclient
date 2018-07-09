@@ -34,7 +34,7 @@ class JobsManagerV2(base.ResourceManager):
 
     def get(self, obj_id):
         """Get information about a Job."""
-        return self._get('/jobs/%s' % obj_id, 'job_execution')
+        return self._get('/jobs/%s' % obj_id, 'job')
 
     def delete(self, obj_id):
         """Delete a Job."""
@@ -54,7 +54,7 @@ class JobsManagerV2(base.ResourceManager):
                               job_configs=configs, interface=interface,
                               is_public=is_public, is_protected=is_protected)
 
-        return self._create('/jobs', data, 'job_execution')
+        return self._create('/jobs', data, 'job')
 
     def refresh_status(self, obj_id):
         """Refresh Job Status."""
