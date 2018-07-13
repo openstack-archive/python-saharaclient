@@ -76,7 +76,9 @@ class DataSourceManagerV1(base.ResourceManager):
         * url
         * is_public
         * is_protected
-        * credentials - dict with `user` and `password` keyword arguments
+        * credentials - dict with the keys `user` and `password` for data
+          source in Swift, or with the keys `accesskey`, `secretkey`,
+          `endpoint`, `ssl`, and `bucket_in_path` for data source in S3
         """
 
         if self.version >= 2:

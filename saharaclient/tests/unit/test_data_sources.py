@@ -15,6 +15,7 @@
 from saharaclient.api import data_sources as ds
 from saharaclient.tests.unit import base
 
+import mock
 from oslo_serialization import jsonutils as json
 
 
@@ -92,3 +93,27 @@ class DataSourceTest(base.BaseTestCase):
         updated = self.client.data_sources.update("id", self.update_json)
         self.assertEqual(self.update_json["name"], updated.name)
         self.assertEqual(self.update_json["url"], updated.url)
+
+    @mock.patch('saharaclient.api.base.ResourceManager._create')
+    def test_create_data_source_s3_or_swift_credentials(self, create):
+        # Data source without any credential arguments
+        self.client.data_sources.create('ds', '', 'swift', 'swift://path')
+        self.assertNotIn('credentials', create.call_args[0][1])
+
+        # Data source with Swift credential arguments
+        self.client.data_sources.create('ds', '', 'swift', 'swift://path',
+                                        credential_user='user')
+        self.assertIn('credentials', create.call_args[0][1])
+
+        # Data source with S3 credential arguments
+        self.client.data_sources.create('ds', '', 'swift', 'swift://path',
+                                        s3_credentials={'accesskey': 'a'})
+        self.assertIn('credentials', create.call_args[0][1])
+        self.assertIn('accesskey', create.call_args[0][1]['credentials'])
+
+        # Data source with both S3 and swift credential arguments
+        self.client.data_sources.create('ds', '', 's3', 's3://path',
+                                        credential_user='swift_user',
+                                        s3_credentials={'accesskey': 's3_a'})
+        self.assertIn('user', create.call_args[0][1]['credentials'])
+        self.assertNotIn('accesskey', create.call_args[0][1]['credentials'])
