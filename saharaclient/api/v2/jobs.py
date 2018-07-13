@@ -60,7 +60,7 @@ class JobsManagerV2(base.ResourceManager):
         """Refresh Job Status."""
         return self._get(
             '/jobs/%s?refresh_status=True' % obj_id,
-            'job_execution'
+            'job'
         )
 
     def update(self, obj_id, is_public=NotUpdated, is_protected=NotUpdated):
