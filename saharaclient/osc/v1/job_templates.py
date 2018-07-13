@@ -111,7 +111,8 @@ class CreateJobTemplate(command.ShowOne):
                 raise exceptions.CommandError(
                     'An error occurred when reading '
                     'template from file %s: %s' % (parsed_args.json, e))
-            data = client.jobs.create(**template).to_dict()
+            data = utils.create_job_template_json(self.app,
+                                                  client, **template)
         else:
             if parsed_args.interface:
                 blob = osc_utils.read_blob_file_contents(parsed_args.json)
@@ -127,11 +128,8 @@ class CreateJobTemplate(command.ShowOne):
             libs_ids = [utils.get_resource_id(client.job_binaries, m) for m
                         in parsed_args.libs] if parsed_args.libs else None
 
-            data = client.jobs.create(
-                name=parsed_args.name, type=parsed_args.type, mains=mains_ids,
-                libs=libs_ids, description=parsed_args.description,
-                interface=parsed_args.interface, is_public=parsed_args.public,
-                is_protected=parsed_args.protected).to_dict()
+            data = utils.create_job_templates(self.app, client, mains_ids,
+                                              libs_ids, parsed_args)
 
         _format_job_template_output(data)
         data = utils.prepare_data(data, JOB_TEMPLATE_FIELDS)
@@ -172,7 +170,7 @@ class ListJobTemplates(command.Lister):
         client = self.app.client_manager.data_processing
         search_opts = {'type': parsed_args.type} if parsed_args.type else {}
 
-        data = client.jobs.list(search_opts=search_opts)
+        data = utils.list_job_templates(self.app, client, search_opts)
 
         if parsed_args.name:
             data = utils.get_by_name_substring(data, parsed_args.name)
@@ -214,8 +212,7 @@ class ShowJobTemplate(command.ShowOne):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
-        data = utils.get_resource(
-            client.jobs, parsed_args.job_template).to_dict()
+        data = utils.get_job_templates_resources(self.app, client, parsed_args)
 
         _format_job_template_output(data)
         data = utils.prepare_data(data, JOB_TEMPLATE_FIELDS)
@@ -243,8 +240,7 @@ class DeleteJobTemplate(command.Command):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
         for jt in parsed_args.job_template:
-            jt_id = utils.get_resource_id(client.jobs, jt)
-            client.jobs.delete(jt_id)
+            utils.delete_job_templates(self.app, client, jt)
             sys.stdout.write(
                 'Job template "{jt}" has been removed '
                 'successfully.\n'.format(jt=jt))
@@ -309,8 +305,7 @@ class UpdateJobTemplate(command.ShowOne):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
-        jt_id = utils.get_resource_id(
-            client.jobs, parsed_args.job_template)
+        jt_id = utils.get_job_template_id(self.app, client, parsed_args)
 
         update_data = utils.create_dict_from_kwargs(
             name=parsed_args.name,
@@ -319,7 +314,7 @@ class UpdateJobTemplate(command.ShowOne):
             is_protected=parsed_args.is_protected
         )
 
-        data = client.jobs.update(jt_id, **update_data).job
+        data = utils.update_job_templates(self.app, client, jt_id, update_data)
 
         _format_job_template_output(data)
         data = utils.prepare_data(data, JOB_TEMPLATE_FIELDS)

@@ -57,10 +57,10 @@ NGT_INFO = {
 class TestNodeGroupTemplates(fakes.TestDataProcessing):
     def setUp(self):
         super(TestNodeGroupTemplates, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.ngt_mock = (
             self.app.client_manager.data_processing.node_group_templates)
         self.ngt_mock.reset_mock()
-        self.app.api_version['data_processing'] = '2'
 
 
 class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):

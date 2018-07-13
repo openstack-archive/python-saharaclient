@@ -33,13 +33,13 @@ def _format_node_groups_list(node_groups):
         ['%s:%s' % (ng['name'], ng['count']) for ng in node_groups])
 
 
-def _format_ct_output(data):
+def _format_ct_output(app, data):
     data['plugin_version'] = data.pop('hadoop_version')
     data['node_groups'] = _format_node_groups_list(data['node_groups'])
     data['anti_affinity'] = osc_utils.format_list(data['anti_affinity'])
 
 
-def _configure_node_groups(node_groups, client):
+def _configure_node_groups(app, node_groups, client):
     node_groups_list = dict(
         map(lambda x: x.split(':', 1), node_groups))
 
@@ -140,10 +140,7 @@ class CreateClusterTemplate(command.ShowOne):
         )
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
             try:
@@ -184,24 +181,24 @@ class CreateClusterTemplate(command.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
-            plugin, plugin_version, node_groups = _configure_node_groups(
-                parsed_args.node_groups, client)
+            plugin, plugin_version, node_groups = (
+                utils._cluster_templates_configure_ng(self.app,
+                                                      parsed_args.node_groups,
+                                                      client))
+            data = utils.create_cluster_template(self.app, client, plugin,
+                                                 plugin_version,
+                                                 parsed_args, configs, shares,
+                                                 node_groups)
 
-            data = client.cluster_templates.create(
-                name=parsed_args.name,
-                plugin_name=plugin,
-                hadoop_version=plugin_version,
-                description=parsed_args.description,
-                node_groups=node_groups,
-                use_autoconfig=parsed_args.autoconfig,
-                cluster_configs=configs,
-                shares=shares,
-                is_public=parsed_args.public,
-                is_protected=parsed_args.protected,
-                domain_name=parsed_args.domain_name
-            ).to_dict()
+        return data
 
-        _format_ct_output(data)
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_ct_output(self.app, data)
         data = utils.prepare_data(data, CT_FIELDS)
 
         return self.dict2columns(data)
@@ -249,7 +246,10 @@ class ListClusterTemplates(command.Lister):
         if parsed_args.plugin:
             search_opts['plugin_name'] = parsed_args.plugin
         if parsed_args.plugin_version:
-            search_opts['hadoop_version'] = parsed_args.plugin_version
+            if utils.is_api_v2(self.app):
+                search_opts['plugin_version'] = parsed_args.plugin_version
+            else:
+                search_opts['hadoop_version'] = parsed_args.plugin_version
 
         data = client.cluster_templates.list(search_opts=search_opts)
 
@@ -301,7 +301,7 @@ class ShowClusterTemplate(command.ShowOne):
         data = utils.get_resource(
             client.cluster_templates, parsed_args.cluster_template).to_dict()
 
-        _format_ct_output(data)
+        _format_ct_output(self.app, data)
         data = utils.prepare_data(data, CT_FIELDS)
 
         return self.dict2columns(data)
@@ -442,13 +442,7 @@ class UpdateClusterTemplate(command.ShowOne):
                             use_autoconfig=None)
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
-        ct_id = utils.get_resource_id(
-            client.cluster_templates, parsed_args.cluster_template)
-
+    def _take_action(self, client, parsed_args, ct_id):
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
             try:
@@ -462,8 +456,9 @@ class UpdateClusterTemplate(command.ShowOne):
         else:
             plugin, plugin_version, node_groups = None, None, None
             if parsed_args.node_groups:
-                plugin, plugin_version, node_groups = _configure_node_groups(
-                    parsed_args.node_groups, client)
+                plugin, plugin_version, node_groups = (
+                    utils._cluster_templates_configure_ng(
+                        self.app, parsed_args.node_groups, client))
 
             configs = None
             if parsed_args.configs:
@@ -485,24 +480,23 @@ class UpdateClusterTemplate(command.ShowOne):
                         'An error occurred when reading '
                         'shares from file %s: %s' % (parsed_args.shares, e))
 
-            update_dict = utils.create_dict_from_kwargs(
-                name=parsed_args.name,
-                plugin_name=plugin,
-                hadoop_version=plugin_version,
-                description=parsed_args.description,
-                node_groups=node_groups,
-                use_autoconfig=parsed_args.use_autoconfig,
-                cluster_configs=configs,
-                shares=shares,
-                is_public=parsed_args.is_public,
-                is_protected=parsed_args.is_protected,
-                domain_name=parsed_args.domain_name
-            )
+            data = utils.update_cluster_template(self.app, client, plugin,
+                                                 plugin_version, parsed_args,
+                                                 configs, shares, node_groups,
+                                                 ct_id)
 
-            data = client.cluster_templates.update(
-                ct_id, **update_dict).to_dict()
+        return data
 
-        _format_ct_output(data)
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        ct_id = utils.get_resource_id(
+            client.cluster_templates, parsed_args.cluster_template)
+
+        data = self._take_action(client, parsed_args, ct_id)
+
+        _format_ct_output(self.app, data)
         data = utils.prepare_data(data, CT_FIELDS)
 
         return self.dict2columns(data)
@@ -541,10 +535,7 @@ class ImportClusterTemplate(command.ShowOne):
         )
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         if (not parsed_args.node_groups):
             raise exceptions.CommandError('--node_groups should be specified')
 
@@ -569,8 +560,9 @@ class ImportClusterTemplate(command.ShowOne):
             template['cluster_template']['net_id'] = (
                 template['cluster_template'].pop('neutron_management_network'))
 
-        plugin, plugin_version, node_groups = _configure_node_groups(
-            parsed_args.node_groups, client)
+        plugin, plugin_version, node_groups = (
+            utils._cluster_templates_configure_ng_configure_node_groups(
+                self.app, parsed_args.node_groups, client))
         if (('plugin_version' in template['cluster_template'] and
                 template['cluster_template']['plugin_version'] !=
                 plugin_version) or
@@ -584,7 +576,15 @@ class ImportClusterTemplate(command.ShowOne):
         data = client.cluster_templates.create(
             **template['cluster_template']).to_dict()
 
-        _format_ct_output(data)
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_ct_output(self.app, data)
         data = utils.prepare_data(data, CT_FIELDS)
 
         return self.dict2columns(data)

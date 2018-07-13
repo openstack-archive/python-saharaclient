@@ -17,8 +17,8 @@ from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import cluster_templates as api_ct
 from saharaclient.api import node_group_templates as api_ngt
-from saharaclient.osc.v1 import cluster_templates as osc_ct
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.osc.v2 import cluster_templates as osc_ct
+from saharaclient.tests.unit.osc.v1 import test_cluster_templates as tct_v1
 
 CT_INFO = {
     "description": "Cluster template for tests",
@@ -30,10 +30,10 @@ CT_INFO = {
             "id": "d29631fc-0fad-434b-80aa-7a3e9526f57c",
             "name": "fakeng",
             "plugin_name": 'fake',
-            "hadoop_version": '0.1'
+            "plugin_version": '0.1'
         }
     ],
-    "hadoop_version": "0.1",
+    "plugin_version": "0.1",
     "is_public": False,
     "plugin_name": "fake",
     "id": "0647061f-ab98-4c89-84e0-30738ea55750",
@@ -44,16 +44,16 @@ CT_INFO = {
 }
 
 
-class TestClusterTemplates(fakes.TestDataProcessing):
+class TestClusterTemplates(tct_v1.TestClusterTemplates):
     def setUp(self):
         super(TestClusterTemplates, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.ct_mock = (
             self.app.client_manager.data_processing.cluster_templates)
         self.ngt_mock = (
             self.app.client_manager.data_processing.node_group_templates)
         self.ct_mock.reset_mock()
         self.ngt_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestCreateClusterTemplate(TestClusterTemplates):
@@ -64,7 +64,6 @@ class TestCreateClusterTemplate(TestClusterTemplates):
             None, CT_INFO)
         self.ngt_mock.find_unique.return_value = api_ngt.NodeGroupTemplate(
             None, CT_INFO['node_groups'][0])
-        self.app.api_version['data_processing'] = '1.1'
 
         # Command to test
         self.cmd = osc_ct.CreateClusterTemplate(self.app, None)
@@ -80,7 +79,7 @@ class TestCreateClusterTemplate(TestClusterTemplates):
 
         # Check that correct arguments were passed
         self.ct_mock.create.assert_called_once_with(
-            description=None, hadoop_version='0.1', is_protected=False,
+            description=None, plugin_version='0.1', is_protected=False,
             is_public=False, name='template', node_groups=[
                 {'count': 2, 'name': 'fakeng',
                  'node_group_template_id':
@@ -107,7 +106,7 @@ class TestCreateClusterTemplate(TestClusterTemplates):
 
         # Check that correct arguments were passed
         self.ct_mock.create.assert_called_once_with(
-            description='descr', hadoop_version='0.1', is_protected=True,
+            description='descr', plugin_version='0.1', is_protected=True,
             is_public=True, name='template', node_groups=[
                 {'count': 2, 'name': 'fakeng',
                  'node_group_template_id':
@@ -302,7 +301,7 @@ class TestUpdateClusterTemplate(TestClusterTemplates):
         # Check that correct arguments were passed
         self.ct_mock.update.assert_called_once_with(
             '0647061f-ab98-4c89-84e0-30738ea55750', description='descr',
-            hadoop_version='0.1', is_protected=True, is_public=True,
+            plugin_version='0.1', is_protected=True, is_public=True,
             name='template',
             node_groups=[
                 {'count': 2, 'name': 'fakeng',

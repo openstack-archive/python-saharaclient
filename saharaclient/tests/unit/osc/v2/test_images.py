@@ -18,7 +18,7 @@ from osc_lib.tests import utils as osc_utils
 
 from saharaclient.api import images as api_images
 from saharaclient.osc.v1 import images as osc_images
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.tests.unit.osc.v1 import test_images as images_v1
 
 
 IMAGE_INFO = {'id': 'id', 'name': 'image', 'username': 'ubuntu',
@@ -26,13 +26,13 @@ IMAGE_INFO = {'id': 'id', 'name': 'image', 'username': 'ubuntu',
               'description': 'Image for tests'}
 
 
-class TestImages(fakes.TestDataProcessing):
+class TestImages(images_v1.TestImages):
     def setUp(self):
         super(TestImages, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.image_mock = (
             self.app.client_manager.data_processing.images)
         self.image_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestListImages(TestImages):

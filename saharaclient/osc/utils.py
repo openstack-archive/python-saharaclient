@@ -105,6 +105,241 @@ def wait_for_delete(manager, obj_id, sleep_time=5, timeout=3000):
     return False
 
 
+def get_api_version(app):
+    return app.api_version['data_processing']
+
+
+def is_api_v2(app):
+    if get_api_version(app) == '2':
+        return True
+    return False
+
+
+def _cluster_templates_configure_ng(app, node_groups, client):
+    node_groups_list = dict(
+        map(lambda x: x.split(':', 1), node_groups))
+
+    node_groups = []
+    plugins_versions = set()
+
+    for name, count in node_groups_list.items():
+        ng = get_resource(client.node_group_templates, name)
+        node_groups.append({'name': ng.name,
+                            'count': int(count),
+                            'node_group_template_id': ng.id})
+        if is_api_v2(app):
+            plugins_versions.add((ng.plugin_name, ng.plugin_version))
+        else:
+            plugins_versions.add((ng.plugin_name, ng.hadoop_version))
+
+    if len(plugins_versions) != 1:
+        raise exceptions.CommandError('Node groups with the same plugins '
+                                      'and versions must be specified')
+
+    plugin, plugin_version = plugins_versions.pop()
+    return plugin, plugin_version, node_groups
+
+
+def _get_plugin_version(app, cluster_template, client):
+    ct = get_resource(client.cluster_templates, cluster_template)
+    if is_api_v2(app):
+        return ct.plugin_name, ct.plugin_version, ct.id
+    else:
+        return ct.plugin_name, ct.hadoop_version, ct.id
+
+
+def create_job_templates(app, client, mains_ids, libs_ids, parsed_args):
+    args_dict = dict(name=parsed_args.name,
+                     type=parsed_args.type,
+                     mains=mains_ids,
+                     libs=libs_ids,
+                     description=parsed_args.description,
+                     interface=parsed_args.interface,
+                     is_public=parsed_args.public,
+                     is_protected=parsed_args.protected)
+
+    if is_api_v2(app):
+        data = client.job_templates.create(**args_dict).to_dict()
+    else:
+        data = client.jobs.create(**args_dict).to_dict()
+
+    return data
+
+
+def create_job_template_json(app, client, **template):
+    if is_api_v2(app):
+        data = client.job_templates.create(**template).to_dict()
+    else:
+        data = client.jobs.create(**template).to_dict()
+
+    return data
+
+
+def list_job_templates(app, client, search_opts):
+    if is_api_v2(app):
+        data = client.job_templates.list(search_opts=search_opts)
+    else:
+        data = client.jobs.list(search_opts=search_opts)
+
+    return data
+
+
+def get_job_templates_resources(app, client, parsed_args):
+    if is_api_v2(app):
+        data = get_resource(
+            client.job_templates, parsed_args.job_template).to_dict()
+    else:
+        data = get_resource(
+            client.jobs, parsed_args.job_template).to_dict()
+
+    return data
+
+
+def delete_job_templates(app, client, jt):
+    if is_api_v2(app):
+        jt_id = get_resource_id(client.job_templates, jt)
+        client.job_templates.delete(jt_id)
+    else:
+        jt_id = get_resource_id(client.jobs, jt)
+        client.jobs.delete(jt_id)
+
+
+def get_job_template_id(app, client, parsed_args):
+    if is_api_v2(app):
+        jt_id = get_resource_id(
+            client.job_templates, parsed_args.job_template)
+    else:
+        jt_id = get_resource_id(
+            client.jobs, parsed_args.job_template)
+
+    return jt_id
+
+
+def update_job_templates(app, client, jt_id, update_data):
+    if is_api_v2(app):
+        data = client.job_templates.update(jt_id, **update_data).job_template
+    else:
+        data = client.jobs.update(jt_id, **update_data).job
+
+    return data
+
+
+def create_cluster_template(app, client, plugin, plugin_version,
+                            parsed_args, configs, shares, node_groups):
+
+    args_dict = dict(
+        name=parsed_args.name,
+        plugin_name=plugin,
+        description=parsed_args.description,
+        node_groups=node_groups,
+        use_autoconfig=parsed_args.autoconfig,
+        cluster_configs=configs,
+        shares=shares,
+        is_public=parsed_args.public,
+        is_protected=parsed_args.protected,
+        domain_name=parsed_args.domain_name)
+
+    if is_api_v2(app):
+        args_dict['plugin_version'] = plugin_version
+    else:
+        args_dict['hadoop_version'] = plugin_version
+
+    data = client.cluster_templates.create(**args_dict).to_dict()
+    return data
+
+
+def update_cluster_template(app, client, plugin, plugin_version,
+                            parsed_args, configs, shares, node_groups, ct_id):
+
+    args_dict = dict(
+        name=parsed_args.name,
+        plugin_name=plugin,
+        description=parsed_args.description,
+        node_groups=node_groups,
+        use_autoconfig=parsed_args.use_autoconfig,
+        cluster_configs=configs,
+        shares=shares,
+        is_public=parsed_args.is_public,
+        is_protected=parsed_args.is_protected,
+        domain_name=parsed_args.domain_name
+    )
+
+    if is_api_v2(app):
+        args_dict['plugin_version'] = plugin_version
+    else:
+        args_dict['hadoop_version'] = plugin_version
+
+    update_dict = create_dict_from_kwargs(**args_dict)
+    data = client.cluster_templates.update(
+        ct_id, **update_dict).to_dict()
+
+    return data
+
+
+def create_cluster(client, app, parsed_args, plugin, plugin_version,
+                   template_id, image_id, net_id):
+
+    args = dict(
+        name=parsed_args.name,
+        plugin_name=plugin,
+        cluster_template_id=template_id,
+        default_image_id=image_id,
+        description=parsed_args.description,
+        is_transient=parsed_args.transient,
+        user_keypair_id=parsed_args.user_keypair,
+        net_id=net_id,
+        count=parsed_args.count,
+        is_public=parsed_args.public,
+        is_protected=parsed_args.protected)
+
+    if is_api_v2(app):
+        args['plugin_version'] = plugin_version
+    else:
+        args['hadoop_version'] = plugin_version
+
+    data = client.clusters.create(**args).to_dict()
+    return data
+
+
+def create_job(client, app, jt_id, cluster_id, input_id, output_id,
+               job_configs, parsed_args):
+    args_dict = dict(cluster_id=cluster_id,
+                     input_id=input_id,
+                     output_id=output_id,
+                     interface=parsed_args.interface,
+                     configs=job_configs,
+                     is_public=parsed_args.public,
+                     is_protected=parsed_args.protected)
+
+    if is_api_v2(app):
+        args_dict['job_template_id'] = jt_id
+        data = client.jobs.create(**args_dict).to_dict()
+    else:
+        args_dict['job_id'] = jt_id
+        data = client.job_executions.create(**args_dict).to_dict()
+
+    return data
+
+
+def create_job_json(client, app, **template):
+    if is_api_v2(app):
+        data = client.jobs.create(**template).to_dict()
+    else:
+        data = client.job_executions.create(**template).to_dict()
+
+    return data
+
+
+def update_job(client, app, parsed_args, update_dict):
+    if is_api_v2(app):
+        data = client.jobs.update(
+            parsed_args.job, **update_dict).job
+    else:
+        data = client.job_executions.update(
+            parsed_args.job, **update_dict).job_execution
+    return data
+
+
 def create_node_group_templates(client, app,  parsed_args, flavor_id, configs,
                                 shares):
     if app.api_version['data_processing'] == '2':

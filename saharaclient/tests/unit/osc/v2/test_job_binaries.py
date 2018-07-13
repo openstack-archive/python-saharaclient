@@ -19,7 +19,7 @@ import testtools
 
 from saharaclient.api import job_binaries as api_jb
 from saharaclient.osc.v1 import job_binaries as osc_jb
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.tests.unit.osc.v1 import test_job_binaries as tjb_v1
 
 
 JOB_BINARY_INFO = {
@@ -32,12 +32,12 @@ JOB_BINARY_INFO = {
 }
 
 
-class TestJobBinaries(fakes.TestDataProcessing):
+class TestJobBinaries(tjb_v1.TestJobBinaries):
     def setUp(self):
         super(TestJobBinaries, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.jb_mock = self.app.client_manager.data_processing.job_binaries
         self.jb_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestCreateJobBinary(TestJobBinaries):
@@ -81,23 +81,6 @@ class TestCreateJobBinary(TestJobBinaries):
         expected_data = ('descr', 'jb_id', False, False, 'job-binary',
                          'swift://cont/test')
         self.assertEqual(expected_data, data)
-
-    def test_job_binary_create_internal(self):
-        m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
-            arglist = ['--name', 'job-binary', '--data', 'filepath']
-            verifylist = [('name', 'job-binary'), ('data', 'filepath')]
-
-            parsed_args = self.check_parser(self.cmd, arglist, verifylist)
-
-            self.cmd.take_action(parsed_args)
-
-            # Check that correct arguments were passed
-            self.jb_mock.create.assert_called_once_with(
-                description=None, extra=None, is_protected=False,
-                is_public=False, name='job-binary', url='internal-db://jbi_id')
-
-            self.jbi_mock.create.assert_called_once_with('job-binary', '')
 
     def test_job_binary_create_mutual_exclusion(self):
         arglist = ['job-binary', '--name', 'job-binary', '--access-key', 'ak',

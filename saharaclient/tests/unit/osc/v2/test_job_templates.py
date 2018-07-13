@@ -16,11 +16,11 @@
 import mock
 from osc_lib.tests import utils as osc_utils
 
-from saharaclient.api import jobs as api_j
-from saharaclient.osc.v1 import job_templates as osc_j
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.api.v2 import job_templates as api_j
+from saharaclient.osc.v2 import job_templates as osc_j
+from saharaclient.tests.unit.osc.v1 import test_job_templates as tjt_v1
 
-JOB_INFO = {
+JOB_TEMPLATE_INFO = {
     "is_public": False,
     "id": "job_id",
     "name": "pig-job",
@@ -43,20 +43,20 @@ JOB_INFO = {
 }
 
 
-class TestJobTemplates(fakes.TestDataProcessing):
+class TestJobTemplates(tjt_v1.TestJobTemplates):
     def setUp(self):
         super(TestJobTemplates, self).setUp()
-        self.job_mock = self.app.client_manager.data_processing.jobs
+        self.app.api_version['data_processing'] = '2'
+        self.job_mock = self.app.client_manager.data_processing.job_templates
         self.job_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestCreateJobTemplate(TestJobTemplates):
     # TODO(apavlov): check for creation with --interface
     def setUp(self):
         super(TestCreateJobTemplate, self).setUp()
-        self.job_mock.create.return_value = api_j.Job(
-            None, JOB_INFO)
+        self.job_mock.create.return_value = api_j.JobTemplate(
+            None, JOB_TEMPLATE_INFO)
         self.jb_mock = self.app.client_manager.data_processing.job_binaries
         self.jb_mock.find_unique.return_value = mock.Mock(id='jb_id')
         self.jb_mock.reset_mock()
@@ -111,8 +111,8 @@ class TestCreateJobTemplate(TestJobTemplates):
 class TestListJobTemplates(TestJobTemplates):
     def setUp(self):
         super(TestListJobTemplates, self).setUp()
-        self.job_mock.list.return_value = [api_j.Job(
-            None, JOB_INFO)]
+        self.job_mock.list.return_value = [api_j.JobTemplate(
+            None, JOB_TEMPLATE_INFO)]
 
         # Command to test
         self.cmd = osc_j.ListJobTemplates(self.app, None)
@@ -171,8 +171,8 @@ class TestListJobTemplates(TestJobTemplates):
 class TestShowJobTemplate(TestJobTemplates):
     def setUp(self):
         super(TestShowJobTemplate, self).setUp()
-        self.job_mock.find_unique.return_value = api_j.Job(
-            None, JOB_INFO)
+        self.job_mock.find_unique.return_value = api_j.JobTemplate(
+            None, JOB_TEMPLATE_INFO)
 
         # Command to test
         self.cmd = osc_j.ShowJobTemplate(self.app, None)
@@ -202,8 +202,8 @@ class TestShowJobTemplate(TestJobTemplates):
 class TestDeleteJobTemplate(TestJobTemplates):
     def setUp(self):
         super(TestDeleteJobTemplate, self).setUp()
-        self.job_mock.find_unique.return_value = api_j.Job(
-            None, JOB_INFO)
+        self.job_mock.find_unique.return_value = api_j.JobTemplate(
+            None, JOB_TEMPLATE_INFO)
 
         # Command to test
         self.cmd = osc_j.DeleteJobTemplate(self.app, None)
@@ -223,8 +223,10 @@ class TestDeleteJobTemplate(TestJobTemplates):
 class TestUpdateJobTemplate(TestJobTemplates):
     def setUp(self):
         super(TestUpdateJobTemplate, self).setUp()
-        self.job_mock.find_unique.return_value = api_j.Job(None, JOB_INFO)
-        self.job_mock.update.return_value = mock.Mock(job=JOB_INFO.copy())
+        self.job_mock.find_unique.return_value = api_j.JobTemplate(
+            None, JOB_TEMPLATE_INFO)
+        self.job_mock.update.return_value = mock.Mock(
+            job_template=JOB_TEMPLATE_INFO.copy())
 
         # Command to test
         self.cmd = osc_j.UpdateJobTemplate(self.app, None)

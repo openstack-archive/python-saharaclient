@@ -20,8 +20,8 @@ from saharaclient.api import cluster_templates as api_ct
 from saharaclient.api import clusters as api_cl
 from saharaclient.api import images as api_img
 from saharaclient.api import node_group_templates as api_ngt
-from saharaclient.osc.v1 import clusters as osc_cl
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.osc.v2 import clusters as osc_cl
+from saharaclient.tests.unit.osc.v1 import test_clusters as tc_v1
 
 CLUSTER_INFO = {
     "description": "Cluster template for tests",
@@ -34,11 +34,11 @@ CLUSTER_INFO = {
             "id": "ng_id",
             "name": "fakeng",
             "plugin_name": 'fake',
-            "hadoop_version": '0.1',
+            "plugin_version": '0.1',
             "node_group_template_id": 'ngt_id'
         }
     ],
-    "hadoop_version": "0.1",
+    "plugin_version": "0.1",
     "is_public": False,
     "plugin_name": "fake",
     "id": "cluster_id",
@@ -65,7 +65,7 @@ CLUSTER_INFO = {
 
 CT_INFO = {
     "plugin_name": "fake",
-    "hadoop_version": "0.1",
+    "plugin_version": "0.1",
     "name": '"template',
     "id": "ct_id"
 }
@@ -76,9 +76,10 @@ NGT_INFO = {
 }
 
 
-class TestClusters(fakes.TestDataProcessing):
+class TestClusters(tc_v1.TestClusters):
     def setUp(self):
         super(TestClusters, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.cl_mock = (
             self.app.client_manager.data_processing.clusters)
         self.ngt_mock = (
@@ -91,7 +92,6 @@ class TestClusters(fakes.TestDataProcessing):
         self.ngt_mock.reset_mock()
         self.ct_mock.reset_mock()
         self.img_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestCreateCluster(TestClusters):
@@ -126,7 +126,7 @@ class TestCreateCluster(TestClusters):
         # Check that correct arguments were passed
         self.cl_mock.create.assert_called_once_with(
             cluster_template_id='ct_id', count=None, default_image_id='img_id',
-            description=None, hadoop_version='0.1', is_protected=False,
+            description=None, plugin_version='0.1', is_protected=False,
             is_public=False, is_transient=False, name='fake', net_id=None,
             plugin_name='fake', user_keypair_id=None)
 
@@ -149,7 +149,7 @@ class TestCreateCluster(TestClusters):
         # Check that correct arguments were passed
         self.cl_mock.create.assert_called_once_with(
             cluster_template_id='ct_id', count=None, default_image_id='img_id',
-            description='descr', hadoop_version='0.1', is_protected=True,
+            description='descr', plugin_version='0.1', is_protected=True,
             is_public=True, is_transient=True, name='fake', net_id='net_id',
             plugin_name='fake', user_keypair_id='test')
 
@@ -172,7 +172,8 @@ class TestCreateCluster(TestClusters):
     def test_cluster_create_with_count(self):
         clusters_mock = mock.Mock()
         clusters_mock.to_dict.return_value = {
-            'clusters': ['cluster1_id', 'cluster2_id']
+            'clusters': [{'cluster': {'id': 'cluster1_id'}},
+                         {'cluster': {'id': 'cluster2_id'}}]
         }
         self.cl_mock.create.return_value = clusters_mock
 
@@ -188,7 +189,7 @@ class TestCreateCluster(TestClusters):
         # Check that correct arguments were passed
         self.cl_mock.create.assert_called_once_with(
             cluster_template_id='ct_id', count=2, default_image_id='img_id',
-            description=None, hadoop_version='0.1', is_protected=False,
+            description=None, plugin_version='0.1', is_protected=False,
             is_public=False, is_transient=False, name='fake', net_id=None,
             plugin_name='fake', user_keypair_id=None)
 

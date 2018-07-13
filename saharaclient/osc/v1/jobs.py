@@ -31,7 +31,7 @@ JOB_STATUS_CHOICES = ['done-with-error', 'failed', 'killed', 'pending',
                       'running', 'succeeded', 'to-be-killed']
 
 
-def _format_job_output(data):
+def _format_job_output(app, data):
     data['status'] = data['info']['status']
     del data['info']
     data['job_template_id'] = data.pop('job_id')
@@ -116,9 +116,7 @@ class ExecuteJob(command.ShowOne):
         )
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
+    def _take_action(self, client, parsed_args):
 
         if parsed_args.json:
             blob = osc_utils.read_blob_file_contents(parsed_args.json)
@@ -132,7 +130,7 @@ class ExecuteJob(command.ShowOne):
             if 'job_configs' in template:
                 template['configs'] = template.pop('job_configs')
 
-            data = client.job_executions.create(**template).to_dict()
+            data = utils.create_job_json(client, self.app, template)
         else:
             if not parsed_args.cluster or not parsed_args.job_template:
                 raise exceptions.CommandError(
@@ -170,8 +168,7 @@ class ExecuteJob(command.ShowOne):
                 job_configs['params'] = dict(
                     map(lambda x: x.split(':', 1), parsed_args.params))
 
-            jt_id = utils.get_resource_id(
-                client.jobs, parsed_args.job_template)
+            jt_id = utils.get_job_template_id(self.app, client, parsed_args)
             cluster_id = utils.get_resource_id(
                 client.clusters, parsed_args.cluster)
             if parsed_args.input not in [None, "", "None"]:
@@ -185,17 +182,22 @@ class ExecuteJob(command.ShowOne):
             else:
                 output_id = None
 
-            data = client.job_executions.create(
-                job_id=jt_id, cluster_id=cluster_id, input_id=input_id,
-                output_id=output_id, interface=parsed_args.interface,
-                configs=job_configs, is_public=parsed_args.public,
-                is_protected=parsed_args.protected).to_dict()
-
+            data = utils.create_job(client, self.app, jt_id, cluster_id,
+                                    input_id, output_id, job_configs,
+                                    parsed_args)
         sys.stdout.write(
             'Job "{job}" has been started successfully.\n'.format(
                 job=data['id']))
 
-        _format_job_output(data)
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_job_output(self.app, data)
         data = utils.prepare_data(data, JOB_FIELDS)
 
         return self.dict2columns(data)
@@ -228,6 +230,7 @@ class ListJobs(command.Lister):
         client = self.app.client_manager.data_processing
 
         data = client.job_executions.list()
+
         for job in data:
             job.status = job.info['status']
 
@@ -275,7 +278,7 @@ class ShowJob(command.ShowOne):
 
         data = client.job_executions.get(parsed_args.job).to_dict()
 
-        _format_job_output(data)
+        _format_job_output(self.app, data)
         data = utils.prepare_data(data, JOB_FIELDS)
 
         return self.dict2columns(data)
@@ -308,12 +311,16 @@ class DeleteJob(command.Command):
         client = self.app.client_manager.data_processing
         for job_id in parsed_args.job:
             client.job_executions.delete(job_id)
+
             sys.stdout.write(
                 'Job "{job}" deletion has been started.\n'.format(job=job_id))
 
         if parsed_args.wait:
             for job_id in parsed_args.job:
-                if not utils.wait_for_delete(client.job_executions, job_id):
+                wait_for_delete = utils.wait_for_delete(
+                    client.job_executions, job_id)
+
+                if not wait_for_delete:
                     self.log.error(
                         'Error occurred during job deleting: %s' %
                         job_id)
@@ -367,18 +374,22 @@ class UpdateJob(command.ShowOne):
 
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         update_dict = utils.create_dict_from_kwargs(
             is_public=parsed_args.is_public,
             is_protected=parsed_args.is_protected)
 
-        data = client.job_executions.update(
-            parsed_args.job, **update_dict).job_execution
+        data = utils.update_job(client, self.app, parsed_args, update_dict)
 
-        _format_job_output(data)
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_job_output(self.app, data)
         data = utils.prepare_data(data, JOB_FIELDS)
 
         return self.dict2columns(data)
