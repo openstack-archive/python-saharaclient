@@ -41,8 +41,6 @@ def make_client(instance):
     client = data_processing_client(
         session=instance.session,
         region_name=instance._region_name,
-        cacert=instance._cacert,
-        insecure=instance._insecure,
         sahara_url=instance._cli_options.data_processing_url,
         **kwargs
         )
