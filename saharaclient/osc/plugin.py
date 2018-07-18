@@ -24,7 +24,8 @@ DEFAULT_DATA_PROCESSING_API_VERSION = "1.1"
 API_VERSION_OPTION = "os_data_processing_api_version"
 API_NAME = "data_processing"
 API_VERSIONS = {
-    "1.1": "saharaclient.api.client.Client"
+    "1.1": "saharaclient.api.client.Client",
+    "2": "saharaclient.api.client.ClientV2"
 }
 
 

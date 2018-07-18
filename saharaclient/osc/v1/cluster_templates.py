@@ -21,7 +21,7 @@ from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils as json
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 CT_FIELDS = ['id', 'name', 'plugin_name', 'plugin_version', 'description',
              'node_groups', 'anti_affinity', 'use_autoconfig', 'is_default',

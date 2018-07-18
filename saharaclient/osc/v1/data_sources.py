@@ -19,7 +19,7 @@ from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 DATA_SOURCE_FIELDS = ['name', 'id', 'type', 'url', 'description', 'is_public',
                       'is_protected']

@@ -23,7 +23,7 @@ from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
 from saharaclient.api import base
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 JOB_BINARY_FIELDS = ['name', 'id', 'url', 'description', 'is_public',
                      'is_protected']

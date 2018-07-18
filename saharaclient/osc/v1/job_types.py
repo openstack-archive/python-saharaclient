@@ -22,8 +22,8 @@ from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
+from saharaclient.osc import utils
 from saharaclient.osc.v1.job_templates import JOB_TYPES_CHOICES
-from saharaclient.osc.v1 import utils
 
 
 class ListJobTypes(command.Lister):

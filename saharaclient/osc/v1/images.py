@@ -19,7 +19,7 @@ from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 IMAGE_FIELDS = ['name', 'id', 'username', 'tags', 'status', 'description']
 

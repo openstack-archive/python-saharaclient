@@ -30,6 +30,8 @@ class BaseTestCase(testtools.TestCase):
         super(BaseTestCase, self).setUp()
         self.responses = self.useFixture(fixture.Fixture())
         self.client = client.Client(session=self.SESSION, sahara_url=self.URL)
+        self.client_v2 = client.ClientV2(session=self.SESSION,
+                                         sahara_url=self.URL)
 
     def assertFields(self, body, obj):
         for key, value in body.items():
