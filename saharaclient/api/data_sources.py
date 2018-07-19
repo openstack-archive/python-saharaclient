@@ -26,7 +26,7 @@ class DataSourceManagerV1(base.ResourceManager):
 
     def create(self, name, description, data_source_type,
                url, credential_user=None, credential_pass=None,
-               is_public=None, is_protected=None):
+               is_public=None, is_protected=None, s3_credentials=None):
         """Create a Data Source."""
 
         data = {
@@ -34,14 +34,15 @@ class DataSourceManagerV1(base.ResourceManager):
             'description': description,
             'type': data_source_type,
             'url': url,
-            'credentials': {}
         }
-        self._copy_if_defined(data['credentials'],
+        credentials = {}
+        self._copy_if_defined(credentials,
                               user=credential_user,
                               password=credential_pass)
-
+        credentials = credentials or s3_credentials
         self._copy_if_defined(data, is_public=is_public,
-                              is_protected=is_protected)
+                              is_protected=is_protected,
+                              credentials=credentials)
 
         return self._create('/data-sources', data, 'data_source')
 
