@@ -21,7 +21,7 @@ from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 CLUSTER_FIELDS = ["cluster_template_id", "use_autoconfig", "user_keypair_id",
                   "status", "image", "node_groups", "id", "info",

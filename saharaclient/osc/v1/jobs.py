@@ -21,7 +21,7 @@ from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 
 JOB_FIELDS = ['id', 'job_template_id', 'cluster_id', 'input_id', 'output_id',
               'start_time', 'end_time', 'status', 'is_public', 'is_protected',

@@ -15,7 +15,7 @@
 
 import mock
 
-from saharaclient.osc.v1 import utils
+from saharaclient.osc import utils
 from saharaclient.tests.unit import base
 
 
