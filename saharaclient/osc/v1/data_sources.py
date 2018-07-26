@@ -23,7 +23,7 @@ from saharaclient.osc import utils
 
 DATA_SOURCE_FIELDS = ['name', 'id', 'type', 'url', 'description', 'is_public',
                       'is_protected']
-DATA_SOURCE_CHOICES = ["swift", "hdfs", "maprfs", "manila"]
+DATA_SOURCE_CHOICES = ["swift", "hdfs", "maprfs", "manila", "s3"]
 
 
 class CreateDataSource(command.ShowOne):
@@ -53,15 +53,59 @@ class CreateDataSource(command.ShowOne):
             help="URL for the data source [REQUIRED]",
             required=True
         )
-        parser.add_argument(
+        username = parser.add_mutually_exclusive_group()
+        username.add_argument(
             '--username',
             metavar="<username>",
             help="Username for accessing the data source URL"
         )
-        parser.add_argument(
+        username.add_argument(
+            '--access-key',
+            metavar='<accesskey>',
+            help='S3 access key for accessing the data source URL',
+        )
+        password = parser.add_mutually_exclusive_group()
+        password.add_argument(
             '--password',
             metavar="<password>",
             help="Password for accessing the data source URL"
+        )
+        password.add_argument(
+            '--secret-key',
+            metavar='<secretkey>',
+            help='S3 secret key for accessing the data source URL',
+        )
+        parser.add_argument(
+            '--s3-endpoint',
+            metavar='<endpoint>',
+            help='S3 endpoint for accessing the data source URL (ignored if '
+                 'data source not in S3)',
+        )
+        enable_s3_ssl = parser.add_mutually_exclusive_group()
+        enable_s3_ssl.add_argument(
+            '--enable-s3-ssl',
+            action='store_true',
+            help='Enable access to S3 endpoint using SSL (ignored if data '
+                 'source not in S3)'
+        )
+        enable_s3_ssl.add_argument(
+            '--disable-s3-ssl',
+            action='store_false',
+            help='Disable access to S3 endpoint using SSL (ignored if data '
+                 'source not in S3)'
+        )
+        s3_bucket_in_path = parser.add_mutually_exclusive_group()
+        s3_bucket_in_path.add_argument(
+            '--enable-s3-bucket-in-path',
+            action='store_true',
+            help='Access S3 endpoint using bucket name in path '
+                 '(ignored if data source not in S3)'
+        )
+        s3_bucket_in_path.add_argument(
+            '--disable-s3-bucket-in-path',
+            action='store_false',
+            help='Access S3 endpoint using bucket name in path '
+                 '(ignored if data source not in S3)'
         )
         parser.add_argument(
             '--description',
@@ -86,6 +130,22 @@ class CreateDataSource(command.ShowOne):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
 
+        s3_credentials = {}
+        if parsed_args.access_key:
+            s3_credentials['accesskey'] = parsed_args.access_key
+        if parsed_args.secret_key:
+            s3_credentials['secretkey'] = parsed_args.secret_key
+        if parsed_args.s3_endpoint:
+            s3_credentials['endpoint'] = parsed_args.s3_endpoint
+        if parsed_args.enable_s3_ssl == parsed_args.disable_s3_ssl:
+            s3_credentials['ssl'] = parsed_args.enable_s3_ssl
+        if (parsed_args.enable_s3_bucket_in_path ==
+                parsed_args.disable_s3_bucket_in_path):
+            s3_credentials['bucket_in_path'] = (
+                parsed_args.enable_s3_bucket_in_path)
+
+        s3_credentials = s3_credentials or None
+
         description = parsed_args.description or ''
         data = client.data_sources.create(
             name=parsed_args.name, description=description,
@@ -93,7 +153,9 @@ class CreateDataSource(command.ShowOne):
             credential_user=parsed_args.username,
             credential_pass=parsed_args.password,
             is_public=parsed_args.public,
-            is_protected=parsed_args.protected).to_dict()
+            is_protected=parsed_args.protected,
+            s3_credentials=s3_credentials
+        ).to_dict()
 
         data = utils.prepare_data(data, DATA_SOURCE_FIELDS)
 
@@ -230,15 +292,59 @@ class UpdateDataSource(command.ShowOne):
             metavar="<url>",
             help="URL for the data source"
         )
-        parser.add_argument(
+        username = parser.add_mutually_exclusive_group()
+        username.add_argument(
             '--username',
             metavar="<username>",
             help="Username for accessing the data source URL"
         )
-        parser.add_argument(
+        username.add_argument(
+            '--access-key',
+            metavar='<accesskey>',
+            help='S3 access key for accessing the data source URL',
+        )
+        password = parser.add_mutually_exclusive_group()
+        password.add_argument(
             '--password',
             metavar="<password>",
             help="Password for accessing the data source URL"
+        )
+        password.add_argument(
+            '--secret-key',
+            metavar='<secretkey>',
+            help='S3 secret key for accessing the data source URL',
+        )
+        parser.add_argument(
+            '--s3-endpoint',
+            metavar='<endpoint>',
+            help='S3 endpoint for accessing the data source URL (ignored if '
+                 'data source not in S3)',
+        )
+        enable_s3_ssl = parser.add_mutually_exclusive_group()
+        enable_s3_ssl.add_argument(
+            '--enable-s3-ssl',
+            action='store_true',
+            help='Enable access to S3 endpoint using SSL (ignored if data '
+                 'source not in S3)'
+        )
+        enable_s3_ssl.add_argument(
+            '--disable-s3-ssl',
+            action='store_false',
+            help='Disable access to S3 endpoint using SSL (ignored if data '
+                 'source not in S3)'
+        )
+        s3_bucket_in_path = parser.add_mutually_exclusive_group()
+        s3_bucket_in_path.add_argument(
+            '--enable-s3-bucket-in-path',
+            action='store_true',
+            help='Access S3 endpoint using bucket name in path '
+                 '(ignored if data source not in S3)'
+        )
+        s3_bucket_in_path.add_argument(
+            '--disable-s3-bucket-in-path',
+            action='store_false',
+            help='Access S3 endpoint using bucket name in path '
+                 '(ignored if data source not in S3)'
         )
         parser.add_argument(
             '--description',
@@ -280,10 +386,24 @@ class UpdateDataSource(command.ShowOne):
         client = self.app.client_manager.data_processing
 
         credentials = {}
-        if parsed_args.username:
-            credentials['user'] = parsed_args.username
-        if parsed_args.password:
-            credentials['password'] = parsed_args.password
+        if parsed_args.type == 'swift':
+            if parsed_args.username:
+                credentials['user'] = parsed_args.username
+            if parsed_args.password:
+                credentials['password'] = parsed_args.password
+        elif parsed_args.type == 's3':
+            if parsed_args.access_key:
+                credentials['accesskey'] = parsed_args.access_key
+            if parsed_args.secret_key:
+                credentials['secretkey'] = parsed_args.secret_key
+            if parsed_args.s3_endpoint:
+                credentials['endpoint'] = parsed_args.s3_endpoint
+            if parsed_args.enable_s3_ssl == parsed_args.disable_s3_ssl:
+                credentials['ssl'] = parsed_args.enable_s3_ssl
+            if (parsed_args.enable_s3_bucket_in_path ==
+                    parsed_args.disable_s3_bucket_in_path):
+                credentials['bucket_in_path'] = (
+                    parsed_args.enable_s3_bucket_in_path)
         if not credentials:
             credentials = None
 
