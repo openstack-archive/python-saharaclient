@@ -1,15 +1,29 @@
 - project:
+    templates:
+      - openstack-python-jobs
+      - openstack-python35-jobs
+      - publish-openstack-sphinx-docs
+      - check-requirements
+      - release-notes-jobs
+      - openstackclient-plugin-jobs
     check:
       jobs:
         - python-saharaclient-scenario
         - python-saharaclient-tempest
         - openstack-tox-lower-constraints
     gate:
+      queue: sahara
       jobs:
         - python-saharaclient-scenario
         - python-saharaclient-tempest
-
         - openstack-tox-lower-constraints
+    post:
+      jobs:
+        - openstack-tox-cover
+    experimental:
+      jobs:
+        - openstack-tox-pypy
+
 - job:
     name: python-saharaclient-scenario
     description: |
@@ -19,7 +33,7 @@
       - openstack/python-saharaclient
     vars:
       devstack_localrc:
-        LIBS_FROM_GIT: 'python-saharaclient'
+        LIBS_FROM_GIT: python-saharaclient
 
 - job:
     name: python-saharaclient-tempest
@@ -31,4 +45,4 @@
       - openstack/python-saharaclient
     vars:
       devstack_localrc:
-        LIBS_FROM_GIT: 'python-saharaclient'
+        LIBS_FROM_GIT: python-saharaclient
