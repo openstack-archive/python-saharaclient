@@ -16,9 +16,9 @@
 import mock
 
 from saharaclient.api import job_types as api_jt
-from saharaclient.api import jobs as api_j
-from saharaclient.osc.v1 import job_types as osc_jt
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.api.v2 import job_templates as api_job_templates
+from saharaclient.osc.v2 import job_types as osc_jt
+from saharaclient.tests.unit.osc.v1 import test_job_types as tjt_v1
 
 JOB_TYPE_INFO = {
     "name": 'Pig',
@@ -40,14 +40,15 @@ JOB_TYPE_INFO = {
 }
 
 
-class TestJobTypes(fakes.TestDataProcessing):
+class TestJobTypes(tjt_v1.TestJobTypes):
     def setUp(self):
         super(TestJobTypes, self).setUp()
-        self.job_mock = self.app.client_manager.data_processing.jobs
+        self.app.api_version['data_processing'] = '2'
+        self.job_template_mock = (
+            self.app.client_manager.data_processing.job_templates)
         self.jt_mock = self.app.client_manager.data_processing.job_types
         self.jt_mock.reset_mock()
-        self.job_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
+        self.job_template_mock.reset_mock()
 
 
 class TestListJobTemplates(TestJobTypes):
@@ -96,8 +97,8 @@ class TestListJobTemplates(TestJobTypes):
 class TestGetJobTypeConfigs(TestJobTypes):
     def setUp(self):
         super(TestGetJobTypeConfigs, self).setUp()
-        self.job_mock.get_configs.return_value = (
-            api_j.Job(None, JOB_TYPE_INFO))
+        self.job_template_mock.get_configs.return_value = (
+            api_job_templates.JobTemplate(None, JOB_TYPE_INFO))
 
         # Command to test
         self.cmd = osc_jt.GetJobTypeConfigs(self.app, None)
@@ -114,7 +115,7 @@ class TestGetJobTypeConfigs(TestJobTypes):
             self.cmd.take_action(parsed_args)
 
             # Check that correct arguments was passed
-            self.job_mock.get_configs.assert_called_once_with(
+            self.job_template_mock.get_configs.assert_called_once_with(
                 'Pig')
 
             args_to_dump = p_dump.call_args[0]
@@ -136,7 +137,7 @@ class TestGetJobTypeConfigs(TestJobTypes):
             self.cmd.take_action(parsed_args)
 
             # Check that correct arguments was passed
-            self.job_mock.get_configs.assert_called_once_with(
+            self.job_template_mock.get_configs.assert_called_once_with(
                 'Pig')
 
             args_to_dump = p_dump.call_args[0]

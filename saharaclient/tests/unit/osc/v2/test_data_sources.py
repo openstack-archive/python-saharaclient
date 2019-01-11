@@ -15,11 +15,10 @@
 
 import mock
 from osc_lib.tests import utils as osc_utils
-import testtools
 
 from saharaclient.api import data_sources as api_ds
 from saharaclient.osc.v1 import data_sources as osc_ds
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.tests.unit.osc.v1 import test_data_sources as tds_v1
 
 DS_INFO = {'id': 'id', 'name': 'source', 'type': 'swift',
            'url': 'swift://container.sahara/object',
@@ -27,13 +26,13 @@ DS_INFO = {'id': 'id', 'name': 'source', 'type': 'swift',
            'is_public': True, 'is_protected': True}
 
 
-class TestDataSources(fakes.TestDataProcessing):
+class TestDataSources(tds_v1.TestDataSources):
     def setUp(self):
         super(TestDataSources, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.ds_mock = (
             self.app.client_manager.data_processing.data_sources)
         self.ds_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestCreateDataSource(TestDataSources):
@@ -114,13 +113,6 @@ class TestCreateDataSource(TestDataSources):
         expected_data = ('Data Source for tests', 'id', True, True, 'source',
                          'swift', 'swift://container.sahara/object')
         self.assertEqual(expected_data, data)
-
-    def test_data_source_create_mutual_exclusion(self):
-        arglist = ['data-source', '--name', 'data-source', '--access-key',
-                   'ak', '--secret-key', 'sk', '--url', 's3a://abc/def',
-                   '--password', 'pw']
-        with testtools.ExpectedException(osc_utils.ParserException):
-            self.check_parser(self.cmd, arglist, mock.Mock())
 
 
 class TestListDataSources(TestDataSources):
@@ -315,11 +307,3 @@ class TestUpdateDataSource(TestDataSources):
         # Check that data source was created with correct arguments
         self.ds_mock.update.assert_called_once_with(
             'id', {'is_public': False, 'is_protected': False})
-
-    def test_data_source_update_mutual_exclusion(self):
-        arglist = ['data-source', '--name', 'data-source', '--access-key',
-                   'ak', '--secret-key', 'sk', '--url', 's3a://abc/def',
-                   '--password', 'pw']
-
-        with testtools.ExpectedException(osc_utils.ParserException):
-            self.check_parser(self.cmd, arglist, mock.Mock())

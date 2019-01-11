@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Mirantis Inc.
+# Copyright (c) 2018 Red Hat Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 import mock
 from osc_lib.tests import utils as osc_utils
 
-from saharaclient.api import job_executions as api_je
-from saharaclient.osc.v1 import jobs as osc_je
-from saharaclient.tests.unit.osc.v1 import fakes
+from saharaclient.api.v2 import jobs as api_j
+from saharaclient.osc.v2 import jobs as osc_j
+from saharaclient.tests.unit.osc.v1 import test_jobs as tj_v1
 
-JOB_EXECUTION_INFO = {
+JOB_INFO = {
     "is_public": False,
-    "id": "je_id",
+    "id": "j_id",
     "interface": [],
     "is_protected": False,
     "input_id": 'input_id',
     "output_id": 'output_id',
-    "job_id": "job_id",
+    "job_template_id": "job_template_id",
     "cluster_id": 'cluster_id',
     "start_time": "start",
     "end_time": "end",
@@ -52,32 +52,31 @@ JOB_EXECUTION_INFO = {
 }
 
 
-class TestJobs(fakes.TestDataProcessing):
+class TestJobs(tj_v1.TestJobs):
     def setUp(self):
         super(TestJobs, self).setUp()
-        self.je_mock = self.app.client_manager.data_processing.job_executions
-        self.je_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
+        self.app.api_version['data_processing'] = '2'
+        self.j_mock = self.app.client_manager.data_processing.jobs
+        self.j_mock.reset_mock()
 
 
 class TestExecuteJob(TestJobs):
     # TODO(apavlov): check for execution with --interface, --configs, --json
     def setUp(self):
         super(TestExecuteJob, self).setUp()
-        self.je_mock.create.return_value = api_je.JobExecution(
-            None, JOB_EXECUTION_INFO)
+        self.j_mock.create.return_value = api_j.Job(None, JOB_INFO)
         self.ds_mock = self.app.client_manager.data_processing.data_sources
         self.ds_mock.find_unique.return_value = mock.Mock(id='ds_id')
         self.c_mock = self.app.client_manager.data_processing.clusters
         self.c_mock.find_unique.return_value = mock.Mock(id='cluster_id')
-        self.jt_mock = self.app.client_manager.data_processing.jobs
-        self.jt_mock.find_unique.return_value = mock.Mock(id='job_id')
+        self.jt_mock = self.app.client_manager.data_processing.job_templates
+        self.jt_mock.find_unique.return_value = mock.Mock(id='job_template_id')
         self.ds_mock.reset_mock()
         self.c_mock.reset_mock()
         self.jt_mock.reset_mock()
 
         # Command to test
-        self.cmd = osc_je.ExecuteJob(self.app, None)
+        self.cmd = osc_j.ExecuteJob(self.app, None)
 
     def test_job_execute_minimum_options(self):
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster']
@@ -88,10 +87,10 @@ class TestExecuteJob(TestJobs):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.create.assert_called_once_with(
+        self.j_mock.create.assert_called_once_with(
             cluster_id='cluster_id', configs={}, input_id=None,
             interface=None, is_protected=False, is_public=False,
-            job_id='job_id', output_id=None)
+            job_template_id='job_template_id', output_id=None)
 
     def test_job_execute_with_input_output_option(self):
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
@@ -103,10 +102,10 @@ class TestExecuteJob(TestJobs):
 
         self.cmd.take_action(parsed_args)
 
-        self.je_mock.create.assert_called_once_with(
+        self.j_mock.create.assert_called_once_with(
             cluster_id='cluster_id', configs={}, input_id='ds_id',
             interface=None, is_protected=False, is_public=False,
-            job_id='job_id', output_id='ds_id')
+            job_template_id='job_template_id', output_id='ds_id')
 
         # without option --output
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
@@ -118,10 +117,10 @@ class TestExecuteJob(TestJobs):
 
         self.cmd.take_action(parsed_args)
 
-        self.je_mock.create.assert_called_with(
+        self.j_mock.create.assert_called_with(
             cluster_id='cluster_id', configs={}, input_id='ds_id',
             interface=None, is_protected=False, is_public=False,
-            job_id='job_id', output_id=None)
+            job_template_id='job_template_id', output_id=None)
 
         # without options --output and --input
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster']
@@ -131,10 +130,10 @@ class TestExecuteJob(TestJobs):
 
         self.cmd.take_action(parsed_args)
 
-        self.je_mock.create.assert_called_with(
+        self.j_mock.create.assert_called_with(
             cluster_id='cluster_id', configs={}, input_id=None,
             interface=None, is_protected=False, is_public=False,
-            job_id='job_id', output_id=None)
+            job_template_id='job_template_id', output_id=None)
 
     def test_job_execute_all_options(self):
         arglist = ['--job-template', 'job-template', '--cluster', 'cluster',
@@ -156,13 +155,14 @@ class TestExecuteJob(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.create.assert_called_once_with(
+        self.j_mock.create.assert_called_once_with(
             cluster_id='cluster_id',
             configs={'configs': {'config1': '1', 'config2': '2'},
                      'args': ['arg1', 'arg2'],
                      'params': {'param2': 'value2', 'param1': 'value1'}},
             input_id='ds_id', interface=None, is_protected=True,
-            is_public=True, job_id='job_id', output_id='ds_id')
+            is_public=True, job_template_id='job_template_id',
+            output_id='ds_id')
 
         # Check that columns are correct
         expected_columns = ('Cluster id', 'End time', 'Engine job id', 'Id',
@@ -172,20 +172,19 @@ class TestExecuteJob(TestJobs):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('cluster_id', 'end', 'engine_job_id', 'je_id',
-                         'input_id', False, False, 'job_id', 'output_id',
-                         'start', 'SUCCEEDED')
+        expected_data = ('cluster_id', 'end', 'engine_job_id', 'j_id',
+                         'input_id', False, False, 'job_template_id',
+                         'output_id', 'start', 'SUCCEEDED')
         self.assertEqual(expected_data, data)
 
 
 class TestListJobs(TestJobs):
     def setUp(self):
         super(TestListJobs, self).setUp()
-        self.je_mock.list.return_value = [api_je.JobExecution(
-            None, JOB_EXECUTION_INFO)]
+        self.j_mock.list.return_value = [api_j.Job(None, JOB_INFO)]
 
         # Command to test
-        self.cmd = osc_je.ListJobs(self.app, None)
+        self.cmd = osc_j.ListJobs(self.app, None)
 
     def test_jobs_list_no_options(self):
         arglist = []
@@ -196,11 +195,12 @@ class TestListJobs(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Id', 'Cluster id', 'Job id', 'Status']
+        expected_columns = ['Id', 'Cluster id', 'Job template id', 'Status']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('je_id', 'cluster_id', 'job_id', 'SUCCEEDED')]
+        expected_data = [('j_id', 'cluster_id', 'job_template_id',
+                          'SUCCEEDED')]
         self.assertEqual(expected_data, list(data))
 
     def test_jobs_list_long(self):
@@ -212,12 +212,12 @@ class TestListJobs(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Id', 'Cluster id', 'Job id', 'Status',
+        expected_columns = ['Id', 'Cluster id', 'Job template id', 'Status',
                             'Start time', 'End time']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('je_id', 'cluster_id', 'job_id', 'SUCCEEDED',
+        expected_data = [('j_id', 'cluster_id', 'job_template_id', 'SUCCEEDED',
                           'start', 'end')]
         self.assertEqual(expected_data, list(data))
 
@@ -230,22 +230,22 @@ class TestListJobs(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that columns are correct
-        expected_columns = ['Id', 'Cluster id', 'Job id', 'Status']
+        expected_columns = ['Id', 'Cluster id', 'Job template id', 'Status']
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = [('je_id', 'cluster_id', 'job_id', 'SUCCEEDED')]
+        expected_data = [('j_id', 'cluster_id', 'job_template_id',
+                          'SUCCEEDED')]
         self.assertEqual(expected_data, list(data))
 
 
 class TestShowJob(TestJobs):
     def setUp(self):
         super(TestShowJob, self).setUp()
-        self.je_mock.get.return_value = api_je.JobExecution(
-            None, JOB_EXECUTION_INFO)
+        self.j_mock.get.return_value = api_j.Job(None, JOB_INFO)
 
         # Command to test
-        self.cmd = osc_je.ShowJob(self.app, None)
+        self.cmd = osc_j.ShowJob(self.app, None)
 
     def test_job_show(self):
         arglist = ['job_id']
@@ -256,7 +256,7 @@ class TestShowJob(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.get.assert_called_once_with('job_id')
+        self.j_mock.get.assert_called_once_with('job_id')
 
         # Check that columns are correct
         expected_columns = ('Cluster id', 'End time', 'Engine job id', 'Id',
@@ -266,20 +266,19 @@ class TestShowJob(TestJobs):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('cluster_id', 'end', 'engine_job_id', 'je_id',
-                         'input_id', False, False, 'job_id', 'output_id',
-                         'start', 'SUCCEEDED')
+        expected_data = ('cluster_id', 'end', 'engine_job_id', 'j_id',
+                         'input_id', False, False, 'job_template_id',
+                         'output_id', 'start', 'SUCCEEDED')
         self.assertEqual(expected_data, data)
 
 
 class TestDeleteJob(TestJobs):
     def setUp(self):
         super(TestDeleteJob, self).setUp()
-        self.je_mock.get.return_value = api_je.JobExecution(
-            None, JOB_EXECUTION_INFO)
+        self.j_mock.get.return_value = api_j.Job(None, JOB_INFO)
 
         # Command to test
-        self.cmd = osc_je.DeleteJob(self.app, None)
+        self.cmd = osc_j.DeleteJob(self.app, None)
 
     def test_job_delete(self):
         arglist = ['job_id']
@@ -290,19 +289,17 @@ class TestDeleteJob(TestJobs):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.delete.assert_called_once_with('job_id')
+        self.j_mock.delete.assert_called_once_with('job_id')
 
 
 class TestUpdateJob(TestJobs):
     def setUp(self):
         super(TestUpdateJob, self).setUp()
-        self.je_mock.get.return_value = api_je.JobExecution(
-            None, JOB_EXECUTION_INFO)
-        self.je_mock.update.return_value = mock.Mock(
-            job_execution=JOB_EXECUTION_INFO.copy())
+        self.j_mock.get.return_value = api_j.Job(None, JOB_INFO)
+        self.j_mock.update.return_value = mock.Mock(job=JOB_INFO.copy())
 
         # Command to test
-        self.cmd = osc_je.UpdateJob(self.app, None)
+        self.cmd = osc_j.UpdateJob(self.app, None)
 
     def test_job_update_no_options(self):
         arglist = []
@@ -321,7 +318,7 @@ class TestUpdateJob(TestJobs):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.update.assert_called_once_with('job_id')
+        self.j_mock.update.assert_called_once_with('job_id')
 
     def test_job_update_public_protected(self):
         arglist = ['job_id', '--public', '--protected']
@@ -334,7 +331,7 @@ class TestUpdateJob(TestJobs):
         columns, data = self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.update.assert_called_once_with(
+        self.j_mock.update.assert_called_once_with(
             'job_id', is_protected=True, is_public=True)
 
         # Check that columns are correct
@@ -345,9 +342,9 @@ class TestUpdateJob(TestJobs):
         self.assertEqual(expected_columns, columns)
 
         # Check that data is correct
-        expected_data = ('cluster_id', 'end', 'engine_job_id', 'je_id',
-                         'input_id', False, False, 'job_id', 'output_id',
-                         'start', 'SUCCEEDED')
+        expected_data = ('cluster_id', 'end', 'engine_job_id', 'j_id',
+                         'input_id', False, False, 'job_template_id',
+                         'output_id', 'start', 'SUCCEEDED')
         self.assertEqual(expected_data, data)
 
     def test_job_update_private_unprotected(self):
@@ -361,5 +358,5 @@ class TestUpdateJob(TestJobs):
         self.cmd.take_action(parsed_args)
 
         # Check that correct arguments were passed
-        self.je_mock.update.assert_called_once_with(
+        self.j_mock.update.assert_called_once_with(
             'job_id', is_protected=False, is_public=False)

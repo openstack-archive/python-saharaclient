@@ -35,7 +35,7 @@ def _format_node_groups_list(node_groups):
         ['%s:%s' % (ng['name'], ng['count']) for ng in node_groups])
 
 
-def _format_cluster_output(data):
+def _format_cluster_output(app, data):
     data['plugin_version'] = data.pop('hadoop_version')
     data['image'] = data.pop('default_image_id')
     data['node_groups'] = _format_node_groups_list(data['node_groups'])
@@ -52,11 +52,6 @@ def _prepare_health_checks(data):
         additional_data[row_name] = check['status']
         additional_fields.append(row_name)
     return additional_data, additional_fields
-
-
-def _get_plugin_version(cluster_template, client):
-    ct = utils.get_resource(client.cluster_templates, cluster_template)
-    return ct.plugin_name, ct.hadoop_version, ct.id
 
 
 class CreateCluster(command.ShowOne):
@@ -140,9 +135,7 @@ class CreateCluster(command.ShowOne):
 
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
+    def _take_action(self, client, parsed_args):
         network_client = self.app.client_manager.network
 
         if parsed_args.json:
@@ -169,8 +162,8 @@ class CreateCluster(command.ShowOne):
                     'should be specified or json template should be provided '
                     'with --json argument')
 
-            plugin, plugin_version, template_id = _get_plugin_version(
-                parsed_args.cluster_template, client)
+            plugin, plugin_version, template_id = utils._get_plugin_version(
+                self.app, parsed_args.cluster_template, client)
 
             image_id = utils.get_resource_id(client.images, parsed_args.image)
 
@@ -178,20 +171,17 @@ class CreateCluster(command.ShowOne):
                 parsed_args.neutron_network, ignore_missing=False).id if
                 parsed_args.neutron_network else None)
 
-            data = client.clusters.create(
-                name=parsed_args.name,
-                plugin_name=plugin,
-                hadoop_version=plugin_version,
-                cluster_template_id=template_id,
-                default_image_id=image_id,
-                description=parsed_args.description,
-                is_transient=parsed_args.transient,
-                user_keypair_id=parsed_args.user_keypair,
-                net_id=net_id,
-                count=parsed_args.count,
-                is_public=parsed_args.public,
-                is_protected=parsed_args.protected
-            ).to_dict()
+            data = utils.create_cluster(client, self.app, parsed_args, plugin,
+                                        plugin_version, template_id, image_id,
+                                        net_id)
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
         if parsed_args.count and parsed_args.count > 1:
             clusters = [
                 utils.get_resource(client.clusters, id)
@@ -217,7 +207,7 @@ class CreateCluster(command.ShowOne):
                         'Error occurred during cluster creation: %s',
                         data['id'])
                 data = client.clusters.get(data['id']).to_dict()
-            _format_cluster_output(data)
+            _format_cluster_output(self.app, data)
             data = utils.prepare_data(data, CLUSTER_FIELDS)
 
         return self.dict2columns(data)
@@ -277,12 +267,13 @@ class ListClusters(command.Lister):
             column_headers = utils.prepare_column_headers(
                 columns, {'hadoop_version': 'plugin_version',
                           'default_image_id': 'image'})
-
         else:
-            columns = ('name', 'id', 'plugin_name', 'hadoop_version', 'status')
+            columns = ('name', 'id', 'plugin_name', 'hadoop_version',
+                       'status')
             column_headers = utils.prepare_column_headers(
                 columns, {'hadoop_version': 'plugin_version',
                           'default_image_id': 'image'})
+
         return (
             column_headers,
             (osc_utils.get_item_properties(
@@ -326,10 +317,7 @@ class ShowCluster(command.ShowOne):
         )
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         kwargs = {}
         if parsed_args.show_progress or parsed_args.full_dump_events:
             kwargs['show_progress'] = True
@@ -344,8 +332,9 @@ class ShowCluster(command.ShowOne):
             with open(file_name, 'w') as file:
                 jsonutils.dump(provision_steps, file, indent=4)
             sys.stdout.write('Event log dump saved to file: %s\n' % file_name)
+        return data, provision_steps
 
-        _format_cluster_output(data)
+    def _show_cluster_info(self, data, provision_steps, parsed_args):
         fields = []
         if parsed_args.verification:
             ver_data, fields = _prepare_health_checks(data)
@@ -368,6 +357,17 @@ class ShowCluster(command.ShowOne):
                 output_steps += [(description, progress)]
             data = utils.extend_columns(data, output_steps)
 
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data, provision_steps = self._take_action(client, parsed_args)
+
+        _format_cluster_output(self.app, data)
+
+        data = self._show_cluster_info(data, provision_steps, parsed_args)
         return data
 
 
@@ -477,10 +477,7 @@ class UpdateCluster(command.ShowOne):
 
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         cluster_id = utils.get_resource_id(
             client.clusters, parsed_args.cluster)
 
@@ -502,8 +499,15 @@ class UpdateCluster(command.ShowOne):
             shares=shares
         )
         data = client.clusters.update(cluster_id, **update_dict).cluster
+        return data
 
-        _format_cluster_output(data)
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_cluster_output(self.app, data)
         data = utils.prepare_data(data, CLUSTER_FIELDS)
 
         return self.dict2columns(data)
@@ -545,10 +549,7 @@ class ScaleCluster(command.ShowOne):
 
         return parser
 
-    def take_action(self, parsed_args):
-        self.log.debug("take_action(%s)", parsed_args)
-        client = self.app.client_manager.data_processing
-
+    def _take_action(self, client, parsed_args):
         cluster = utils.get_resource(
             client.clusters, parsed_args.cluster)
 
@@ -603,7 +604,15 @@ class ScaleCluster(command.ShowOne):
                     cluster.id)
             data = client.clusters.get(cluster.id).cluster
 
-        _format_cluster_output(data)
+        return data
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        data = self._take_action(client, parsed_args)
+
+        _format_cluster_output(self.app, data)
         data = utils.prepare_data(data, CLUSTER_FIELDS)
 
         return self.dict2columns(data)

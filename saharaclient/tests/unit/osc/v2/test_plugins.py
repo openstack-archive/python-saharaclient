@@ -36,9 +36,9 @@ PLUGIN_INFO = {'name': 'fake',
 class TestPlugins(fakes.TestDataProcessing):
     def setUp(self):
         super(TestPlugins, self).setUp()
+        self.app.api_version['data_processing'] = '2'
         self.plugins_mock = self.app.client_manager.data_processing.plugins
         self.plugins_mock.reset_mock()
-        self.app.api_version['data_processing'] = '1'
 
 
 class TestListPlugins(TestPlugins):
