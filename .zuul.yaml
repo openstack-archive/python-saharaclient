@@ -32,6 +32,7 @@
     vars:
       devstack_localrc:
         LIBS_FROM_GIT: python-saharaclient
+      sahara_scenario_tox_env: venv-py2
 
 - job:
     name: python-saharaclient-tempest
