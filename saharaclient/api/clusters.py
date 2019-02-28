@@ -213,6 +213,11 @@ class ClusterManagerV2(ClusterManagerV1):
         data = {'force': True}
         return self._delete('/clusters/%s' % cluster_id, data)
 
+    def update_keypair(self, cluster_id):
+        """Reflect an updated keypair on the cluster."""
+        data = {'update_keypair': True}
+        return self._patch("/clusters/%s" % cluster_id, data)
+
 
 # NOTE(jfreud): keep this around for backwards compatibility
 ClusterManager = ClusterManagerV1

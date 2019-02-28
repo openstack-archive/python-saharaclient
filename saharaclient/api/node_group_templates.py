@@ -58,7 +58,8 @@ class NodeGroupTemplateManagerV1(base.ResourceManager):
                    volumes_availability_zone, volume_type, image_id,
                    is_proxy_gateway, volume_local_to_instance, use_autoconfig,
                    shares, is_public, is_protected, volume_mount_prefix,
-                   boot_from_volume=None):
+                   boot_from_volume=None, boot_volume_type=None,
+                   boot_volume_az=None, boot_volume_local=None):
 
         self._copy_if_defined(data,
                               description=description,
@@ -73,7 +74,10 @@ class NodeGroupTemplateManagerV1(base.ResourceManager):
                               shares=shares,
                               is_public=is_public,
                               is_protected=is_protected,
-                              boot_from_volume=boot_from_volume
+                              boot_from_volume=boot_from_volume,
+                              boot_volume_type=boot_volume_type,
+                              boot_volume_availability_zone=boot_volume_az,
+                              boot_volume_local_to_instance=boot_volume_local
                               )
 
         if volumes_per_node:
@@ -162,7 +166,9 @@ class NodeGroupTemplateManagerV2(NodeGroupTemplateManagerV1):
                volume_type=None, image_id=None, is_proxy_gateway=None,
                volume_local_to_instance=None, use_autoconfig=None,
                shares=None, is_public=None, is_protected=None,
-               volume_mount_prefix=None, boot_from_volume=None):
+               volume_mount_prefix=None, boot_from_volume=None,
+               boot_volume_type=None, boot_volume_availability_zone=None,
+               boot_volume_local_to_instance=None):
         """Create a Node Group Template."""
 
         data = {
@@ -180,7 +186,10 @@ class NodeGroupTemplateManagerV2(NodeGroupTemplateManagerV1):
                                volume_type, image_id, is_proxy_gateway,
                                volume_local_to_instance, use_autoconfig,
                                shares, is_public, is_protected,
-                               volume_mount_prefix, boot_from_volume)
+                               volume_mount_prefix, boot_from_volume,
+                               boot_volume_type,
+                               boot_volume_availability_zone,
+                               boot_volume_local_to_instance)
 
     def update(self, ng_template_id, name=NotUpdated, plugin_name=NotUpdated,
                plugin_version=NotUpdated, flavor_id=NotUpdated,
@@ -194,7 +203,10 @@ class NodeGroupTemplateManagerV2(NodeGroupTemplateManagerV1):
                volume_local_to_instance=NotUpdated, use_autoconfig=NotUpdated,
                shares=NotUpdated, is_public=NotUpdated,
                is_protected=NotUpdated, volume_mount_prefix=NotUpdated,
-               boot_from_volume=NotUpdated):
+               boot_from_volume=NotUpdated,
+               boot_volume_type=NotUpdated,
+               boot_volume_availability_zone=NotUpdated,
+               boot_volume_local_to_instance=NotUpdated):
         """Update a Node Group Template."""
 
         data = {}
@@ -214,7 +226,10 @@ class NodeGroupTemplateManagerV2(NodeGroupTemplateManagerV1):
             use_autoconfig=use_autoconfig, shares=shares,
             is_public=is_public, is_protected=is_protected,
             volume_mount_prefix=volume_mount_prefix,
-            boot_from_volume=boot_from_volume
+            boot_from_volume=boot_from_volume,
+            boot_volume_type=boot_volume_type,
+            boot_volume_availability_zone=boot_volume_availability_zone,
+            boot_volume_local_to_instance=boot_volume_local_to_instance
         )
 
         return self._patch('/node-group-templates/%s' % ng_template_id, data,

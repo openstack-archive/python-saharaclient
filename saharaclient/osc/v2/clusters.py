@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
+from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
 
@@ -131,6 +134,22 @@ class DeleteCluster(c_v1.DeleteCluster):
 
     log = logging.getLogger(__name__ + ".DeleteCluster")
 
+    def get_parser(self, prog_name):
+        parser = super(DeleteCluster, self).get_parser(prog_name)
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            default=False,
+            help='Force the deletion of the cluster',
+        )
+        return parser
+
+    def _choose_delete_mode(self, parsed_args):
+        if parsed_args.force:
+            return "force_delete"
+        else:
+            return "delete"
+
 
 class UpdateCluster(c_v1.UpdateCluster):
     """Updates cluster"""
@@ -154,6 +173,15 @@ class ScaleCluster(c_v1.ScaleCluster):
 
     log = logging.getLogger(__name__ + ".ScaleCluster")
 
+    def _get_json_arg_helptext(self):
+        return '''
+               JSON representation of the cluster scale object. Other
+               arguments (except for --wait) will not be taken into
+               account if this one is provided. Specifiying a JSON
+               object is also the only way to indicate specific
+               instances to decomission.
+               '''
+
     def take_action(self, parsed_args):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
@@ -170,3 +198,31 @@ class VerificationUpdateCluster(c_v1.VerificationUpdateCluster):
     """Updates cluster verifications"""
 
     log = logging.getLogger(__name__ + ".VerificationUpdateCluster")
+
+
+class UpdateKeypairCluster(command.ShowOne):
+    """Reflects an updated keypair on the cluster"""
+
+    log = logging.getLogger(__name__ + ".UpdateKeypairCluster")
+
+    def get_parser(self, prog_name):
+        parser = super(UpdateKeypairCluster, self).get_parser(prog_name)
+
+        parser.add_argument(
+            'cluster',
+            metavar="<cluster>",
+            help="Name or ID of the cluster",
+        )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+        client = self.app.client_manager.data_processing
+
+        cluster_id = utils.get_resource_id(
+            client.clusters, parsed_args.cluster)
+        client.clusters.update_keypair(cluster_id)
+        sys.stdout.write(
+            'Cluster "{cluster}" keypair has been updated.\n'
+            .format(cluster=parsed_args.cluster))
+        return {}, {}

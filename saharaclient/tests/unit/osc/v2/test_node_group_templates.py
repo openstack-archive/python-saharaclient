@@ -50,7 +50,10 @@ NGT_INFO = {
     "volumes_availability_zone": None,
     "volumes_per_node": 2,
     "volume_local_to_instance": False,
-    "boot_from_volume": False
+    "boot_from_volume": False,
+    "boot_volume_type": None,
+    "boot_volume_availability_zone": None,
+    "boot_volume_local_to_instance": False
 }
 
 
@@ -101,7 +104,10 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             volume_type=None, volumes_availability_zone=None,
             volumes_per_node=None, volumes_size=None, shares=None,
             node_configs=None, volume_mount_prefix=None,
-            boot_from_volume=False)
+            boot_from_volume=False,
+            boot_volume_type=None,
+            boot_volume_availability_zone=None,
+            boot_volume_local_to_instance=False)
 
     def test_ngt_create_all_options(self):
         arglist = ['--name', 'template', '--plugin', 'fake',
@@ -115,7 +121,10 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
                    '--volumes-mount-prefix', '/volume/asd',
                    '--volumes-locality', '--description', 'descr',
                    '--autoconfig', '--proxy-gateway', '--public',
-                   '--protected', '--boot-from-volume']
+                   '--protected', '--boot-from-volume',
+                   '--boot-volume-type', 'volume2',
+                   '--boot-volume-availability-zone', 'ceph',
+                   '--boot-volume-local-to-instance']
 
         verifylist = [('name', 'template'), ('plugin', 'fake'),
                       ('plugin_version', '0.1'),
@@ -149,7 +158,10 @@ class TestCreateNodeGroupTemplate(TestNodeGroupTemplates):
             volume_local_to_instance=True, volume_type='type',
             volumes_availability_zone='vavzone', volumes_per_node=2,
             volumes_size=2, shares=None, node_configs=None,
-            volume_mount_prefix='/volume/asd', boot_from_volume=True)
+            volume_mount_prefix='/volume/asd', boot_from_volume=True,
+            boot_volume_type='volume2',
+            boot_volume_availability_zone='ceph',
+            boot_volume_local_to_instance=True)
 
         # Check that columns are correct
         expected_columns = (
@@ -340,7 +352,10 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
                    '--volumes-mount-prefix', '/volume/asd',
                    '--volumes-locality-enable', '--description', 'descr',
                    '--autoconfig-enable', '--proxy-gateway-enable', '--public',
-                   '--protected', '--boot-from-volume-enable']
+                   '--protected', '--boot-from-volume-enable',
+                   '--boot-volume-type', 'volume2',
+                   '--boot-volume-availability-zone', 'ceph',
+                   '--boot-volume-local-to-instance-enable']
 
         verifylist = [('node_group_template', 'template'),
                       ('name', 'template'), ('plugin', 'fake'),
@@ -377,7 +392,10 @@ class TestUpdateNodeGroupTemplate(TestNodeGroupTemplates):
             volume_local_to_instance=True, volume_type='type',
             volumes_availability_zone='vavzone', volumes_per_node=2,
             volumes_size=2, volume_mount_prefix='/volume/asd',
-            boot_from_volume=True)
+            boot_from_volume=True,
+            boot_volume_type='volume2',
+            boot_volume_availability_zone='ceph',
+            boot_volume_local_to_instance=True)
 
         # Check that columns are correct
         expected_columns = (

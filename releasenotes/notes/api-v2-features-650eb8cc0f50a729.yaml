@@ -1,0 +1,12 @@
+---
+features:
+  - |
+    The basic saharaclient and the OSC plugin now include support for
+    the enhanced boot from volume mechanism introduced in the Stein
+    release of Sahara, and support for the keypair replacement
+    mechanism introduced in the Rocky release of Sahara. The OSC plugin
+    also now includes support for the force deletion of clusters
+    feature introduced in the Queens release of Sahara, and support
+    for the decommision of a specific instance feature (albeit only via
+    the --json flag) introduced in the Queens release of Sahara. (All
+    of these features are exclusive to Sahara's APIv2.)

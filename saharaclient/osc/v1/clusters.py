@@ -393,14 +393,20 @@ class DeleteCluster(command.Command):
 
         return parser
 
+    def _choose_delete_mode(self, parsed_args):
+        return "delete"
+
     def take_action(self, parsed_args):
         self.log.debug("take_action(%s)", parsed_args)
         client = self.app.client_manager.data_processing
+
+        delete_function_attr = self._choose_delete_mode(parsed_args)
+
         clusters = []
         for cluster in parsed_args.cluster:
             cluster_id = utils.get_resource_id(
                 client.clusters, cluster)
-            client.clusters.delete(cluster_id)
+            getattr(client.clusters, delete_function_attr)(cluster_id)
             clusters.append((cluster_id, cluster))
             sys.stdout.write(
                 'Cluster "{cluster}" deletion has been started.\n'.format(
@@ -518,6 +524,13 @@ class ScaleCluster(command.ShowOne):
 
     log = logging.getLogger(__name__ + ".ScaleCluster")
 
+    def _get_json_arg_helptext(self):
+        return '''
+               JSON representation of the cluster scale object. Other
+               arguments (except for --wait) will not be taken into
+               account if this one is provided
+               '''
+
     def get_parser(self, prog_name):
         parser = super(ScaleCluster, self).get_parser(prog_name)
 
@@ -536,9 +549,7 @@ class ScaleCluster(command.ShowOne):
         parser.add_argument(
             '--json',
             metavar='<filename>',
-            help='JSON representation of the cluster scale object. Other '
-                 'arguments (except for --wait) will not be taken into '
-                 'account if this one is provided'
+            help=self._get_json_arg_helptext()
         )
         parser.add_argument(
             '--wait',

@@ -27,7 +27,8 @@ NGT_FIELDS = ['id', 'name', 'plugin_name', 'plugin_version', 'node_processes',
               'volume_type', 'volume_local_to_instance', 'volume_mount_prefix',
               'volumes_availability_zone', 'use_autoconfig',
               'is_proxy_gateway', 'is_default', 'is_protected', 'is_public',
-              'boot_from_volume']
+              'boot_from_volume', 'boot_volume_type',
+              'boot_volume_availability_zone', 'boot_volume_local_to_instance']
 
 
 def _format_ngt_output(data):
@@ -38,6 +39,10 @@ def _format_ngt_output(data):
         del data['volume_type'],
         del data['volumes_availability_zone']
         del data['volumes_size']
+    if not data['boot_from_volume']:
+        del data['boot_volume_type']
+        del data['boot_volume_availability_zone']
+        del data['boot_volume_local_to_instance']
 
 
 class CreateNodeGroupTemplate(ngt_v1.CreateNodeGroupTemplate,
@@ -52,6 +57,28 @@ class CreateNodeGroupTemplate(ngt_v1.CreateNodeGroupTemplate,
             action='store_true',
             default=False,
             help="Make the node group bootable from volume",
+        )
+        parser.add_argument(
+            '--boot-volume-type',
+            metavar="<boot-volume-type>",
+            help='Type of the boot volume. '
+                 'This parameter will be taken into account only '
+                 'if booting from volume.'
+        )
+        parser.add_argument(
+            '--boot-volume-availability-zone',
+            metavar="<boot-volume-availability-zone>",
+            help='Name of the availability zone to create boot volume in.'
+                 ' This parameter will be taken into account only '
+                 'if booting from volume.'
+        )
+        parser.add_argument(
+            '--boot-volume-local-to-instance',
+            action='store_true',
+            default=False,
+            help='Instance and volume guaranteed on the same host. '
+                 'This parameter will be taken into account only '
+                 'if booting from volume.'
         )
         return parser
 
@@ -132,10 +159,39 @@ class UpdateNodeGroupTemplate(ngt_v1.UpdateNodeGroupTemplate,
             help='Makes node group not bootable from volume.',
             dest='boot_from_volume'
         )
+        parser.add_argument(
+            '--boot-volume-type',
+            metavar="<boot-volume-type>",
+            help='Type of the boot volume. '
+                 'This parameter will be taken into account only '
+                 'if booting from volume.'
+        )
+        parser.add_argument(
+            '--boot-volume-availability-zone',
+            metavar="<boot-volume-availability-zone>",
+            help='Name of the availability zone to create boot volume in.'
+                 ' This parameter will be taken into account only '
+                 'if booting from volume.'
+        )
+        bfv_locality = parser.add_mutually_exclusive_group()
+        bfv_locality.add_argument(
+            '--boot-volume-local-to-instance-enable',
+            action='store_true',
+            help='Makes boot volume explicitly local to instance.',
+            dest='boot_volume_local_to_instance'
+        )
+        bfv_locality.add_argument(
+            '--boot-volume-local-to-instance-disable',
+            action='store_false',
+            help='Removes explicit instruction of boot volume locality.',
+            dest='boot_volume_local_to_instance'
+        )
         parser.set_defaults(is_public=None, is_protected=None,
                             is_proxy_gateway=None, volume_locality=None,
                             use_auto_security_group=None, use_autoconfig=None,
-                            boot_from_volume=None)
+                            boot_from_volume=None, boot_volume_type=None,
+                            boot_volume_availability_zone=None,
+                            boot_volume_local_to_instance=None)
         return parser
 
     def take_action(self, parsed_args):

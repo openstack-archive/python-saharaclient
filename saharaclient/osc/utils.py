@@ -367,7 +367,13 @@ def create_node_group_templates(client, app,  parsed_args, flavor_id, configs,
             volumes_availability_zone=(
                 parsed_args.volumes_availability_zone),
             volume_mount_prefix=parsed_args.volumes_mount_prefix,
-            boot_from_volume=parsed_args.boot_from_volume).to_dict()
+            boot_from_volume=parsed_args.boot_from_volume,
+            boot_volume_type=parsed_args.boot_volume_type,
+            boot_volume_availability_zone=(
+                parsed_args.boot_volume_availability_zone),
+            boot_volume_local_to_instance=(
+                parsed_args.boot_volume_local_to_instance)
+            ).to_dict()
     else:
         data = client.node_group_templates.create(
             name=parsed_args.name,
@@ -564,6 +570,15 @@ class NodeGroupTemplatesUtils(object):
                 if parsed_args.boot_from_volume is not None:
                     update_dict['boot_from_volume'] = (
                         parsed_args.boot_from_volume)
+                if parsed_args.boot_volume_type is not None:
+                    update_dict['boot_volume_type'] = (
+                        parsed_args.boot_volume_type)
+                if parsed_args.boot_volume_availability_zone is not None:
+                    update_dict['boot_volume_availability_zone'] = (
+                        parsed_args.boot_volume_availability_zone)
+                if parsed_args.boot_volume_local_to_instance is not None:
+                    update_dict['boot_volume_local_to_instance'] = (
+                        parsed_args.boot_volume_local_to_instance)
             data = client.node_group_templates.update(
                 ngt_id, **update_dict).to_dict()
 
