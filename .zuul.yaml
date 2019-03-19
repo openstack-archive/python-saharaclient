@@ -5,6 +5,7 @@
       - openstack-python-jobs
       - openstack-python35-jobs
       - openstack-python36-jobs
+      - openstack-python37-jobs
       - publish-openstack-docs-pti
       - check-requirements
       - release-notes-jobs-python3
@@ -12,12 +13,16 @@
     check:
       jobs:
         - python-saharaclient-scenario
+        - python-saharaclient-scenario-v2
         - python-saharaclient-tempest
+        - python-saharaclient-tempest-v2
     gate:
       queue: sahara
       jobs:
         - python-saharaclient-scenario
+        - python-saharaclient-scenario-v2
         - python-saharaclient-tempest
+        - python-saharaclient-tempest-v2
     experimental:
       jobs:
         - openstack-tox-pypy
@@ -25,13 +30,20 @@
 - job:
     name: python-saharaclient-scenario
     description: |
-      Run scenario tests for Sahara against python-saharaclient changes.
+      Run scenario tests for Sahara against python-saharaclient
+      changes.
     parent: sahara-tests-scenario
     required-projects:
       - openstack/python-saharaclient
-    vars:
-      devstack_localrc:
-        LIBS_FROM_GIT: python-saharaclient
+
+- job:
+    name: python-saharaclient-scenario-v2
+    description: |
+      Run scenario tests for Sahara on API v2 against python-saharaclient
+      changes.
+    parent: sahara-tests-scenario-v2
+    required-projects:
+      - openstack/python-saharaclient
 
 - job:
     name: python-saharaclient-tempest
@@ -41,6 +53,12 @@
     parent: sahara-tests-tempest
     required-projects:
       - openstack/python-saharaclient
-    vars:
-      devstack_localrc:
-        LIBS_FROM_GIT: python-saharaclient
+
+- job:
+    name: python-saharaclient-tempest-v2
+    description: |
+      Run Tempest tests from the Sahara plugin on API v2 against
+      python-saharaclient changes.
+    parent: sahara-tests-tempest-v2
+    required-projects:
+      - openstack/python-saharaclient
