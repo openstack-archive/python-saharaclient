@@ -506,7 +506,7 @@ class DownloadJobBinary(command.Command):
                 client.job_binaries, parsed_args.job_binary)
             data = client.job_binaries.get_file(jb_id)
 
-            with open(parsed_args.file, 'w') as f:
+            with open(parsed_args.file, 'wb') as f:
                 f.write(data)
             sys.stdout.write(
                 'Job binary "{jb}" has been downloaded '
