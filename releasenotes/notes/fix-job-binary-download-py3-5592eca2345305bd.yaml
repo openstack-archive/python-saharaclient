@@ -1,0 +1,4 @@
+---
+fixes:
+  - |
+    Fix the "job binary download" command when Python 3 is used.
