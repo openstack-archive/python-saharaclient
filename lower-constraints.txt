@@ -7,7 +7,7 @@ cmd2==0.8.0
 coverage==4.0
 cryptography==2.1
 debtcollector==1.2.0
-decorator==3.4.0
+decorator==4.4.0
 deprecation==1.0
 dogpile.cache==0.6.2
 extras==1.0.0
