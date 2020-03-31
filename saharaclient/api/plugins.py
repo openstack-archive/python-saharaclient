@@ -87,5 +87,6 @@ class PluginManagerV2(_PluginManager):
         return self._get('/plugins/%s/%s' % (plugin_name, plugin_version),
                          'plugin')
 
+
 # NOTE(jfreud): keep this around for backwards compatibility
 PluginManager = PluginManagerV1

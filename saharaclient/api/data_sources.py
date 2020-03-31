@@ -93,5 +93,6 @@ class DataSourceManagerV1(base.ResourceManager):
 class DataSourceManagerV2(DataSourceManagerV1):
     version = 2
 
+
 # NOTE(jfreud): keep this around for backwards compatibility
 DataSourceManager = DataSourceManagerV1

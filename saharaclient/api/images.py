@@ -87,5 +87,6 @@ class ImageManagerV2(_ImageManager):
     def delete_tags(self, image_id):
         return self._delete('/images/%s/tags' % image_id)
 
+
 # NOTE(jfreud): keep this around for backwards compatibility
 ImageManager = ImageManagerV1

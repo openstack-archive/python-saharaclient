@@ -12,9 +12,7 @@ deprecation==1.0
 dogpile.cache==0.6.2
 extras==1.0.0
 fixtures==3.0.0
-flake8==2.5.5
 future==0.16.0
-hacking==0.12.0
 idna==2.6
 iso8601==0.1.11
 jmespath==0.9.0
@@ -43,11 +41,9 @@ oslo.serialization==2.18.0
 oslo.utils==3.33.0
 oslotest==3.2.0
 pbr==2.0.0
-pep8==1.5.7
 positional==1.2.1
 prettytable==0.7.2
 pycparser==2.18
-pyflakes==0.8.1
 pyinotify==0.9.6
 pyOpenSSL==17.1.0
 pyparsing==2.1.0

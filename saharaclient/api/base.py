@@ -187,10 +187,10 @@ class ResourceManager(object):
                 prev = meta.get('prev')
                 next = meta.get('next')
 
-            l = [self.resource_class(self, res)
-                 for res in data]
+            li = [self.resource_class(self, res)
+                  for res in data]
 
-            return Page(l, prev, next, limit)
+            return Page(li, prev, next, limit)
         else:
             self._raise_api_exception(resp)
 

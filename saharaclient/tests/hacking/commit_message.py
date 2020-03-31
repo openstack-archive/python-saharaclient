@@ -59,8 +59,8 @@ class OnceGitCheckCommitTitleBug(GitCheck):
     # Changeid|bug|blueprint
     GIT_REGEX = re.compile(
         r'(I[0-9a-f]{8,40})|'
-        '([Bb]ug|[Ll][Pp])[\s\#:]*(\d+)|'
-        '([Bb]lue[Pp]rint|[Bb][Pp])[\s\#:]*([A-Za-z0-9\\-]+)')
+        r'([Bb]ug|[Ll][Pp])[\s\#:]*(\d+)|'
+        r'([Bb]lue[Pp]rint|[Bb][Pp])[\s\#:]*([A-Za-z0-9\\-]+)')
 
     def run_once(self):
         title = self._get_commit_title()
