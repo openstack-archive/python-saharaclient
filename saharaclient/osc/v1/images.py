@@ -149,8 +149,8 @@ class RegisterImage(command.ShowOne):
         client = self.app.client_manager.data_processing
         image_client = self.app.client_manager.image
 
-        image_id = osc_utils.find_resource(
-            image_client.images, parsed_args.image).id
+        image_id = image_client.find_image(parsed_args.image,
+                                           ignore_missing=False).id
 
         data = client.images.update_image(
             image_id, user_name=parsed_args.username,

@@ -176,8 +176,8 @@ class TestRegisterImage(TestImages):
         self.image_mock.update_image.return_value = mock.Mock(
             image=IMAGE_INFO.copy())
         self.app.client_manager.image = mock.Mock()
-        self.image_client = self.app.client_manager.image.images
-        self.image_client.get.return_value = mock.Mock(id='id')
+        self.image_client = self.app.client_manager.image
+        self.image_client.find_image.return_value = mock.Mock(id='id')
 
         # Command to test
         self.cmd = osc_images.RegisterImage(self.app, None)

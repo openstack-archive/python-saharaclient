@@ -1,0 +1,6 @@
+---
+fixes:
+  - |
+    A change in python-openstackclient 5.2.0 broke the image register command.
+    The incompatibility is now solved but the python-openstackclient
+    requirement has been bumped to 5.2.0.
