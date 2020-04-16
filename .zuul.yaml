@@ -20,9 +20,6 @@
         - python-saharaclient-scenario-v2
         - python-saharaclient-tempest
         - python-saharaclient-tempest-v2
-    experimental:
-      jobs:
-        - openstack-tox-pypy
 
 - job:
     name: python-saharaclient-scenario
