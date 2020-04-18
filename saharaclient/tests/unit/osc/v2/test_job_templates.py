@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
 from osc_lib.tests import utils as osc_utils
+from unittest import mock
 
 from saharaclient.api.v2 import job_templates as api_j
 from saharaclient.osc.v2 import job_templates as osc_j

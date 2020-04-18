@@ -14,8 +14,8 @@
 
 from saharaclient.api import data_sources as ds
 from saharaclient.tests.unit import base
+from unittest import mock
 
-import mock
 from oslo_serialization import jsonutils as json
 
 

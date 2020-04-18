@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+from unittest import mock
 
 from saharaclient.api import job_types as api_jt
 from saharaclient.api.v2 import job_templates as api_job_templates

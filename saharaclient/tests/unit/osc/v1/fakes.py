@@ -14,8 +14,8 @@
 # limitations under the License.
 
 
-import mock
 from osc_lib.tests import utils
+from unittest import mock
 
 
 class TestDataProcessing(utils.TestCommand):
