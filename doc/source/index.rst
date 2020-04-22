@@ -23,4 +23,3 @@ Contents:
    reference/index
    cli/index
    contributor/index
-
