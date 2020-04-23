@@ -1,21 +1,19 @@
-If you would like to contribute to the development of OpenStack,
-you must follow the steps in the "If you're a developer"
-section of this page:
+The source repository for this project can be found at:
 
-   https://wiki.openstack.org/wiki/How_To_Contribute
+   https://opendev.org/openstack/python-saharaclient
 
-You can find more Sahara-specific info in our How To Participate guide:
+Pull requests submitted through GitHub are not monitored.
 
-   https://docs.openstack.org/python-saharaclient/latest/how_to_participate.html
+To start contributing to OpenStack, follow the steps in the contribution guide
+to set up and use Gerrit:
 
-Once those steps have been completed, changes to OpenStack
-should be submitted for review via the Gerrit tool, following
-the workflow documented at:
+   https://docs.openstack.org/contributors/code-and-documentation/quick-start.html
 
-   https://docs.openstack.org/infra/manual/developers.html#development-workflow
+Bugs should be filed on Storyboard:
 
-Pull requests submitted through GitHub will be ignored.
+   https://storyboard.openstack.org/#!/project/openstack/python-saharaclient
 
-Bugs should be filed on Storyboard, not GitHub:
+For more specific information about contributing to this repository, see the
+python-saharaclient contributor guide:
 
-   https://storyboard.openstack.org/#!/project/934
+   https://docs.openstack.org/python-saharaclient/latest/contributor/contributing.html
