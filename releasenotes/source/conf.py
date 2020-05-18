@@ -20,10 +20,9 @@ extensions = [
 ]
 
 # openstackdocstheme options
-repository_name = 'openstack/python-saharaclient'
-bug_project = '934'
-bug_tag = 'releasenotes'
-html_last_updated_fmt = '%Y-%m-%d %H:%M'
+openstackdocs_repo_name = 'openstack/python-saharaclient'
+openstackdocs_use_storyboard = True
+openstackdocs_auto_name = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -49,7 +48,7 @@ version = ''
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 
 # -- Options for HTML output ----------------------------------------------
