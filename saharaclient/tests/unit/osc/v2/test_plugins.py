@@ -156,7 +156,7 @@ class TestGetPluginConfigs(TestPlugins):
     @mock.patch('oslo_serialization.jsonutils.dump')
     def test_get_plugin_configs_default_file(self, p_dump):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
+        with mock.patch('builtins.open', m_open, create=True):
             arglist = ['fake', '0.1']
             verifylist = [('plugin', 'fake'), ('plugin_version', '0.1')]
 
@@ -178,7 +178,7 @@ class TestGetPluginConfigs(TestPlugins):
     @mock.patch('oslo_serialization.jsonutils.dump')
     def test_get_plugin_configs_specified_file(self, p_dump):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open):
+        with mock.patch('builtins.open', m_open):
             arglist = ['fake', '0.1', '--file', 'testfile']
             verifylist = [('plugin', 'fake'), ('plugin_version', '0.1'),
                           ('file', 'testfile')]

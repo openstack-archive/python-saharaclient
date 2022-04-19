@@ -84,7 +84,7 @@ class TestCreateJobBinary(TestJobBinaries):
 
     def test_job_binary_create_internal(self):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
+        with mock.patch('builtins.open', m_open, create=True):
             arglist = ['--name', 'job-binary', '--data', 'filepath']
             verifylist = [('name', 'job-binary'), ('data', 'filepath')]
 
@@ -310,7 +310,7 @@ class TestDownloadJobBinary(TestJobBinaries):
 
     def test_download_job_binary_default_file(self):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
+        with mock.patch('builtins.open', m_open, create=True):
             arglist = ['job-binary']
             verifylist = [('job_binary', 'job-binary')]
 
@@ -327,7 +327,7 @@ class TestDownloadJobBinary(TestJobBinaries):
 
     def test_download_job_binary_specified_file(self):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
+        with mock.patch('builtins.open', m_open, create=True):
             arglist = ['job-binary', '--file', 'test']
             verifylist = [('job_binary', 'job-binary'), ('file', 'test')]
 
