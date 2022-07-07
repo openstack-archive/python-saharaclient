@@ -16,7 +16,7 @@
 import copy
 
 from oslo_serialization import jsonutils
-from six.moves.urllib import parse
+from urllib import parse
 
 from saharaclient._i18n import _
 

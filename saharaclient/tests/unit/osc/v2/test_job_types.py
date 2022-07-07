@@ -106,7 +106,7 @@ class TestGetJobTypeConfigs(TestJobTypes):
     @mock.patch('oslo_serialization.jsonutils.dump')
     def test_get_job_type_configs_default_file(self, p_dump):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open, create=True):
+        with mock.patch('builtins.open', m_open, create=True):
             arglist = ['Pig']
             verifylist = [('job_type', 'Pig')]
 
@@ -128,7 +128,7 @@ class TestGetJobTypeConfigs(TestJobTypes):
     @mock.patch('oslo_serialization.jsonutils.dump')
     def test_get_job_type_configs_specified_file(self, p_dump):
         m_open = mock.mock_open()
-        with mock.patch('six.moves.builtins.open', m_open):
+        with mock.patch('builtins.open', m_open):
             arglist = ['Pig', '--file', 'testfile']
             verifylist = [('job_type', 'Pig'), ('file', 'testfile')]
 
