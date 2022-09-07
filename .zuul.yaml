@@ -8,17 +8,25 @@
       - openstackclient-plugin-jobs
     check:
       jobs:
-        - python-saharaclient-scenario
-        - python-saharaclient-scenario-v2
-        - python-saharaclient-tempest
-        - python-saharaclient-tempest-v2
+        - python-saharaclient-scenario:
+            voting: false
+        - python-saharaclient-scenario-v2:
+            voting: false
+        - python-saharaclient-tempest:
+            voting: false
+        - python-saharaclient-tempest-v2:
+            voting: false
     gate:
       queue: sahara
       jobs:
-        - python-saharaclient-scenario
-        - python-saharaclient-scenario-v2
-        - python-saharaclient-tempest
-        - python-saharaclient-tempest-v2
+        - python-saharaclient-scenario:
+            voting: false
+        - python-saharaclient-scenario-v2:
+            voting: false
+        - python-saharaclient-tempest:
+            voting: false
+        - python-saharaclient-tempest-v2:
+            voting: false
 
 - job:
     name: python-saharaclient-scenario
