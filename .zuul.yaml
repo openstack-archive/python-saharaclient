@@ -1,4 +1,5 @@
 - project:
+    queue: sahara
     templates:
       - openstack-cover-jobs
       - openstack-lower-constraints-jobs
@@ -15,7 +16,6 @@
         - python-saharaclient-tempest
         - python-saharaclient-tempest-v2
     gate:
-      queue: sahara
       jobs:
         - python-saharaclient-scenario
         - python-saharaclient-scenario-v2
