@@ -1,4 +1,5 @@
 - project:
+    queue: sahara
     templates:
       - openstack-cover-jobs
       - openstack-python3-zed-jobs
@@ -17,7 +18,6 @@
         - python-saharaclient-tempest-v2:
             voting: false
     gate:
-      queue: sahara
       jobs:
         - python-saharaclient-scenario:
             voting: false
