@@ -36,7 +36,7 @@ in the `developer guide
 
 .. _PyPi: https://pypi.org/project/python-saharaclient
 .. _Online Documentation: https://docs.openstack.org/python-saharaclient/latest/
-.. _Blueprints: http://specs.openstack.org/openstack/sahara-specs/
+.. _Blueprints: https://specs.openstack.org/openstack/sahara-specs/
 .. _Bugs: https://storyboard.openstack.org/#!/project/934
 .. _Source: https://opendev.org/openstack/python-saharaclient
 .. _How to Contribute: https://docs.openstack.org/infra/manual/developers.html
