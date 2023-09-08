@@ -11,4 +11,4 @@ we communicate as a community, etc.
 python-saharaclient is maintained by the OpenStack Sahara project.
 To understand our development process and how you can contribute to it, please
 look at the Sahara project's general contributor's page:
-http://docs.openstack.org/sahara/latest/contributor/contributing.html
+https://docs.openstack.org/sahara/latest/contributor/contributing.html
