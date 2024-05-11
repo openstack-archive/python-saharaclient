@@ -1,6 +1,0 @@
----
-upgrade:
-  - |
-    The Sahara client library now only supports authentication with a Keystone
-    session object. Consequently the arguments which `saharaclient.api.Client`
-    accepts, and the order of those arguments, have changed.

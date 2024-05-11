@@ -1,4 +1,0 @@
----
-features:
-  - Providing ability to make dump of event logs for clusters.
-    Also displaying shorten version of event logs by option.

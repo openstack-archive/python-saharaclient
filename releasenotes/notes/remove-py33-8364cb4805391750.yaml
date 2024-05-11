@@ -1,5 +1,0 @@
----
-deprecations:
-  - >
-    [`bug 1526170  <https://bugs.launchpad.net/python-saharaclient/+bug/1526170>`_]
-    Support of python 3.3 was dropped.

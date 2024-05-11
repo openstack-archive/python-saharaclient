@@ -1,5 +1,0 @@
----
-features:
-  - |
-    Adding the ability for the CLI to communicate with OpenStack
-    Sahara using the new APIv2.
